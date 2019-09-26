@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="@color/colorBlue"
+    android:gravity="center_horizontal"
+    android:alpha="0.4">
+
+    <EditText
+        android:id="@+id/create_tid"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/createTidHint"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textSize="18sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:id="@+id/notification_tid"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/create_tid"
+        android:textSize="15sp"
+        android:textColor="@color/colorBlack"
+        android:layout_marginTop="15dp"
+        android:maxLines="1"/>
+
+    <Button
+        android:id="@+id/check_tid"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/notification_tid"
+        android:layout_alignStart="@+id/notification_tid"
+        android:layout_alignEnd="@+id/notification_tid"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="86dp"
+        android:text="@string/createTid" />
+
+</RelativeLayout>

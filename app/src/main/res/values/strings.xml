@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">INvoForUltimate</string>
+    <string name="tools1">1</string>
+    <string name="tools2">2</string>
+    <string name="tools3">3</string>
+
+    <string name="trackService">是否开启轨迹追踪</string>
+    <string name="hawkEyeService">鹰眼服务</string>
+
+    <string name="yes">是</string>
+    <string name="nope">否</string>
+
+    <string name="startTrack">开启服务</string>
+    <string name="startGather">开始采集</string>
+    <string name="createTrack">创建轨迹以保存</string>
+
+    <string name="checkTid">0x03</string>
+
+    <string name="createTid">创建终端</string>
+
+    <string name="createTidHint">支持中文、英文大小字母、英文下划线</string>
+
+
+
+
+</resources>
