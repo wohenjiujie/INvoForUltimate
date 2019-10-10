@@ -3,16 +3,21 @@ package com.graduationproject.invoforultimate;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -41,15 +46,26 @@ import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.constant.Constants;
+import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import com.graduationproject.invoforultimate.initialize.MapSetting;
 import com.graduationproject.invoforultimate.service.OnTrackListenerService;
 import com.graduationproject.invoforultimate.util.BottomNavigationUtil;
+import com.graduationproject.invoforultimate.util.DatabaseUtil;
+import com.graduationproject.invoforultimate.util.HttpUtil;
 import com.graduationproject.invoforultimate.util.InputUtil;
 import com.graduationproject.invoforultimate.service.OnTrackLifecycleListenerService;
 import com.graduationproject.invoforultimate.util.ToastUtil;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainActivity extends BaseActivity {
     private static final String CHANNEL_ID_SERVICE_RUNNING = "CHANNEL_ID_SERVICE_RUNNING";
@@ -77,11 +93,11 @@ public class MainActivity extends BaseActivity {
     private static double longitude;//经度
     private static double latitude;//纬度
     private static List<LatLng> coordinate = new ArrayList<LatLng>();
-    List<LatLng> allCoordinate = new ArrayList<LatLng>();
-    List<LatLng> latLngs = new ArrayList<LatLng>();
-
-    Polyline polyline;
-
+    private List<LatLng> allCoordinate = new ArrayList<LatLng>();
+    private List<LatLng> latLngs = new ArrayList<LatLng>();
+    private Polyline polyline;
+    private DatabaseUtil databaseUtil;
+    private InitializeTerminal initializeTerminal = new InitializeTerminal();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +131,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 设置定位参数
      */
-    private AMapLocationClientOption getDefaultOption(){
+    private AMapLocationClientOption getDefaultOption() {
         AMapLocationClientOption mOption = new AMapLocationClientOption();
         mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
         mOption.setInterval(5000);
@@ -134,7 +150,54 @@ public class MainActivity extends BaseActivity {
         createTrace.setVisibility(View.INVISIBLE);
         builder = new AlertDialog.Builder(MainActivity.this);
         bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather);
+        /*
+        * 判断是否第一次接入终端
+        * */
+        if (!initializeTerminal.checkTerminal(getApplicationContext())) {
+            ToastUtil.showToast(this, "no terminal!!");
+            ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("diy");
+            progressDialog.show();
+        }
     }
+
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == 0) {
+//                http://xiaomu1079.club/infos/query
+                HttpUtil.sendOkHttpRequest("http://xiaomu1079.club/infos/query", new com.squareup.okhttp.Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        String string = response.body().string();
+                        Looper.prepare();
+                        ToastUtil.showToast(getApplication(), string);
+                        Looper.loop();
+                        Log.d(TAG, string);
+                        try {
+                            JSONArray jsonArray = new JSONArray(string);
+                            for (int i=0;i<jsonArray.length();i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String result = jsonObject.getString("count");
+//                                ToastUtil.showToast(getApplication(),result);
+                                Log.d(TAG, result);
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+            }
+        }
+    };
 
     protected void initListener() {
         /*
@@ -145,7 +208,16 @@ public class MainActivity extends BaseActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.tools1:
-                        bottomNavigationUtil.ItemSelected(1);
+//                        bottomNavigationUtil.ItemSelected(1);
+//                        databaseUtil = new DatabaseUtil();
+//                        Log.d(TAG, databaseUtil.test());
+//                        ToastText(databaseUtil.test());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                handler.sendEmptyMessage(0);
+                            }
+                        }).start();
                         break;
                     case R.id.tools2:
                         bottomNavigationUtil.ItemSelected(2);
@@ -229,6 +301,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if (isServiceRunning) {
                     aMapTrackClient.stopTrack(new TrackParam(Constants.ServiceID, Constants.TerminalID), onTrackLifecycleListener);
+
                 } else {
                     startTrack();
                 }
@@ -246,7 +319,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
             if (null != aMapLocation) {
-                if(aMapLocation.getErrorCode() == 0){
+                if (aMapLocation.getErrorCode() == 0) {
                     longitude = aMapLocation.getLongitude();
                     latitude = aMapLocation.getLatitude();
 //                    ToastUtil.showToast(MainActivity.this, "info:" + longitude + "\n" + latitude);
@@ -261,8 +334,8 @@ public class MainActivity extends BaseActivity {
 
 
                     /*
-                    * test
-                    * */
+                     * test
+                     * */
 //                    mapView.getMap().moveCamera(CameraUpdateFactory.zoomTo(4));
                     /*latLngs.add(new LatLng(30.679879,104.064855));//成都
                     latLngs.add(new LatLng(39.90403,116.407525));//北京
@@ -360,7 +433,7 @@ public class MainActivity extends BaseActivity {
 
     private void startTrack() {
 
-        aMapTrackClient.addTrack(new AddTrackRequest(Constants.ServiceID, Constants.TerminalID),new OnTrackListenerService(){
+        aMapTrackClient.addTrack(new AddTrackRequest(Constants.ServiceID, Constants.TerminalID), new OnTrackListenerService() {
             @Override
             public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
                 if (addTrackResponse.isSuccess()) {
@@ -371,7 +444,7 @@ public class MainActivity extends BaseActivity {
                         trackParam.setNotification(createNotification());
                     }
                     Log.d(TAG, "TrackID:" + TrackID);
-                    ToastUtil.showToast(MainActivity.this,"TrackID:"+TrackID);
+                    ToastUtil.showToast(MainActivity.this, "TrackID:" + TrackID);
 
                     aMapTrackClient.startTrack(trackParam, onTrackLifecycleListener);
 
