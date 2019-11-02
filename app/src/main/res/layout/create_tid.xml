@@ -13,26 +13,16 @@
         android:hint="@string/createTidHint"
         android:inputType="text"
         android:maxLines="1"
-        android:textSize="18sp"
-        android:textColor="@color/colorBlack"/>
-
-    <TextView
-        android:id="@+id/notification_tid"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_below="@id/create_tid"
         android:textSize="15sp"
-        android:textColor="@color/colorBlack"
-        android:layout_marginTop="15dp"
-        android:maxLines="1"/>
+        android:textColor="@color/colorBlack"/>
 
     <Button
         android:id="@+id/check_tid"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_below="@id/notification_tid"
-        android:layout_alignStart="@+id/notification_tid"
-        android:layout_alignEnd="@+id/notification_tid"
+        android:layout_below="@id/create_tid"
+        android:layout_alignStart="@+id/create_tid"
+        android:layout_alignEnd="@+id/create_tid"
         android:layout_marginStart="85dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="86dp"

@@ -17,10 +17,10 @@ import com.graduationproject.invoforultimate.util.ToastUtil;
 public class TrackService {
 
     public static void createTerminal(final Context context) {
-        final AlertDialog.Builder builder= new AlertDialog.Builder(context);
+        /*final AlertDialog.Builder builder= new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.create_tid, null);
         final Button button = view.findViewById(R.id.check_tid);
-        final TextView textView = view.findViewById(R.id.notification_tid);
+//        final TextView textView = view.findViewById(R.id.notification_tid);
         builder.setTitle("diy4").setView(view).setCancelable(false);
         final AlertDialog dialog = builder.show();
         button.setOnClickListener(new View.OnClickListener() {
@@ -29,7 +29,7 @@ public class TrackService {
                 ToastUtil.showToast(context,"succeed");
                 dialog.dismiss();
             }
-        });
+        });*/
     }
 
 }

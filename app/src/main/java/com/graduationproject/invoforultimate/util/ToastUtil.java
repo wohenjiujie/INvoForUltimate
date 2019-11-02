@@ -20,4 +20,13 @@ public final class ToastUtil {
         }
         mToast.show();
     }
+
+    public static void showLongToast(Context ctx, @Nullable String msg) {
+        if (mToast == null) {
+            mToast = Toast.makeText(ctx, msg, Toast.LENGTH_LONG);
+        } else {
+            mToast.setText(msg);
+        }
+        mToast.show();
+    }
 }

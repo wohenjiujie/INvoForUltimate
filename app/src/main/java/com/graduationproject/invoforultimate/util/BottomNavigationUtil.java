@@ -3,6 +3,7 @@ package com.graduationproject.invoforultimate.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.R;
+import com.graduationproject.invoforultimate.TrackHistoryActivity;
 
 /**
  * Created by INvo
@@ -55,6 +57,11 @@ public class BottomNavigationUtil {
 
     public void ItemSelected(int itemId) {
 //        check = true;
+        if (itemId == 2) {
+            Intent intent = new Intent();
+            intent.setClass(context, TrackHistoryActivity.class);
+            context.startActivity(intent);
+        }
         if (itemId == 3) {
             builder.setTitle(R.string.hawkEyeService).setMessage(R.string.trackService).setIcon(R.drawable.ic_launcher_background)
                     .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
