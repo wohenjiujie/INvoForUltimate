@@ -12,6 +12,9 @@
 
     <string name="startTrack">开启服务</string>
     <string name="startGather">开始采集</string>
+    <string name="start">开始</string>
+    <string name="end">结束</string>
+    <string name="continuance">继续</string>
     <string name="createTrack">创建轨迹以保存</string>
 
     <string name="checkTid">0x03</string>

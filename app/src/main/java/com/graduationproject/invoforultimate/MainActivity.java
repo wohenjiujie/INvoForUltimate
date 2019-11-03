@@ -36,7 +36,10 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.location.CoordinateConverter;
+import com.amap.api.location.DPoint;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
@@ -51,6 +54,7 @@ import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.constant.Constants;
+import com.graduationproject.invoforultimate.constant.TrackInfo;
 import com.graduationproject.invoforultimate.initialize.GeographicDescription;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import com.graduationproject.invoforultimate.initialize.MapSetting;
@@ -64,6 +68,7 @@ import com.graduationproject.invoforultimate.util.HttpUtil;
 import com.graduationproject.invoforultimate.util.InputUtil;
 import com.graduationproject.invoforultimate.service.OnTrackLifecycleListenerService;
 import com.graduationproject.invoforultimate.util.ToastUtil;
+import com.graduationproject.invoforultimate.util.UnixUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +77,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MainActivity extends BaseActivity {
@@ -87,10 +98,11 @@ public class MainActivity extends BaseActivity {
     private MyLocationStyle myLocationStyle = new MyLocationStyle();
     private BottomNavigationView bottomNavigationView;
     private BottomNavigationUtil bottomNavigationUtil;
-    private TextView startTrack, startGather;
+    private TextView startTrack, startGather, startFor;//需要更名
     private AlertDialog.Builder builder;
     private EditText createTrace;
     private Button traceSetting;
+    private Chronometer chronometer;
     private boolean isServiceRunning = false;
     private boolean isGatherRunning = false;
     private boolean isLocationRunning = false;
@@ -106,6 +118,13 @@ public class MainActivity extends BaseActivity {
     private DatabaseUtil databaseUtil;
     private InitializeTerminal initializeTerminal = new InitializeTerminal();
     private DialogUtil dialogUtil = new DialogUtil();
+    private boolean isStart = false;
+    private boolean isRunning = false;
+    private boolean isGather = false;
+    private TrackInfo trackInfo = new TrackInfo();
+    private static int timeConsuming;
+    private static boolean theFirstTransmit;
+
 //    TrackThread trackThread = new TrackThread(getApplicationContext());
 
     @Override
@@ -117,8 +136,6 @@ public class MainActivity extends BaseActivity {
         // 不要使用Activity作为Context传入
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
-
-
     }
 
     protected void initUI() {
@@ -128,6 +145,8 @@ public class MainActivity extends BaseActivity {
         startGather = findViewById(R.id.start_gather);
         traceSetting = findViewById(R.id.trace_setting);
         createTrace = findViewById(R.id.create_trace);
+        startFor = findViewById(R.id.start_for);
+        chronometer = findViewById(R.id.time_task);
         //初始化client
         aMapLocationClient = new AMapLocationClient(this.getApplicationContext());
         aMapLocationClientOption = getDefaultOption();
@@ -157,8 +176,10 @@ public class MainActivity extends BaseActivity {
         startGather.setVisibility(View.INVISIBLE);
         traceSetting.setVisibility(View.INVISIBLE);
         createTrace.setVisibility(View.INVISIBLE);
+        startFor.setVisibility(View.INVISIBLE);
+//        chronometer.setVisibility(View.INVISIBLE);
         builder = new AlertDialog.Builder(MainActivity.this);
-        bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather);
+        bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
         /*
          * 判断是否第一次接入终端
          * */
@@ -176,35 +197,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == 0) {
-//                http://xiaomu1079.club/infos/query
-               /* HttpUtil.sendOkHttpRequest("http://xiaomu1079.club/infos/query", new com.squareup.okhttp.Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
 
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        String string = response.body().string();
-                        Looper.prepare();
-                        ToastUtil.showToast(getApplication(), string);
-                        Looper.loop();
-                        Log.d(TAG, string);
-                        try {
-                            JSONArray jsonArray = new JSONArray(string);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                String result = jsonObject.getString("count");
-//                                ToastUtil.showToast(getApplication(),result);
-                                Log.d(TAG, result);
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                });*/
             }
         }
     };
@@ -215,75 +208,49 @@ public class MainActivity extends BaseActivity {
          * */
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
+                /**
+                 * 暂定
+                 */
                 case R.id.tools1:
 //                        bottomNavigationUtil.ItemSelected(1);
 //                        databaseUtil = new DatabaseUtil();
 //                        Log.d(TAG, databaseUtil.test());
 //                        ToastText(databaseUtil.test());
-                    new Thread(() -> handler.sendEmptyMessage(0)).start();
+//                    new Thread(() -> handler.sendEmptyMessage(0)).start();
+//                    ToastUtil.showToast(this,"sendHttp");
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            OkHttpClient client = new OkHttpClient();
+                            String content;
+                            Response response;
+                            RequestBody requestBody = null;
+                            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                            Request request;
+                            content = "http://xiaomu1079.club/searchCounts/2029115";
+                            request = new Request.Builder().url(content).build();
+                            try {
+                                response = client.newCall(request).execute();
+                                String accept = response.body().string();
+//                                JSONObject jsonObject = new JSONObject(accept);
+
+                                Log.d(TAG, accept);
+                                ToastUtil.showToast(MainActivity.this, accept);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
                     break;
+                /*
+                 * 查询轨迹历史记录
+                 * */
                 case R.id.tools2:
-                    /*
-                     * 查询表
-                     * */
-                    /*Intent intent = new Intent();
-                    intent.setClass(context, TrackHistoryActivity.class);*/
-
-                    /*AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    View view = LayoutInflater.from(this).inflate(R.layout.time_task, null);
-                    Chronometer chronometer = view.findViewById(R.id.time_task);
-                    Button start = view.findViewById(R.id.time_start);
-                    Button pause = view.findViewById(R.id.time_pause);
-                    Button restart = view.findViewById(R.id.time_restart);
-                    builder.setView(view).show();
-                    start.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //设置开始计时时间
-                            chronometer.setBase(SystemClock.elapsedRealtime());
-                            //启动计时器
-                            chronometer.start();
-                            pause.setEnabled(true);
-                            restart.setEnabled(false);
-                            start.setEnabled(false);
-                        }
-                    });
-                    pause.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            start.setText("重新开始");
-                            chronometer.stop();
-                            start.setEnabled(true);
-                            restart.setEnabled(true);
-                            pause.setEnabled(false);
-                        }
-                    });
-                    //jixu按钮监听器
-                    restart.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            start.setText("重新开始");
-                            chronometer.start();
-                            start.setEnabled(true);
-                            pause.setEnabled(true);
-                            restart.setEnabled(false);
-                        }
-                    });
-                    chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-                        @Override
-                        public void onChronometerTick(Chronometer chronometer) {
-                            int temp0 = Integer.parseInt(chronometer.getText().toString().split(":")[0]);
-                            int temp1 = Integer.parseInt(chronometer.getText().toString().split(":")[1]);
-//                            int temp2 = Integer.parseInt(chronometer.getText().toString());
-
-                            int temp = temp0 * 60 + temp1;
-                            Log.d("mylog", "temp:" + temp);
-//                            Log.d("mylog", "temp2:" + temp2);
-                        }
-                    });*/
-
                     bottomNavigationUtil.ItemSelected(2);
                     break;
+                /**
+                 * 轨迹服务开启
+                 */
                 case R.id.tools3:
                     bottomNavigationUtil.ItemSelected(3);
                     OnProcessCallBack(R.string.checkTid);
@@ -291,6 +258,10 @@ public class MainActivity extends BaseActivity {
             }
             return true;
         });
+
+        /*
+         * createTrace & traceSetting暂时不需要
+         * */
 
         /*
          * 创建轨迹输入框监听
@@ -326,6 +297,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+
         /*
          * 开始采集监听
          * */
@@ -360,30 +332,96 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if (isServiceRunning) {
                     aMapTrackClient.stopTrack(new TrackParam(Constants.ServiceID, Constants.TerminalID), onTrackLifecycleListener);
-
                 } else {
                     startTrack();
                 }
             }
         });
+
+
+        /**
+         * 开启所有
+         * 1、开启服务--isServiceRunning default == false
+         * 2、开启采集和计时
+         * 3、结束操作停止服务和location
+         */
+        startFor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isStart) {
+                    startTrack();
+                    theFirstTransmit = true;
+                    chronometer.setVisibility(View.VISIBLE);
+                    chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                    int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
+                    chronometer.setFormat("0" + hour + ":%s");
+                    aMapTrackClient.startGather(onTrackLifecycleListener);
+                    aMapLocationClient.startLocation();
+                    chronometer.start();
+                    UnixUtil unixUtil = new UnixUtil();
+                    trackInfo.setDate(unixUtil.getDate());
+                    Log.d(TAG, unixUtil.getDate());
+                }
+            }
+        });
+
+        startFor.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (isStart) {
+                    aMapTrackClient.stopGather(onTrackLifecycleListener);
+                    aMapTrackClient.stopTrack(new TrackParam(Constants.ServiceID, Constants.TerminalID), onTrackLifecycleListener);
+                    chronometer.stop();
+                    chronometer.setVisibility(View.INVISIBLE);
+                    aMapLocationClient.stopLocation();
+                    Log.d(TAG, "trackInfo.getServiceID():" + trackInfo.getServiceID());
+                    Log.d(TAG, "trackInfo.getTerminalID():" + trackInfo.getTerminalID());
+                    Log.d(TAG, "trackInfo.getTrackID():" + trackInfo.getTrackID());
+                    Log.d(TAG, trackInfo.getDesc());
+                    Log.d(TAG, trackInfo.getDate());
+                    Log.d(TAG, trackInfo.getTime());
+                    Log.d(TAG, "trackInfo.getTimeConsuming():" + trackInfo.getTimeConsuming());
+                }
+                return false;
+            }
+        });
+        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                int temp0 = Integer.parseInt(chronometer.getText().toString().split(":")[0]);
+                int temp1 = Integer.parseInt(chronometer.getText().toString().split(":")[1]);
+                int temp2 = Integer.parseInt(chronometer.getText().toString().split(":")[2]);
+                timeConsuming = temp0 * 3600 + temp1 * 60 + temp2;
+                String timeConsumingStr = chronometer.getText().toString();
+                trackInfo.setTimeConsuming(timeConsuming);
+                trackInfo.setTime(timeConsumingStr);
+//                Log.d(TAG, timeConsuming);
+                Log.d(TAG, "temp:" + timeConsuming);
+            }
+        });
+
+
     }
 
     private GeographicDescription geographicDescription;
+
     /**
      * 发送地理位置描述
-     *只执行第一次发送的数据
+     * 只执行第一次发送的数据
+     *
      * @param s
      */
     void transmitGeographicDescription(String s) {
         if (theFirstTransmit) {
             Log.d(TAG, "transmitGeographicDescription: yici");
-             geographicDescription= new GeographicDescription();
-            geographicDescription.setString(s);
+            /*geographicDescription = new GeographicDescription();
+            geographicDescription.setString(s);*/
+            trackInfo.setDesc(s);
             theFirstTransmit = false;
         }
     }
-//    static int theFirstTransmit;
-    static boolean theFirstTransmit;
+
+    //    static int theFirstTransmit;
     /**
      * 定位监听
      */
@@ -401,22 +439,39 @@ public class MainActivity extends BaseActivity {
                     mapView.getMap().moveCamera(CameraUpdateFactory.zoomTo(19));
                     coordinate.add(new LatLng(latitude, longitude));
 //                    allCoordinate.addAll(coordinate);
-                    Log.d(TAG, "two:" + allCoordinate);
+//                    Log.d(TAG, "two:" + allCoordinate);
                     polyline = mapView.getMap().addPolyline(new PolylineOptions().
                             addAll(coordinate).width(10).color(Color.argb(255, 1, 1, 1)));
 
                     /*
                      * 获取地理位置描述
                      * */
-                    Log.d(TAG, aMapLocation.getProvince());
+                   /* Log.d(TAG, aMapLocation.getProvince());
                     Log.d(TAG, aMapLocation.getCity());
                     Log.d(TAG, aMapLocation.getDistrict());
-                    Log.d(TAG, aMapLocation.getStreet());
+                    Log.d(TAG, aMapLocation.getStreet());*/
                     String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
 //                    theFirstTransmit = theFirstTransmit + 1;
                     transmitGeographicDescription(address);
-                    Log.d(TAG, "theFirstTransmit:" + theFirstTransmit);
-                    ToastText(address);
+                    float speed = aMapLocation.getSpeed();//速度显示在textView上
+                    Log.d(TAG, "speed:" + speed);
+                    /*CoordinateConverter converter = new CoordinateConverter(MainActivity.this);
+//                    converter.
+                    DPoint dPoint1 = new DPoint(longitude, latitude);
+                    DPoint dPoint2 = new DPoint(0, 0);
+                    DPoint dPoint3 = new DPoint(0, 0);
+                    if (dPoint2.equals(dPoint3)) {
+                        float dis = converter.calculateLineDistance(dPoint1, dPoint2);
+                        dPoint2 = dPoint1;
+                        Log.d(TAG, "dis:" + dis);
+                    }*/
+                    /*float distance = AMapUtils.calculateLineDistance(new LatLng(longitude, latitude), new LatLng(108.316948, 22.824577));
+                    int a = (int) distance;
+                    Log.d(TAG, "distance:" + a);
+                    Log.d(TAG, "distance:" + distance);*/
+
+//                    Log.d(TAG, "theFirstTransmit:" + theFirstTransmit);
+//                    ToastText(address);
                     /*
                      * test
                      * */
@@ -446,12 +501,17 @@ public class MainActivity extends BaseActivity {
         public void onStartGatherCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_GATHER_SUCEE) {
                 Toast.makeText(MainActivity.this, "定位采集开启成功", Toast.LENGTH_SHORT).show();
+                /*isGather = true;
+
+
                 isGatherRunning = true;
-                updateBtnStatus();
+                updateBtnStatus();*/
             } else if (i == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
                 Toast.makeText(MainActivity.this, "定位采集已经开启", Toast.LENGTH_SHORT).show();
+                /*isGather = true;
+
                 isGatherRunning = true;
-                updateBtnStatus();
+                updateBtnStatus();*/
             } else {
                 Log.w(TAG, "error onStartGatherCallback, status: " + i + ", msg: " + s);
                 Toast.makeText(MainActivity.this,
@@ -465,12 +525,16 @@ public class MainActivity extends BaseActivity {
             if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
                 // 成功启动
 //                Toast.makeText(MainActivity.this, "启动服务成功", Toast.LENGTH_SHORT).show();
-                isServiceRunning = true;
+                //
+
+//                isServiceRunning = true;
+                isStart = true;
                 updateBtnStatus();
             } else if (i == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {
                 // 已经启动
 //                Toast.makeText(MainActivity.this, "服务已经启动", Toast.LENGTH_SHORT).show();
-                isServiceRunning = true;
+                isStart = true;
+//                isServiceRunning = true;
                 updateBtnStatus();
             } else {
                 Log.w(TAG, "error onStartTrackCallback, status: " + i + ", msg: " + s);
@@ -484,8 +548,10 @@ public class MainActivity extends BaseActivity {
         public void onStopGatherCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
                 Toast.makeText(MainActivity.this, "定位采集停止成功", Toast.LENGTH_SHORT).show();
-                isGatherRunning = false;
-                updateBtnStatus();
+                /*isGatherRunning = false;
+                isGather = false;*/
+
+//                updateBtnStatus();
             } else {
                 Log.w(TAG, "error onStopGatherCallback, status: " + i + ", msg: " + s);
                 Toast.makeText(MainActivity.this,
@@ -499,8 +565,10 @@ public class MainActivity extends BaseActivity {
             if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 // 成功停止
                 Toast.makeText(MainActivity.this, "停止服务成功", Toast.LENGTH_SHORT).show();
-                isServiceRunning = false;
+                isStart = false;
+               /* isServiceRunning = false;
                 isGatherRunning = false;
+                isGather = false;*/
                 updateBtnStatus();
             } else {
                 Log.w(TAG, "error onStopTrackCallback, status: " + i + ", msg: " + s);
@@ -513,6 +581,9 @@ public class MainActivity extends BaseActivity {
     };
 
     private void updateBtnStatus() {
+        startFor.setText(isStart ? R.string.end : R.string.start);
+
+
         startTrack.setText(isServiceRunning ? "停止服务" : "启动服务");
         startTrack.setTextColor(isServiceRunning ? 0xFFFFFFFF : 0xFF000000);
         startTrack.setBackgroundResource(isServiceRunning ? R.drawable.round_corner_btn_bg_active : R.drawable.round_corner_btn_bg);
@@ -522,12 +593,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startTrack() {
-
         aMapTrackClient.addTrack(new AddTrackRequest(Constants.ServiceID, Constants.TerminalID), new OnTrackListenerService() {
             @Override
             public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
                 if (addTrackResponse.isSuccess()) {
                     TrackID = addTrackResponse.getTrid();
+                    trackInfo.setTrackID(TrackID);
+                    trackInfo.setServiceID(Constants.ServiceID);
+                    trackInfo.setTerminalID(initializeTerminal.getTerminal(MainActivity.this));//tid得从sp获取
                     TrackParam trackParam = new TrackParam(Constants.ServiceID, Constants.TerminalID);
                     trackParam.setTrackId(TrackID);
                     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -535,17 +608,13 @@ public class MainActivity extends BaseActivity {
                     }
                     Log.d(TAG, "TrackID:" + TrackID);
                     ToastUtil.showToast(MainActivity.this, "TrackID:" + TrackID);
-
                     aMapTrackClient.startTrack(trackParam, onTrackLifecycleListener);
 
                 } else {
                     ToastText("网络请求失败，" + addTrackResponse.getErrorMsg());
                 }
-
-
             }
         });
-
     }
 
 
@@ -553,7 +622,7 @@ public class MainActivity extends BaseActivity {
     protected void OnProcessCallBack(int msg) {
         switch (msg) {
             case R.string.checkTid:
-//                ToastText("tid is empty");
+                ToastText("tid is empty");
                 /*
                  * 没有创建终端，需要创建终端
                  *

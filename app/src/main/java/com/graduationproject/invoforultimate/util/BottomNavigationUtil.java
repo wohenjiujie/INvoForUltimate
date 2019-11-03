@@ -32,12 +32,12 @@ public class BottomNavigationUtil {
     private static Context context;
     private static EditText editText;
     private static Button button;
-    private static TextView textView1, textView2;
+    private static TextView textView1, textView2, textView3;
     private DatabaseUtil databaseUtil;
     private static boolean check;
 
 
-    public BottomNavigationUtil(Context context, AlertDialog.Builder builder, BottomNavigationView bottomNavigationView, EditText editText, Button button, TextView textView1, TextView textView2) {
+    public BottomNavigationUtil(Context context, AlertDialog.Builder builder, BottomNavigationView bottomNavigationView, EditText editText, Button button, TextView textView1, TextView textView2, TextView textView3) {
         /*
          * 鹰眼服务构造方法
          * */
@@ -49,6 +49,7 @@ public class BottomNavigationUtil {
         this.editText = editText;
         this.textView1 = textView1;
         this.textView2 = textView2;
+        this.textView3 = textView3;
     }
 
     public BottomNavigationUtil() {
@@ -78,11 +79,12 @@ public class BottomNavigationUtil {
                         Log.d("my", "checkAfter:" + check);
                     } */
 
-                        bottomNavigationView.setVisibility(View.INVISIBLE);//底部导航关闭显示}
-                        editText.setVisibility(View.VISIBLE);
-                        button.setVisibility(View.VISIBLE);
-                        textView1.setVisibility(View.VISIBLE);
-                        textView2.setVisibility(View.VISIBLE);
+                    bottomNavigationView.setVisibility(View.INVISIBLE);//底部导航关闭显示}
+//                        editText.setVisibility(View.VISIBLE);
+//                        button.setVisibility(View.VISIBLE);
+//                    textView1.setVisibility(View.VISIBLE);
+//                    textView2.setVisibility(View.VISIBLE);
+                    textView3.setVisibility(View.VISIBLE);
                 }
             }).setCancelable(false).show();
         }

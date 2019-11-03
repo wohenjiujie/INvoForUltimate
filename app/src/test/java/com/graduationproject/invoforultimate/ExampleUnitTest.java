@@ -66,11 +66,11 @@ public class ExampleUnitTest {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-        unxiTime();
+        unixTime();
     }
 
 
-    public void unxiTime() {
+    public void unixTime() {
         long time = System.currentTimeMillis();
         String nowTimeStamp = String.valueOf(time);
         System.out.println(time);
