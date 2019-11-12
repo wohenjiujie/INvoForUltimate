@@ -6,61 +6,85 @@
     android:orientation="horizontal"
     android:padding="2dp">
 
-    <ImageView
-        android:id="@+id/test11111"
-        android:scaleType="centerCrop"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@color/colorBlue"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/track_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textColor="@color/colorBlack"
-            android:textSize="25sp"></TextView>
-        <TextView
-            android:id="@+id/track_list3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="asdasda"
-            android:textColor="@color/colorGrey"
-            android:textSize="20sp"></TextView>
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="104dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="104dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/track_list4"
-                android:layout_width="0dp"
+
+            <ImageView
+                android:id="@+id/test11111"
+                android:scaleType="centerCrop"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@color/colorBlue"/>
+
+            <LinearLayout
+                android:layout_width="290dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Title:asdasdasd"
-                android:textColor="@color/colorBlack"
-                android:textSize="18sp"></TextView>
+                android:paddingLeft="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/track_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp"></TextView>
+                <TextView
+                    android:id="@+id/track_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="asdasda"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="15sp"></TextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/track_extra_1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Title:asdasdasd"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="10sp"></TextView>
+
+                    <TextView
+                        android:id="@+id/track_extra_2"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:text="xxx:asdasbdhj"
+                        android:textColor="@color/colorGrey"
+                        android:textSize="10sp"></TextView>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/track_list2"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="xxx:asdasbdhj"
-                android:textColor="@color/colorGrey"
-                android:textSize="18sp"></TextView>
+                android:background="@color/colorRed"
+                android:text="删除"
+                android:ems="1"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="35sp"/>
 
         </LinearLayout>
 
-    </LinearLayout>
-
-
+    </HorizontalScrollView>
 
 </LinearLayout>

@@ -15,6 +15,8 @@ import androidx.test.runner.AndroidJUnit4;
 
 import com.graduationproject.invoforultimate.util.DatabaseUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,7 +38,8 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.graduationproject.invoforultimate", appContext.getPackageName());
 //        TestDataBase();
-        testTimeTask(appContext);
+//        testTimeTask(appContext);
+        getJson();
     }
 
     @Test
@@ -67,5 +70,18 @@ public class ExampleInstrumentedTest {
                 start.setEnabled(false);
             }
         });
+    }
+
+    public void getJson(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("terminal", 22222);
+            jsonObject.put("track", "sadad");
+            System.out.println(jsonObject);
+            String c = jsonObject.toString();
+            System.out.println(c);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

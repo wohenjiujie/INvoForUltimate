@@ -9,6 +9,7 @@ public class Constants {
     public static final long ServiceID = 72958;
     public static final String initializeTerminal = "Terminal";
     public static final String CreateTerminalUrl = "https://tsapi.amap.com/v1/track/terminal/add";
+    public static final String AddTrackInfo = "http://xiaomu1079.club/addTrackInfo";
     public static final long TerminalID = 211539155;
     public static final long TID_TEST = 202911601;
     public static final int CreateTerminalCommand = 0x201;
@@ -16,6 +17,7 @@ public class Constants {
     public static final int MsgTerminalExistError = 0x203;
     public static final int MsgTerminalInvalidError = 0x204;
     public static final int MsgTerminalSuccess = 0x205;
+    public static final int UploadTrackInfo = 0x206;//上传
     public static final String CreateTerminalSucceed = "创建成功";
     public static final String CreateTerminalFailure = "创建失败";
     public static final String InputEmpty = "请不要输入空值";

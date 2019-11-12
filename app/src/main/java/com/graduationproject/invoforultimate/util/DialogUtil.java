@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -177,5 +178,19 @@ public class DialogUtil {
 
     public void setTerminalName(String terminalName) {
         this.TerminalName = terminalName;
+    }
+
+    public void checkFalse(Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("本次服务将不会上传")
+                .setMessage("因为距离或时间太短等其他因素，本次记录的轨迹将不会上传到服务器上")
+                .setPositiveButton("好", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 }

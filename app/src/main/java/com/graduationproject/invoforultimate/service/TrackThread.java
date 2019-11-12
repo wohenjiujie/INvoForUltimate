@@ -1,22 +1,19 @@
 package com.graduationproject.invoforultimate.service;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.OnCreateTerminalListener;
+import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
+import com.graduationproject.invoforultimate.constant.TrackInfo;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import com.graduationproject.invoforultimate.util.HttpUtil;
-import com.graduationproject.invoforultimate.util.ToastUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,20 +43,26 @@ public class TrackThread extends Thread {
     private MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
     private Request request;
     private OkHttpClient okHttpClient = new OkHttpClient();
-    private OnCreateTerminalListener onCreateTerminalListener;
+    private OnTrackCountsPostListener onTrackCountsPostListener;
     private Bundle bundle;
+    private TrackInfo trackInfo;
 //    private Handler handler;
 //    private Message message;
 
 
-    public void setOnCreateTerminalListener(OnCreateTerminalListener listener) {
-        this.onCreateTerminalListener = listener;
+    public void setOnTrackCountsPostListener(OnTrackCountsPostListener listener) {
+        this.onTrackCountsPostListener = listener;
     }
     public TrackThread(Context context, int CommandType, @Nullable String string,@Nullable Handler handler) {
         this.context = context;
         this.anInt = CommandType;
         this.string = string;
 //        this.handler = handler;
+    }
+
+    public TrackThread(TrackInfo trackInfo,int CommandType) {
+        this.trackInfo = trackInfo;
+        this.anInt = CommandType;
     }
 
     /*public TrackThread(Context context, int CommandType, @Nullable String string) {
@@ -116,7 +119,7 @@ public class TrackThread extends Thread {
                 bundle.putString("tid", temporary);
 //                setBundle(bundle);
                 ToastUtil.showLongToast(context, "bundle test");
-                onCreateTerminalListener.onBundle(bundle);
+                onTrackCountsPostListener.onBundle(bundle);
                 Log.d("mybundle", "bundle:" + bundle);
             }
 

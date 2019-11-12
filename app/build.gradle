@@ -43,6 +43,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:25.3.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
     //    implementation files('libs/mysql-connector-java-8.0.17.jar')
 //    implementation files('libs/mysql-connector-java-8.0.17.jar')
 }

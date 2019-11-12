@@ -1,6 +1,7 @@
 package com.graduationproject.invoforultimate;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -12,13 +13,17 @@ import androidx.annotation.Nullable;
  * on 2019-09-24.
  */
 public abstract class BaseActivity extends Activity {
+    private static Context context;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
         setContentView(getContentViewId());
 
     }
-
+    protected static  Context getContext(){
+        return context;
+    }
     protected abstract int getContentViewId();
 
     protected void ToastText(String text) {

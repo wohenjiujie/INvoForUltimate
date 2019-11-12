@@ -13,6 +13,7 @@ import com.graduationproject.invoforultimate.service.TrackHandler;
 import com.graduationproject.invoforultimate.util.HttpUtil;
 import com.graduationproject.invoforultimate.util.ToastUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +35,7 @@ public class InitializeTerminal {
     private HttpUtil httpUtil;
     private Bundle bundle;
     private String content;
-    TrackHandler trackHandler;
+    private TrackHandler trackHandler;
     private Response response;
     private RequestBody requestBody = null;
     private MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
@@ -53,7 +54,7 @@ public class InitializeTerminal {
         }
     }
     public void createTerminal(final Context context, final String terminalName,TrackHandler trackHandler) {
-        Thread thread = new Thread(()->{
+        Thread thread = new Thread(() -> {
             content = "key="
                     + Constants.Key + "&sid=" + Constants.ServiceID + "&&name=" + terminalName;
             requestBody = RequestBody.create(mediaType, content);
@@ -61,7 +62,6 @@ public class InitializeTerminal {
             try {
                 response = okHttpClient.newCall(request).execute();
                 String accept = response.body().string();
-
                 Log.d("myaccept", accept);
 
                 JSONObject jsonObject = new JSONObject(accept);

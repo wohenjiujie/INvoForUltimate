@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.TrackHistoryActivity;
+import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
 /**
  * Created by INvo
@@ -35,6 +36,7 @@ public class BottomNavigationUtil {
     private static TextView textView1, textView2, textView3;
     private DatabaseUtil databaseUtil;
     private static boolean check;
+    private InitializeTerminal initializeTerminal;
 
 
     public BottomNavigationUtil(Context context, AlertDialog.Builder builder, BottomNavigationView bottomNavigationView, EditText editText, Button button, TextView textView1, TextView textView2, TextView textView3) {
@@ -61,6 +63,9 @@ public class BottomNavigationUtil {
         if (itemId == 2) {
             Intent intent = new Intent();
             intent.setClass(context, TrackHistoryActivity.class);
+            Bundle bundle = new Bundle();
+//            bundle.putLong("tid",);
+            intent.putExtras(bundle);
             context.startActivity(intent);
         }
         if (itemId == 3) {
@@ -68,7 +73,7 @@ public class BottomNavigationUtil {
                     .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ToastUtil.showToast(context, "test");
+                            ToastUtil.showToast(context, "no");
                         }
                     }).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
@@ -88,6 +93,6 @@ public class BottomNavigationUtil {
                 }
             }).setCancelable(false).show();
         }
-        Log.d("my", "check:" + check);
+//        Log.d("my", "check:" + check);
     }
 }

@@ -1,15 +1,9 @@
 package com.graduationproject.invoforultimate.util;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.OnCreateTerminalListener;
 import com.graduationproject.invoforultimate.service.TrackThread;
 /*import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
@@ -19,12 +13,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;*/
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.URL;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

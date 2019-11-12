@@ -61,6 +61,7 @@ import com.graduationproject.invoforultimate.initialize.MapSetting;
 import com.graduationproject.invoforultimate.service.OnTrackListenerService;
 import com.graduationproject.invoforultimate.service.TrackHandler;
 import com.graduationproject.invoforultimate.service.TrackThread;
+import com.graduationproject.invoforultimate.service.TrackUpload;
 import com.graduationproject.invoforultimate.util.BottomNavigationUtil;
 import com.graduationproject.invoforultimate.util.DatabaseUtil;
 import com.graduationproject.invoforultimate.util.DialogUtil;
@@ -124,6 +125,7 @@ public class MainActivity extends BaseActivity {
     private TrackInfo trackInfo = new TrackInfo();
     private static int timeConsuming;
     private static boolean theFirstTransmit;
+    private TrackUpload trackUpload;
 
 //    TrackThread trackThread = new TrackThread(getApplicationContext());
 
@@ -177,7 +179,7 @@ public class MainActivity extends BaseActivity {
         traceSetting.setVisibility(View.INVISIBLE);
         createTrace.setVisibility(View.INVISIBLE);
         startFor.setVisibility(View.INVISIBLE);
-//        chronometer.setVisibility(View.INVISIBLE);
+        chronometer.setVisibility(View.INVISIBLE);
         builder = new AlertDialog.Builder(MainActivity.this);
         bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
         /*
@@ -350,13 +352,13 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if (!isStart) {
                     startTrack();
-                    theFirstTransmit = true;
+                    /*theFirstTransmit = true;
                     chronometer.setVisibility(View.VISIBLE);
                     chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
                     int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
                     chronometer.setFormat("0" + hour + ":%s");
                     aMapTrackClient.startGather(onTrackLifecycleListener);
-                    aMapLocationClient.startLocation();
+                    aMapLocationClient.startLocation();*/
                     chronometer.start();
                     UnixUtil unixUtil = new UnixUtil();
                     trackInfo.setDate(unixUtil.getDate());
@@ -370,17 +372,40 @@ public class MainActivity extends BaseActivity {
             public boolean onLongClick(View v) {
                 if (isStart) {
                     aMapTrackClient.stopGather(onTrackLifecycleListener);
+                    /*
+                    * 考虑是否需要关闭服务
+                    * */
                     aMapTrackClient.stopTrack(new TrackParam(Constants.ServiceID, Constants.TerminalID), onTrackLifecycleListener);
                     chronometer.stop();
+                    theFirstTransmit = true;//可能不需要在这里重置
                     chronometer.setVisibility(View.INVISIBLE);
                     aMapLocationClient.stopLocation();
+                    bottomNavigationView.setVisibility(View.VISIBLE);
                     Log.d(TAG, "trackInfo.getServiceID():" + trackInfo.getServiceID());
                     Log.d(TAG, "trackInfo.getTerminalID():" + trackInfo.getTerminalID());
                     Log.d(TAG, "trackInfo.getTrackID():" + trackInfo.getTrackID());
-                    Log.d(TAG, trackInfo.getDesc());
-                    Log.d(TAG, trackInfo.getDate());
-                    Log.d(TAG, trackInfo.getTime());
+                    Log.d(TAG, (String) trackInfo.getDesc());
+                    Log.d(TAG, (String) trackInfo.getDate());
+                    Log.d(TAG, (String) trackInfo.getTime());
                     Log.d(TAG, "trackInfo.getTimeConsuming():" + trackInfo.getTimeConsuming());
+                    int a = (int)trackInfo.getTimeConsuming();
+//                    Log.d(TAG, "a:" + a);
+                    trackUpload = new TrackUpload(trackInfo);
+//                    trackUpload.setCheck();
+                    if (trackUpload.isCheck()) {
+                        trackUpload.upload();
+                        trackUpload.addTrackCounts();
+                    } else {
+                        /**
+                         * 当记录时间小于1min时，不执行上传操作，直接进入回放界面
+                         * alterDialog提示
+                         */
+                      /*  trackUpload.upload();
+                        trackUpload.addTrackCounts();*/
+
+                        dialogUtil.checkFalse(MainActivity.this);
+                    }
+//                    boolean a = (boolean) trackUpload.isCheck();//test
                 }
                 return false;
             }
@@ -396,7 +421,7 @@ public class MainActivity extends BaseActivity {
                 trackInfo.setTimeConsuming(timeConsuming);
                 trackInfo.setTime(timeConsumingStr);
 //                Log.d(TAG, timeConsuming);
-                Log.d(TAG, "temp:" + timeConsuming);
+//                Log.d(TAG, "temp:" + timeConsuming);
             }
         });
 
@@ -452,9 +477,14 @@ public class MainActivity extends BaseActivity {
                     Log.d(TAG, aMapLocation.getStreet());*/
                     String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
 //                    theFirstTransmit = theFirstTransmit + 1;
-                    transmitGeographicDescription(address);
+                    if (address.length()>0) {
+                        transmitGeographicDescription(address);
+                    }
                     float speed = aMapLocation.getSpeed();//速度显示在textView上
-                    Log.d(TAG, "speed:" + speed);
+
+//                    Log.d(TAG, "speed:" + speed);
+                    Log.d(TAG, address+"\n"+address.length());
+
                     /*CoordinateConverter converter = new CoordinateConverter(MainActivity.this);
 //                    converter.
                     DPoint dPoint1 = new DPoint(longitude, latitude);
@@ -471,7 +501,7 @@ public class MainActivity extends BaseActivity {
                     Log.d(TAG, "distance:" + distance);*/
 
 //                    Log.d(TAG, "theFirstTransmit:" + theFirstTransmit);
-//                    ToastText(address);
+                    ToastText(address+"\n"+address.length());
                     /*
                      * test
                      * */
@@ -500,14 +530,14 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onStartGatherCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_GATHER_SUCEE) {
-                Toast.makeText(MainActivity.this, "定位采集开启成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "定位采集开启成功", Toast.LENGTH_SHORT).show();
                 /*isGather = true;
 
 
                 isGatherRunning = true;
                 updateBtnStatus();*/
             } else if (i == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
-                Toast.makeText(MainActivity.this, "定位采集已经开启", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "定位采集已经开启", Toast.LENGTH_SHORT).show();
                 /*isGather = true;
 
                 isGatherRunning = true;
@@ -530,6 +560,13 @@ public class MainActivity extends BaseActivity {
 //                isServiceRunning = true;
                 isStart = true;
                 updateBtnStatus();
+                theFirstTransmit = true;
+                chronometer.setVisibility(View.VISIBLE);
+                chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
+                chronometer.setFormat("0" + hour + ":%s");
+                aMapTrackClient.startGather(onTrackLifecycleListener);
+                aMapLocationClient.startLocation();
             } else if (i == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {
                 // 已经启动
 //                Toast.makeText(MainActivity.this, "服务已经启动", Toast.LENGTH_SHORT).show();
@@ -547,7 +584,7 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onStopGatherCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
-                Toast.makeText(MainActivity.this, "定位采集停止成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "定位采集停止成功", Toast.LENGTH_SHORT).show();
                 /*isGatherRunning = false;
                 isGather = false;*/
 
@@ -564,7 +601,7 @@ public class MainActivity extends BaseActivity {
         public void onStopTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 // 成功停止
-                Toast.makeText(MainActivity.this, "停止服务成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "停止服务成功", Toast.LENGTH_SHORT).show();
                 isStart = false;
                /* isServiceRunning = false;
                 isGatherRunning = false;
@@ -607,7 +644,7 @@ public class MainActivity extends BaseActivity {
                         trackParam.setNotification(createNotification());
                     }
                     Log.d(TAG, "TrackID:" + TrackID);
-                    ToastUtil.showToast(MainActivity.this, "TrackID:" + TrackID);
+//                    ToastUtil.showToast(MainActivity.this, "TrackID:" + TrackID);
                     aMapTrackClient.startTrack(trackParam, onTrackLifecycleListener);
 
                 } else {
@@ -622,7 +659,7 @@ public class MainActivity extends BaseActivity {
     protected void OnProcessCallBack(int msg) {
         switch (msg) {
             case R.string.checkTid:
-                ToastText("tid is empty");
+//                ToastText("tid is empty");
                 /*
                  * 没有创建终端，需要创建终端
                  *

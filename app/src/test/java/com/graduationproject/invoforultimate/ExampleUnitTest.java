@@ -66,8 +66,26 @@ public class ExampleUnitTest {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-        unixTime();
+//        unixTime();
+//        getJson();
+//        getLength();
+        longToString();
     }
+
+    private void longToString() {
+        String a = "1569469623619";
+        long c = Long.valueOf(a);
+        System.out.println(c);
+        final long b = 1569469623619L;
+        System.out.println(b);
+    }
+
+    /*private void getLength() {
+        String a = "";
+        if (a.equals("")) {
+            System.out.println(a.length());
+        }
+    }*/
 
 
     public void unixTime() {
@@ -79,4 +97,16 @@ public class ExampleUnitTest {
         String date = new SimpleDateFormat(formats, Locale.CHINA).format(new Date(timestamp));
         System.out.println(date);
     }
+
+    /*@Test
+    public void getJson(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("terminal", 22222);
+            jsonObject.put("track", "sadad");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }*/
 }
