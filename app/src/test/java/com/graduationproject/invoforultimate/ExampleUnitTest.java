@@ -7,9 +7,11 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 
 import com.graduationproject.invoforultimate.constant.Constants;
+import com.graduationproject.invoforultimate.constant.TrackApplication;
 import com.graduationproject.invoforultimate.util.DatabaseUtil;
 import com.graduationproject.invoforultimate.util.ToastUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -46,6 +48,8 @@ public class ExampleUnitTest {
     private Request request;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private String content;
+    private String result;
+
     public static final String url = "https://127.0.0.1/deleteTrackInfo";
     @Test
     public void addition_isCorrect() {
@@ -67,9 +71,9 @@ public class ExampleUnitTest {
             e.printStackTrace();
         }*/
 //        unixTime();
-//        getJson();
+        getJson();
 //        getLength();
-        longToString();
+//        longToString();
     }
 
     private void longToString() {
@@ -98,15 +102,29 @@ public class ExampleUnitTest {
         System.out.println(date);
     }
 
-    /*@Test
+    @Test
     public void getJson(){
-        JSONObject jsonObject = new JSONObject();
+        content="https://tsapi.amap.com/v1/track/terminal/trsearch?key=b26487968ee70a1647954c49b55828f2&sid="
+                +Constants.ServiceID+"&tid=211539155&trid="+"1718"+"&pagesize=999";
+        request = new Request.Builder().url(content).get().build();
         try {
-            jsonObject.put("terminal", 22222);
-            jsonObject.put("track", "sadad");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            response = okHttpClient.newCall(request).execute();
+            result = response.body().string();
 
-    }*/
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                /*JSONArray jsonArray = new JSONArray(result);
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                String a = jsonObject.getString("counts");
+                System.out.println(a);*/
+                JSONObject jsonObject = new JSONObject(result);
+                String a = jsonObject.getString("counts");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

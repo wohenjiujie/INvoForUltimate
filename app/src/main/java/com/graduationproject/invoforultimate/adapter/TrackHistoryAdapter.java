@@ -91,7 +91,7 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
                 holder.desc.setText(desc);
                 holder.time.setText(date);
                 holder.timeConsuming.setText("用时："+time);
-//                Log.d("TrackHistoryAdapter", "foreach:trackID:" + trackID);
+//                Log.d("my", "foreach:trackID:" + trackID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

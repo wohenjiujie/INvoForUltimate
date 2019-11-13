@@ -50,12 +50,13 @@ public class TrackReplayActivity extends BaseActivity {
         textureMapView.onCreate(savedInstanceState);
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         initializeTerminal = new InitializeTerminal();
-       /* Bundle bundle = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
         int trackID = bundle.getInt("trackID");
+        Log.d("TrackReplayActivity", "trackID:" + trackID);
         long startUnix = Long.valueOf(bundle.getString("startUnix"));
         Log.d("TrackReplayActivity", "startUnix:" + startUnix);
         long endUnix = Long.valueOf(bundle.getString("endUnix"));
-        Log.d("TrackReplayActivity", "endUnix:" + endUnix);*/
+        Log.d("TrackReplayActivity", "endUnix:" + endUnix);
         clearTracksOnMap();
         aMapTrackClient.queryTerminal(new QueryTerminalRequest(Constants.ServiceID, "neko"), new TrackHistoryListener() {
 
@@ -71,9 +72,9 @@ public class TrackReplayActivity extends BaseActivity {
                         QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
                                 Constants.ServiceID,
                                 initializeTerminal.getTerminal(getContext()),
-                                id,     // 轨迹id，不指定，查询所有轨迹，注意分页仅在查询特定轨迹id时生效，查询所有轨迹时无法对轨迹点进行分页
-                                a,
-                                b,
+                                trackID,     // 轨迹id，不指定，查询所有轨迹，注意分页仅在查询特定轨迹id时生效，查询所有轨迹时无法对轨迹点进行分页
+                                startUnix,
+                                endUnix,
                                 0,      // 不启用去噪
                                 0,   // 绑路
                                 0,      // 不进行精度过滤

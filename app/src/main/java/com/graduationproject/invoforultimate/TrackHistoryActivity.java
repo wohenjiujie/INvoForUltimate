@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Adapter;
 
-import com.google.gson.JsonArray;
 import com.graduationproject.invoforultimate.adapter.TrackHistoryAdapter;
 import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
 import com.graduationproject.invoforultimate.constant.TrackApplication;
@@ -44,6 +43,7 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     private int counts;
     private String startUnix;
     private String endUnix;
+    private int TrackID;
     /*public TrackHistoryActivity(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }*/
@@ -92,25 +92,15 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
             recyclerView.setAdapter(new TrackHistoryAdapter(getContext(), getCounts(), jsonArray, new TrackHistoryAdapter.onTrackItemClickListener() {
                 @Override
                 public void onSwitch(int pos, int id[]) {
-
                     start(id[pos]);
-                    /*Intent intent = new Intent();
-                    intent.setClass(TrackHistoryActivity.this, TrackReplayActivity.class);
-                    Bundle bundle = new Bundle();
-                   *//* bundle.putInt("trackID", id);
-                    bundle.putString("startUnix", getStartUnix());
-                    bundle.putString("endUnix", getEndUnix());*//*
-                    Log.d("TrackHistoryActivity", "startUnix:"+getStartUnix());
-                    Log.d("TrackHistoryActivity", "endUnix:"+getEndUnix());
-                    intent.putExtras(bundle);
-//        startActivity(intent);*/
-
                 }
             }));
         });
     }
 
     private void start(int id) {
+        Log.d("myTrackID", "id[pos]:" + id);
+        setTrackID(id);
         new TrackAsync(3, id, this).execute();
     }
 
@@ -132,16 +122,44 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
 
     @Override
     public void onGetID(String result) {
-        String a = null;
+        /**
+         * 在此方法下获取时间戳和id
+         */
+        String points;
+        int counts;
+        Log.d("myResult_onGetID", result);
         try {
-            JSONObject jsonObject = new JSONObject(result);
-           JSONObject test1 = jsonObject.getJSONObject("tracks");
-            Log.d("TrackHistoryActivity", "test1:" + test1);
-//            Log.d("TrackHistoryActivity", result);
+            JSONObject jsonObject = new JSONObject(result).getJSONObject("data");
+            JSONArray jsonArray = jsonObject.getJSONArray("tracks");
+
+            points = jsonArray.getJSONObject(0).getString("counts");
+            counts = Integer.parseInt(points);//时间戳数量
+//            Log.d("myCounts", "counts:" + counts);
+            String po = jsonArray.getJSONObject(0).getString("points");
+            Log.d("myPoints", po);
+
+            startUnix = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(0).getString("locatetime");
+            endUnix = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(counts - 1).getString("locatetime");
+            Log.d("myStartUnix", startUnix);
+            Log.d("myEndUnix", endUnix);
+            if (null != startUnix && null != endUnix) {
+                setStartUnix(startUnix);
+                setEndUnix(endUnix);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
+        }finally {
+            Intent intent = new Intent();
+            intent.setClass(TrackHistoryActivity.this, TrackReplayActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("trackID", getTrackID());
+            bundle.putString("startUnix", getStartUnix());
+            bundle.putString("endUnix", getEndUnix());
+//            Log.d("TrackHistoryActivity", "startUnix:"+getStartUnix());
+//            Log.d("TrackHistoryActivity", "endUnix:"+getEndUnix());
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
-
     }
 
     @Override
@@ -219,6 +237,14 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
 
     public void setEndUnix(String endUnix) {
         this.endUnix = endUnix;
+    }
+
+    public int getTrackID() {
+        return TrackID;
+    }
+
+    public void setTrackID(int trackID) {
+        TrackID = trackID;
     }
 
     class Decoration extends RecyclerView.ItemDecoration {
