@@ -28,6 +28,7 @@ import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
 import com.graduationproject.invoforultimate.adapter.TrackHistoryListener;
 import com.graduationproject.invoforultimate.constant.Constants;
+import com.graduationproject.invoforultimate.constant.TrackApplication;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
 import java.util.LinkedList;
@@ -58,7 +59,7 @@ public class TrackReplayActivity extends BaseActivity {
         long endUnix = Long.valueOf(bundle.getString("endUnix"));
         Log.d("TrackReplayActivity", "endUnix:" + endUnix);
         clearTracksOnMap();
-        aMapTrackClient.queryTerminal(new QueryTerminalRequest(Constants.ServiceID, "neko"), new TrackHistoryListener() {
+        aMapTrackClient.queryTerminal(new QueryTerminalRequest(Constants.ServiceID,initializeTerminal.getTerminalName(TrackApplication.getContext())), new TrackHistoryListener() {
 
             @Override
             public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
@@ -67,6 +68,8 @@ public class TrackReplayActivity extends BaseActivity {
                     final long b = 1573294764853L;
                     int id = 1718;
                     if (queryTerminalResponse.isTerminalExist()) {
+                        String test = initializeTerminal.getTerminalName(TrackApplication.getContext());
+                        Log.d("TrackReplayActivity", test);
                         long tid = queryTerminalResponse.getTid();
                         // 搜索最近12小时以内上报的属于某个轨迹的轨迹点信息，散点上报不会包含在该查询结果中
                         QueryTrackRequest queryTrackRequest = new QueryTrackRequest(

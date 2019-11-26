@@ -143,7 +143,8 @@ public class DialogUtil {
                                     /*
                                      * 写入tid到sp
                                      * */
-                                    initializeTerminal.setTerminal(context, tid);
+                                    Log.d("DialogUtil-TerminalName", getTerminalName());//check name exist
+                                    initializeTerminal.setTerminal(context, tid,getTerminalName());
                                     ToastUtil.showToast(context, Constants.CreateTerminalSucceed);
                                     progressDialog.dismiss();
                                 }

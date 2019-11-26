@@ -220,7 +220,7 @@ public class MainActivity extends BaseActivity {
 //                        ToastText(databaseUtil.test());
 //                    new Thread(() -> handler.sendEmptyMessage(0)).start();
 //                    ToastUtil.showToast(this,"sendHttp");
-                    new Thread() {
+                   /* new Thread() {
                         @Override
                         public void run() {
                             OkHttpClient client = new OkHttpClient();
@@ -242,7 +242,10 @@ public class MainActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-                    }.start();
+                    }.start();*/
+//                    initializeTerminal.testTerminal(MainActivity.this);
+                    String a = initializeTerminal.getTerminalName(MainActivity.this);
+                    ToastText(a);
                     break;
                 /*
                  * 查询轨迹历史记录
@@ -393,8 +396,22 @@ public class MainActivity extends BaseActivity {
                     trackUpload = new TrackUpload(trackInfo);
 //                    trackUpload.setCheck();
                     if (trackUpload.isCheck()) {
-                        trackUpload.upload();
-                        trackUpload.addTrackCounts();
+                        if (initializeTerminal.checkFirstPosting(MainActivity.this)) {
+                            /**
+                             * 如果已经上传
+                             */
+                            trackUpload.upload();
+                            trackUpload.addTrackCounts();
+                        } else {
+                            /**
+                             * 第一次上传情况
+                             *
+                             */
+                            initializeTerminal.createTrackCounts(MainActivity.this,(Long) trackInfo.getTerminalID());
+                            trackUpload.upload();
+                            trackUpload.addTrackCounts();
+                        }
+
                     } else {
                         /**
                          * 当记录时间小于1min时，不执行上传操作，直接进入回放界面
