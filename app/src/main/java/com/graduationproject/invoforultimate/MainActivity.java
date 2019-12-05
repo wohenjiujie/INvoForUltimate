@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -138,6 +139,11 @@ public class MainActivity extends BaseActivity {
         // 不要使用Activity作为Context传入
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
+        hansa();
+    }
+
+    private void hansa() {
+        ImageView imageView = this.findViewById(R.id.history_map);
     }
 
     protected void initUI() {
