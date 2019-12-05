@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity {
         // 不要使用Activity作为Context传入
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
-        hansa();
+//        hansa();
     }
 
     private void hansa() {
