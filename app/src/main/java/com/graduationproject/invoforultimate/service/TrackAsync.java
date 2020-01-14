@@ -9,10 +9,15 @@ import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
 import com.graduationproject.invoforultimate.constant.TrackApplication;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -29,8 +34,9 @@ public class TrackAsync extends AsyncTask<String, Integer, String> {
     private OnTrackCountsPostListener onTrackCountsPostListener;
     private int type;
     private int trackID;
+    private RequestBody requestBody=null;
 
-/*
+    /*
 *
 *
 * */
@@ -86,21 +92,45 @@ public class TrackAsync extends AsyncTask<String, Integer, String> {
             }
         } else if (type == 3) {
             initializeTerminal = new InitializeTerminal();
-            content="https://tsapi.amap.com/v1/track/terminal/trsearch?key=b26487968ee70a1647954c49b55828f2&sid="
-                    +Constants.ServiceID+"&tid="+initializeTerminal.getTerminal(TrackApplication.getContext())
-                    +"&trid="+trackID+"&pagesize=999";
+            content = "https://tsapi.amap.com/v1/track/terminal/trsearch?key=b26487968ee70a1647954c49b55828f2&sid="
+                    + Constants.ServiceID + "&tid=" + initializeTerminal.getTerminal(TrackApplication.getContext())
+                    + "&trid=" + trackID + "&pagesize=999";
             request = new Request.Builder().url(content).get().build();
             try {
                 response = okHttpClient.newCall(request).execute();
             } catch (IOException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 try {
                     result = response.body().string();
 //                    Log.d("TrackAsync", result);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        } else if (4==type) {
+            initializeTerminal = new InitializeTerminal();
+            content = "http://xiaomu1079.club/decreaseCounts/"+initializeTerminal.getTerminal(TrackApplication.getContext());
+            request = new Request.Builder().url(content).get().build();
+
+
+            MediaType mediaType=MediaType.parse("application/json; charset=utf-8");
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("terminal", initializeTerminal.getTerminal(TrackApplication.getContext()));
+                jsonObject.put("track", trackID);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            requestBody = RequestBody.create(mediaType, jsonObject.toString());
+            Request request2 = new Request.Builder().url(Constants.deleteTrackInfo).post(requestBody).build();
+
+            try {
+                response = okHttpClient.newCall(request).execute();
+                Response response2 = okHttpClient.newCall(request2).execute();
+                Log.d("TrackHistoryAdapter", "is done?>");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return result ;
@@ -120,6 +150,8 @@ public class TrackAsync extends AsyncTask<String, Integer, String> {
             onTrackCountsPostListener.onGetInfo(s);
         } else if (type == 3) {
             onTrackCountsPostListener.onGetID(s);
+        } else if (4 == type) {
+            onTrackCountsPostListener.onDeleteInfo();
         }
     }
 

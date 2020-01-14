@@ -10,6 +10,7 @@ public class Constants {
     public static final String initializeTerminal = "Terminal";
     public static final String CreateTerminalUrl = "https://tsapi.amap.com/v1/track/terminal/add";
     public static final String AddTrackInfo = "http://xiaomu1079.club/addTrackInfo";
+    public static final String deleteTrackInfo = "http://xiaomu1079.club/deleteTrackInfo";
     public static final long TerminalID = 211539155;
     public static final long TID_TEST = 202911601;
     public static final int CreateTerminalCommand = 0x201;

@@ -1,8 +1,6 @@
 package com.graduationproject.invoforultimate.adapter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,24 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.TrackHistoryActivity;
-import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
-import com.graduationproject.invoforultimate.constant.TrackApplication;
+import com.graduationproject.invoforultimate.constant.OnTrackAdapterListener;
 import com.graduationproject.invoforultimate.service.TrackAsync;
 import com.graduationproject.invoforultimate.service.TrackHistoryService;
-import com.graduationproject.invoforultimate.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.nio.file.SecureDirectoryStream;
-import java.util.List;
-import java.util.logging.LogRecord;
 
 /**
  * Created by INvo
@@ -49,15 +37,18 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
     private JSONArray jsonArray;
     private int trackID[]=new int[1000];
 
-    private onTrackItemClickListener onTrackItemClickListener;
+//    private onTrackItemClickListener onTrackItemClickListener;
+    private OnTrackAdapterListener onTrackAdapter;
 
-    public TrackHistoryAdapter(Context context, int counts, JSONArray jsonArray,onTrackItemClickListener onTrackItemClickListener) {
+    public TrackHistoryAdapter(Context context, int counts, JSONArray jsonArray, OnTrackAdapterListener onTrackAdapter) {
         this.context = context;
         this.counts = counts;
 //        this.s = string;
         this.jsonArray = jsonArray;
-        this.onTrackItemClickListener = onTrackItemClickListener;
+//        this.onTrackItemClickListener = onTrackItemClickListener;
+        this.onTrackAdapter = onTrackAdapter;
     }
+//    , onTrackItemClickListener onTrackItemClickListener
 
     @NonNull
     @Override
@@ -99,8 +90,14 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
         holder.desc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onTrackItemClickListener.onSwitch(position,trackID);
+                onTrackAdapter.onSwitch(position,trackID);
 //                Log.d("TrackHistoryAdapter", "trackID:" + trackID[position]);
+            }
+        });
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTrackAdapter.onDelete(position,trackID);
             }
         });
     }
@@ -131,6 +128,7 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
     class TrackHistoryViewHolder extends RecyclerView.ViewHolder {
 
         private TextView desc,timeConsuming,time;
+        private final TextView delete;
 
         /**
          * @param itemView
@@ -141,6 +139,7 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
             desc = itemView.findViewById(R.id.track_title);
             time = itemView.findViewById(R.id.track_subtitle);
             timeConsuming = itemView.findViewById(R.id.track_extra_2);
+            delete = itemView.findViewById(R.id.delete_track_info);
             JSONObject jsonObject = jsonArray.getJSONObject(0);
             String a = jsonObject.getString("time");
             Log.d("TrackHistoryViewHolder", a);
@@ -151,8 +150,13 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
         }
     }
 
-    public interface onTrackItemClickListener{
+   /* public interface onTrackItemClickListener{
         void onSwitch(int pos,int id[]);
     }
+*/
+  /*  public interface onTrackDeleteListener {
+        void onDelete(int pos,int id[]);
+    }*/
+
 }
 

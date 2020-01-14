@@ -14,6 +14,8 @@ public interface OnTrackCountsPostListener {
     void onGetInfo(String result) ;
 
     void onGetID(String result);
+
+    void onDeleteInfo();
 }
 
 

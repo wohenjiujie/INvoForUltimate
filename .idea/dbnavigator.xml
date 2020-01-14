@@ -20,28 +20,49 @@
     </export-instructions>
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
-    <autoscroll-to-editor value="false" />
+    <autoscroll-to-editor value="true" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
+        <schema name="Chat" object-types="table, view" />
+        <schema name="TrackInfo" object-types="table, procedure, function, view, column" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="5414783c-44a9-46b1-8d40-5f6d10393b2c">
+    <connection id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
+      <console name="Connection" type="STANDARD" schema="mysql" session="Main"><![CDATA[select * from `Chat`.accounts]]></console>
       <console name="INvo" type="STANDARD" schema="mysql" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackCounts" />
+      <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackInfo" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="5414783c-44a9-46b1-8d40-5f6d10393b2c" />
+    <connection id="c88432d3-a740-43f3-8d4e-93c52f0baa43" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="5414783c-44a9-46b1-8d40-5f6d10393b2c" dataset="testxx.testa" active-filter-id="" />
-    <filter-actions connection-id="5414783c-44a9-46b1-8d40-5f6d10393b2c" dataset="testxx.info" active-filter-id="" />
+    <filter-actions connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" dataset="TrackInfo.trackInfo" active-filter-id="9d957403-3e31-4403-bde4-82b8b29271d3">
+      <filter id="9d957403-3e31-4403-bde4-82b8b29271d3" name="211539155" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="terminal" operator="=" value="211539155" active="true" />
+      </filter>
+    </filter-actions>
+    <filter-actions connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" dataset="Chat.accounts" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" dataset="TrackInfo.accounts" active-filter-id="" />
+    <filter-actions connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" dataset="TrackInfo.trackCounts" active-filter-id="18e0a7fe-6d19-4ffa-9970-4435c65c3c6f">
+      <filter id="18e0a7fe-6d19-4ffa-9970-4435c65c3c6f" name="211539155" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="tid" operator="=" value="211539155" active="true" />
+      </filter>
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
-    <last-used-providers />
+    <last-used-providers>
+      <object-type object-type="TABLE" editor-provider="DATA" />
+    </last-used-providers>
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -63,26 +84,26 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="5414783c-44a9-46b1-8d40-5f6d10393b2c" active="true">
+      <connection id="c88432d3-a740-43f3-8d4e-93c52f0baa43" active="true">
         <database>
           <name value="INvo" />
           <description value="" />
           <database-type value="MYSQL" />
           <config-type value="BASIC" />
-          <database-version value="8.0" />
+          <database-version value="5.7" />
           <driver-source value="BUILTIN" />
           <driver-library value="" />
           <driver value="" />
           <url-type value="DATABASE" />
-          <host value="localhost" />
-          <port value="3306" />
+          <host value="cdb-kwv2dz6y.cd.tencentcdb.com" />
+          <port value="10002" />
           <database value="mysql" />
           <type value="USER_PASSWORD" />
           <user value="root" />
-          <deprecated-pwd value="MTIzNDU2Nzg=" />
+          <deprecated-pwd value="bDEyMzQ1Njc=" />
         </database>
         <properties>
-          <auto-commit value="false" />
+          <auto-commit value="true" />
         </properties>
         <ssh-settings>
           <active value="false" />

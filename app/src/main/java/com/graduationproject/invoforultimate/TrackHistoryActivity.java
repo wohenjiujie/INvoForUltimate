@@ -1,36 +1,34 @@
 package com.graduationproject.invoforultimate;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Adapter;
 
 import com.graduationproject.invoforultimate.adapter.TrackHistoryAdapter;
 import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
 import com.graduationproject.invoforultimate.constant.TrackApplication;
+import com.graduationproject.invoforultimate.constant.OnTrackAdapterListener;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import com.graduationproject.invoforultimate.service.TrackAsync;
+import com.graduationproject.invoforultimate.util.ToastUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.PipedReader;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsPostListener {
+public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsPostListener, OnTrackAdapterListener {
 
     private Request request;
     private String content;
@@ -44,6 +42,8 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     private String startUnix;
     private String endUnix;
     private int TrackID;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    //    private SwipeRefreshLayout swipeRefreshLayout;
     /*public TrackHistoryActivity(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }*/
@@ -53,6 +53,10 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_track_history);
+        swipeRefreshLayout = this.findViewById(R.id.swipe_refresh);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorBlack, R.color.colorGreen, R.color.colorBlue, R.color.colorAccent);
+
 
         recyclerView = findViewById(R.id.track_history);
         recyclerView.setLayoutManager(new LinearLayoutManager(TrackHistoryActivity.this));
@@ -61,8 +65,20 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
 //        sendResponse();
 //        recyclerView.setAdapter(new TrackHistoryAdapter(getContext()));
 //        recyclerView.getAdapter().getItemId();
-
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            handler.postDelayed(runnable, 100);
+        });
     }
+
+    private Handler handler = new Handler();
+    private Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+            swipeRefreshLayout.setRefreshing(false);
+            ToastUtil.showToast(TrackApplication.getContext(), "更新成功");
+
+        }
+    };
 
     /*private void sendResponse() {
      *//*new Thread(new Runnable() {
@@ -89,19 +105,35 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
 
     private void showResponse(JSONArray jsonArray) {
         runOnUiThread(() -> {
-            recyclerView.setAdapter(new TrackHistoryAdapter(getContext(), getCounts(), jsonArray, new TrackHistoryAdapter.onTrackItemClickListener() {
-                @Override
-                public void onSwitch(int pos, int id[]) {
-                    start(id[pos]);
-                }
-            }));
+            recyclerView.setAdapter(new TrackHistoryAdapter(getContext(), getCounts(), jsonArray, this));
         });
     }
-
+    @Override
+    public void onSwitch(int pos, int[] id) {
+        start(id[pos]);
+    }
     private void start(int id) {
         Log.d("myTrackID", "id[pos]:" + id);
         setTrackID(id);
         new TrackAsync(3, id, this).execute();
+    }
+
+    @Override
+    public void onDelete(int pos, int[] id) {
+        swipeRefreshLayout.setRefreshing(true);
+        /*ToastUtil.showToast(TrackApplication.getContext(), "testDelete");
+        Log.d("TrackHistoryAdapter", "testdelet");*/
+        new TrackAsync(4, id[pos], this).execute();
+
+    }
+
+
+
+    @Override
+    public void onDeleteInfo() {
+        new TrackAsync(1, this).execute();
+        ToastUtil.showToast(TrackApplication.getContext(), "删除成功");
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -148,7 +180,7 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             Intent intent = new Intent();
             intent.setClass(TrackHistoryActivity.this, TrackReplayActivity.class);
             Bundle bundle = new Bundle();
@@ -161,6 +193,7 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
             startActivity(intent);
         }
     }
+
 
     @Override
     protected void ToastText(String text) {
@@ -246,6 +279,7 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     public void setTrackID(int trackID) {
         TrackID = trackID;
     }
+
 
     class Decoration extends RecyclerView.ItemDecoration {
 
