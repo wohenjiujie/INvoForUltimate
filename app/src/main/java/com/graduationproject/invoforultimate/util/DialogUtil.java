@@ -194,4 +194,23 @@ public class DialogUtil {
                 .setCancelable(false)
                 .show();
     }
+
+    public void exitDialog(Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("是否退出软件？")
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("nope", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
 }

@@ -15,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.TrackHistoryActivity;
+import com.graduationproject.invoforultimate.constant.OnLoadingStatus;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
 /**
@@ -37,7 +38,8 @@ public class BottomNavigationUtil {
     private DatabaseUtil databaseUtil;
     private static boolean check;
     private InitializeTerminal initializeTerminal;
-
+    private OnLoadingStatus onLoadingStatus;
+    private boolean isLoad=false;
 
     public BottomNavigationUtil(Context context, AlertDialog.Builder builder, BottomNavigationView bottomNavigationView, EditText editText, Button button, TextView textView1, TextView textView2, TextView textView3) {
         /*
@@ -56,6 +58,20 @@ public class BottomNavigationUtil {
 
     public BottomNavigationUtil() {
 
+    }
+
+    private void isItemSelected(boolean x) {
+        this.isLoad = x;
+    }
+
+    private boolean getStatus() {
+        return isLoad;
+    }
+
+    public void setListener(OnLoadingStatus onLoadingStatus) {
+        this.onLoadingStatus = onLoadingStatus;
+        onLoadingStatus.isLoading(getStatus());
+//        this.isLoad = false;
     }
 
     public void ItemSelected(int itemId) {
@@ -90,6 +106,7 @@ public class BottomNavigationUtil {
 //                    textView1.setVisibility(View.VISIBLE);
 //                    textView2.setVisibility(View.VISIBLE);
                     textView3.setVisibility(View.VISIBLE);
+                    isItemSelected(true);
                 }
             }).setCancelable(false).show();
         }

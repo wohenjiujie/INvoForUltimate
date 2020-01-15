@@ -145,12 +145,18 @@ public class InitializeTerminal {
         editor.commit();
     }
 
+    /**
+     * 需要传入Context参数的方法已经废弃
+     *
+     * @param context
+     * @return
+     */
+    @Deprecated
     public Long getTerminal(Context context) {
         sharedPreferences = context.getSharedPreferences(Constants.initializeTerminal, Context.MODE_PRIVATE);
         Long tid = sharedPreferences.getLong("tid", 0);
         return tid;
     }
-
     public String getTerminalName(Context context) {
         sharedPreferences = context.getSharedPreferences(Constants.initializeTerminal, Context.MODE_PRIVATE);
         String tidName = sharedPreferences.getString("terminalName", "");

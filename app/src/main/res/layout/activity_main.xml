@@ -36,6 +36,16 @@
         android:gravity="center"
         android:orientation="horizontal"
         >
+        <TextView
+            android:id="@+id/start_gather"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:text="@string/startGather"
+            android:textColor="@color/colorBlack"
+            android:background="@drawable/round_corner_btn_bg"/>
 
 
 
@@ -62,15 +72,18 @@
             android:visibility="gone"
 
             android:background="@drawable/ic_setting" />
+        <TextView
+            android:id="@+id/start_track"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:text="@string/startTrack"
+            android:textColor="@color/colorBlack"
+            android:background="@drawable/round_corner_btn_bg"/>
 
-        <Chronometer
-            android:id="@+id/time_task"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="35sp"
-            android:format="00:00:00"
-            android:gravity="center_horizontal"
-            android:textColor="@color/colorBlack"/>
+
 
     </LinearLayout>
         <LinearLayout
@@ -82,16 +95,18 @@
             android:layout_gravity="bottom"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/start_track"
+            <Chronometer
+                android:id="@+id/time_task"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:format="00:00:00"
                 android:gravity="center"
-                android:text="@string/startTrack"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/round_corner_btn_bg"/>
+                android:alpha="0.75"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ring_grey"
+                android:textColor="@color/colorBlack"/>
 
             <TextView
                 android:id="@+id/start_for"
@@ -105,15 +120,18 @@
                 android:background="@drawable/btn_start_end"/>
 
             <TextView
-                android:id="@+id/start_gather"
+                android:id="@+id/speed"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center"
-                android:text="@string/startGather"
+                android:text="@string/start"
                 android:textColor="@color/colorBlack"
-                android:background="@drawable/round_corner_btn_bg"/>
+                android:alpha="0.75"
+                android:background="@drawable/ring_grey"/>
+
+
         </LinearLayout>
 
 

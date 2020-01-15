@@ -26,20 +26,20 @@
     <loaded-nodes>
       <connection connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
         <schema name="Chat" object-types="table, view" />
-        <schema name="TrackInfo" object-types="table, procedure, function, view, column" />
+        <schema name="TrackInfo" object-types="procedure, column, table, function, view" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
-      <console name="Connection" type="STANDARD" schema="mysql" session="Main"><![CDATA[select * from `Chat`.accounts]]></console>
+      <console name="Connection" type="STANDARD" schema="mysql" session="Main">select * from `Chat`.accounts</console>
       <console name="INvo" type="STANDARD" schema="mysql" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
-      <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackCounts" />
       <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackInfo" />
+      <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackCounts" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">

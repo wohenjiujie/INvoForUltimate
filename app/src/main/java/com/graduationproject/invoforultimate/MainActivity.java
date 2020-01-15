@@ -55,6 +55,7 @@ import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.constant.Constants;
+import com.graduationproject.invoforultimate.constant.OnLoadingStatus;
 import com.graduationproject.invoforultimate.constant.TrackInfo;
 import com.graduationproject.invoforultimate.initialize.GeographicDescription;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
@@ -128,6 +129,10 @@ public class MainActivity extends BaseActivity {
     private static boolean theFirstTransmit;
     private TrackUpload trackUpload;
 
+
+    private boolean isLoadingInterface = false;//所有与此相关的代码无效（包括部分BottomNavigationUtil中的代码）
+    private TextView trackSpeed;
+
 //    TrackThread trackThread = new TrackThread(getApplicationContext());
 
     @Override
@@ -140,6 +145,21 @@ public class MainActivity extends BaseActivity {
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
 //        hansa();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (KeyEvent.KEYCODE_BACK == keyCode&&View.VISIBLE==startFor.getVisibility()) {
+            //当进入轨迹追踪时
+            startFor.setVisibility(View.INVISIBLE);
+            bottomNavigationView.setVisibility(View.VISIBLE);
+//            dialogUtil.exitDialog(MainActivity.this);
+
+        } else if (KeyEvent.KEYCODE_BACK == keyCode && View.INVISIBLE==startFor.getVisibility()) {
+            //在初始界面时
+            dialogUtil.exitDialog(MainActivity.this);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void hansa() {
@@ -155,6 +175,7 @@ public class MainActivity extends BaseActivity {
         createTrace = findViewById(R.id.create_trace);
         startFor = findViewById(R.id.start_for);
         chronometer = findViewById(R.id.time_task);
+        trackSpeed = this.findViewById(R.id.speed);
         //初始化client
         aMapLocationClient = new AMapLocationClient(this.getApplicationContext());
         aMapLocationClientOption = getDefaultOption();
@@ -186,6 +207,7 @@ public class MainActivity extends BaseActivity {
         createTrace.setVisibility(View.INVISIBLE);
         startFor.setVisibility(View.INVISIBLE);
         chronometer.setVisibility(View.INVISIBLE);
+        trackSpeed.setVisibility(View.INVISIBLE);
         builder = new AlertDialog.Builder(MainActivity.this);
         bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
         /*
@@ -264,6 +286,15 @@ public class MainActivity extends BaseActivity {
                  */
                 case R.id.tools3:
                     bottomNavigationUtil.ItemSelected(3);
+                    /*if (startFor.getVisibility()==View.VISIBLE) {
+                    }
+                    bottomNavigationUtil.setListener(new OnLoadingStatus() {
+                        @Override
+                        public void isLoading(boolean x) {
+                            Log.d(TAG, "x:" + x);
+                            isLoadingInterface = x;
+                        }
+                    });*/
                     OnProcessCallBack(R.string.checkTid);
                     break;
             }
@@ -388,6 +419,7 @@ public class MainActivity extends BaseActivity {
                     chronometer.stop();
                     theFirstTransmit = true;//可能不需要在这里重置
                     chronometer.setVisibility(View.INVISIBLE);
+                    trackSpeed.setVisibility(View.INVISIBLE);
                     aMapLocationClient.stopLocation();
                     bottomNavigationView.setVisibility(View.VISIBLE);
                     Log.d(TAG, "trackInfo.getServiceID():" + trackInfo.getServiceID());
@@ -585,6 +617,7 @@ public class MainActivity extends BaseActivity {
                 updateBtnStatus();
                 theFirstTransmit = true;
                 chronometer.setVisibility(View.VISIBLE);
+                trackSpeed.setVisibility(View.VISIBLE);
                 chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
                 chronometer.setFormat("0" + hour + ":%s");
