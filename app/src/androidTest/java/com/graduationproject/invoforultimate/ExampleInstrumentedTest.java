@@ -2,6 +2,8 @@ package com.graduationproject.invoforultimate;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
+import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 //import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.AndroidJUnit4;
@@ -30,7 +33,8 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 
 public class ExampleInstrumentedTest {
-
+    private Runnable runnable;
+    private Handler handler;
     @Test
     public void useAppContext() {
         // Context of the app under test.
@@ -39,7 +43,26 @@ public class ExampleInstrumentedTest {
         assertEquals("com.graduationproject.invoforultimate", appContext.getPackageName());
 //        TestDataBase();
 //        testTimeTask(appContext);
-        getJson();
+//        getJson();
+        myTest();
+    }
+
+    @Test
+    public void myTest() {
+        handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                postDelayed(runnable, 2000);
+            }
+        };
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("hahahah");
+                Log.d("ExampleUnitTest", "hahah");
+            }
+        };
     }
 
     @Test

@@ -1,9 +1,13 @@
 package com.graduationproject.invoforultimate;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.graduationproject.invoforultimate.constant.Constants;
@@ -49,7 +53,8 @@ public class ExampleUnitTest {
     private OkHttpClient okHttpClient = new OkHttpClient();
     private String content;
     private String result;
-
+    private Runnable runnable;
+    private Handler handler;
     public static final String url = "https://127.0.0.1/deleteTrackInfo";
     @Test
     public void addition_isCorrect() {
@@ -71,9 +76,31 @@ public class ExampleUnitTest {
             e.printStackTrace();
         }*/
 //        unixTime();
-        getJson();
+//        getJson();
 //        getLength();
 //        longToString();
+
+        myTest();
+
+
+    }
+
+    @Test
+    public void myTest() {
+        handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                postDelayed(runnable, 2000);
+            }
+        };
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("hahahah");
+                Log.d("ExampleUnitTest", "hahah");
+            }
+        };
     }
 
     private void longToString() {
@@ -102,7 +129,7 @@ public class ExampleUnitTest {
         System.out.println(date);
     }
 
-    @Test
+    /*@Test
     public void getJson(){
         content="https://tsapi.amap.com/v1/track/terminal/trsearch?key=b26487968ee70a1647954c49b55828f2&sid="
                 +Constants.ServiceID+"&tid=211539155&trid="+"1718"+"&pagesize=999";
@@ -115,10 +142,10 @@ public class ExampleUnitTest {
             e.printStackTrace();
         }finally {
             try {
-                /*JSONArray jsonArray = new JSONArray(result);
+                *//*JSONArray jsonArray = new JSONArray(result);
                 JSONObject jsonObject = jsonArray.getJSONObject(0);
                 String a = jsonObject.getString("counts");
-                System.out.println(a);*/
+                System.out.println(a);*//*
                 JSONObject jsonObject = new JSONObject(result);
                 String a = jsonObject.getString("counts");
 
@@ -126,5 +153,5 @@ public class ExampleUnitTest {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 }

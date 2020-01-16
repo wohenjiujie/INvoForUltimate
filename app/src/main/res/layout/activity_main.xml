@@ -31,7 +31,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:layout_marginTop="550dp"
+        android:layout_marginTop="50dp"
         android:layout_gravity="top"
         android:gravity="center"
         android:orientation="horizontal"
@@ -83,6 +83,17 @@
             android:textColor="@color/colorBlack"
             android:background="@drawable/round_corner_btn_bg"/>
 
+        <TextView
+            android:id="@+id/track_distance"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:alpha="0.75"
+            android:text="0.0 km/h"
+            />
+
 
 
     </LinearLayout>
@@ -120,15 +131,15 @@
                 android:background="@drawable/btn_start_end"/>
 
             <TextView
-                android:id="@+id/speed"
+                android:id="@+id/track_speed"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
                 android:gravity="center"
-                android:text="@string/start"
                 android:textColor="@color/colorBlack"
                 android:alpha="0.75"
+                android:text="0.0 km/h"
                 android:background="@drawable/ring_grey"/>
 
 

@@ -25,8 +25,8 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
-        <schema name="Chat" object-types="table, view" />
-        <schema name="TrackInfo" object-types="procedure, column, table, function, view" />
+        <schema name="Chat" object-types="view, table" />
+        <schema name="TrackInfo" object-types="view, procedure, function, column, table" />
       </connection>
     </loaded-nodes>
   </component>
@@ -38,8 +38,8 @@
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
-      <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackInfo" />
       <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackCounts" />
+      <object connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43" object-ref="schemas/TrackInfo/tables/trackInfo" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
