@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -66,17 +67,54 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
 //        recyclerView.setAdapter(new TrackHistoryAdapter(getContext()));
 //        recyclerView.getAdapter().getItemId();
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            handler.postDelayed(runnable, 100);
+            handler.postDelayed(runnable, 500);
+            new TrackAsync(1, this).execute();
+
         });
     }
 
-    private Handler handler = new Handler();
+    /**
+     * 测试handler中的线程，后期不需要实现handleMessage方法
+     */
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == 1) {
+                myTest();
+                new Thread(new Thread(){
+                    @Override
+                    public void run() {
+                        Log.d("mylog", "test handler thread222222");
+                    }
+                }).start();
+            }
+            /*if (msg.what == 1) {
+                Log.d("mylog", "test handler thread2");
+            }*/
+        }
+    };
+
+    private void myTest() {
+        Thread thread=new Thread(new Thread(){
+            @Override
+            public void run() {
+                Log.d("mylog", "test handler thread2");
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private Runnable runnable=new Runnable() {
         @Override
         public void run() {
             swipeRefreshLayout.setRefreshing(false);
             ToastUtil.showToast(TrackApplication.getContext(), "更新成功");
-
+            handler.sendEmptyMessage(1);
         }
     };
 

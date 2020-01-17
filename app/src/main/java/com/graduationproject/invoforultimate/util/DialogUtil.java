@@ -28,6 +28,12 @@ import com.graduationproject.invoforultimate.service.TrackThread;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 
 /**
  * Created by INvo
@@ -39,6 +45,7 @@ public class DialogUtil {
     private String TerminalName;
     private TrackHandler trackHandler;
     private InitializeTerminal initializeTerminal;
+    private String tid=null;
 //    private TrackHandler trackHandler;
 
     /*
@@ -132,7 +139,7 @@ public class DialogUtil {
                             super.handleMessage(msg);
                             Log.d("mymsg", "msg:" + msg);
                             if (msg.what == Constants.MsgTerminalSuccess) {
-                                String tid=null;
+//                                String tid=null;
                                 try {
                                     JSONObject jsonObject = new JSONObject(msg.obj.toString());
                                      tid = jsonObject.getJSONObject("data").getString("tid");
@@ -147,6 +154,20 @@ public class DialogUtil {
                                     initializeTerminal.setTerminal(context, tid,getTerminalName());
                                     ToastUtil.showToast(context, Constants.CreateTerminalSucceed);
                                     progressDialog.dismiss();
+                                    new Thread(new Thread(){
+                                        @Override
+                                        public void run() {
+                                            OkHttpClient okHttpClient = new OkHttpClient();
+                                            Log.d("mylog", "test handler thread origin");
+                                            String x = "http://xiaomu1079.club/createTrackCounts/" + tid;
+                                            Request request = new Request.Builder().url(x).get().build();
+                                            try {
+                                                Response response = okHttpClient.newCall(request).execute();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }).start();
                                 }
                             } else {
                                 /*

@@ -89,6 +89,12 @@ public class InitializeTerminal {
         editor.commit();
     }
 
+    /**
+     *
+     * @param context
+     * @param terminalName
+     * @param trackHandler
+     */
     public void createTerminal(final Context context, final String terminalName, TrackHandler trackHandler) {
         Thread thread = new Thread(() -> {
             content = "key="
@@ -110,6 +116,8 @@ public class InitializeTerminal {
                         message.what = Constants.MsgTerminalInvalidError;
                     }
                 } else {
+                    //createTrackCounts
+                    String x = "http://xiaomu1079.club/createTrackCounts/";
                     message.what = Constants.MsgTerminalSuccess;
                     message.obj = accept;
                 }
