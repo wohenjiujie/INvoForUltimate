@@ -35,14 +35,14 @@
                     android:id="@+id/track_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Title"
+                    android:text="Description"
                     android:textColor="@color/colorBlack"
                     android:textSize="20sp"></TextView>
                 <TextView
                     android:id="@+id/track_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="asdasda"
+                    android:text="Date"
                     android:textColor="@color/colorGrey"
                     android:textSize="15sp"></TextView>
 
@@ -56,7 +56,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="Title:asdasdasd"
+                        android:text="Distance:Unknown"
                         android:textColor="@color/colorBlack"
                         android:textSize="10sp"></TextView>
 
@@ -65,7 +65,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:text="xxx:asdasbdhj"
+                        android:text="Time:Unknown"
                         android:textColor="@color/colorGrey"
                         android:textSize="10sp"></TextView>
 

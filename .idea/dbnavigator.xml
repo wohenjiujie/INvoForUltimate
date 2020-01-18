@@ -25,13 +25,13 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
-        <schema name="TrackInfo" object-types="view, procedure, index, dataset trigger, function, column, table, constraint" />
+        <schema name="TrackInfo" object-types="view, table" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="c88432d3-a740-43f3-8d4e-93c52f0baa43">
-      <console name="Connection" type="STANDARD" schema="mysql" session="Main"><![CDATA[select * from `Chat`.accounts]]></console>
+      <console name="Connection" type="STANDARD" schema="mysql" session="Main">select * from `Chat`.accounts</console>
       <console name="INvo" type="STANDARD" schema="mysql" session="Main" />
     </connection>
   </component>

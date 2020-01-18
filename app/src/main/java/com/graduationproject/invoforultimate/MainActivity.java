@@ -1,5 +1,6 @@
 package com.graduationproject.invoforultimate;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -142,7 +143,7 @@ public class MainActivity extends BaseActivity {
 
 
     private boolean isLoadingInterface = false;//所有与此相关的代码无效（包括部分BottomNavigationUtil中的代码）
-    private TextView trackSpeed,trackDistance;
+    private TextView trackSpeed, trackDistance;
 
 
     private Response response;
@@ -150,17 +151,24 @@ public class MainActivity extends BaseActivity {
     private Handler handler;
     private TimerTask timerTask;
     private Timer timer;
-private                             OkHttpClient okHttpClient = new OkHttpClient();
-private                          String speed = null;
+    private OkHttpClient okHttpClient = new OkHttpClient();
+    private String speed = null;
     private int counts = 0;
     private String distance;
     private String startUnix;
     private String endUnix;
+    private ImageView trackSignal;
 
+
+    private int count = 1;
+    private float Speed = 0;
+    private float avaSpeed = 0;
+    private float sumSpeed = 0;
 
 //    TrackThread trackThread = new TrackThread(getApplicationContext());
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUI();
@@ -206,6 +214,7 @@ private                          String speed = null;
         chronometer = findViewById(R.id.time_task);
         trackSpeed = this.findViewById(R.id.track_speed);
         trackDistance = this.findViewById(R.id.track_distance);
+        trackSignal = this.findViewById(R.id.track_signal);
         //初始化client
         aMapLocationClient = new AMapLocationClient(this.getApplicationContext());
         aMapLocationClientOption = getDefaultOption();
@@ -238,6 +247,7 @@ private                          String speed = null;
         startFor.setVisibility(View.INVISIBLE);
         chronometer.setVisibility(View.INVISIBLE);
         trackSpeed.setVisibility(View.INVISIBLE);
+        trackSignal.setVisibility(View.INVISIBLE);
         builder = new AlertDialog.Builder(MainActivity.this);
         bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
         /*
@@ -251,7 +261,6 @@ private                          String speed = null;
         Long a = initializeTerminal.getTerminal(MainActivity.this);
         Log.d(TAG, "a:" + a);
     }
-
 
 
     protected void initListener() {
@@ -322,8 +331,8 @@ private                          String speed = null;
                                     JSONArray jsonArray = jsonObject.getJSONArray("tracks");
                                     int counts = Integer.parseInt(jsonArray.getJSONObject(0).getString("counts"));
                                     Log.d(TAG, "counts:" + counts);
-                                    String x[]=new String[counts];
-                                    for (int i=0; i <= counts; i++) {
+                                    String x[] = new String[counts];
+                                    for (int i = 0; i <= counts; i++) {
                                         x[i] = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(i).getString("speed");
                                         Log.d(TAG, x[i]);
                                     }
@@ -501,27 +510,97 @@ private                          String speed = null;
                     Log.d(TAG, (String) trackInfo.getDesc());
                     Log.d(TAG, (String) trackInfo.getDate());
                     Log.d(TAG, (String) trackInfo.getTime());
+                    Log.d(TAG, "trackInfo.getDistance():" + trackInfo.getDistance());
                     Log.d(TAG, "trackInfo.getTimeConsuming():" + trackInfo.getTimeConsuming());
                     int a = (int) trackInfo.getTimeConsuming();
+
+                    /**
+                     * 2020.01.18
+                     * get Distance
+                     *
+                     */
+
+                    /*Thread thread = new Thread(() -> {
+                        String result = null;
+                        String speed = null;
+                        long sumSpeed = 0;
+                        long avaSpeed;
+                        initializeTerminal = new InitializeTerminal();
+                        String content = "https://tsapi.amap.com/v1/track/terminal/trsearch?key=b26487968ee70a1647954c49b55828f2&sid="
+                                + Constants.ServiceID + "&tid=" + trackInfo.getTerminalID()
+                                + "&trid=" + trackInfo.getTrackID() + "&pagesize=999";
+                        Request request = new Request.Builder().url(content).get().build();
+                        try {
+                            response = okHttpClient.newCall(request).execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                result = response.body().string();
+                                JSONObject jsonObject = new JSONObject(result).getJSONObject("data");
+                                JSONArray jsonArray = jsonObject.getJSONArray("tracks");
+                                String counts = jsonArray.getJSONObject(0).getString("counts");
+                                int count = Integer.parseInt(counts);
+                                for (int i = 0; i <= count; i++) {
+                                    speed = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(i).getString("speed");
+                                    long temSpeed = new Double(Double.parseDouble(speed)).longValue();
+                                    Log.d(TAG, "temSpeed:" + temSpeed);
+                                    sumSpeed += temSpeed;
+//                                    Log.d(TAG, "sumSpeed:" + sumSpeed);
+                                }
+                                avaSpeed = sumSpeed / count;
+                                Log.d(TAG, "count:" + count);
+                                Log.d(TAG, "avaSpeed:" + avaSpeed);
+                                String resultSpeed = Long.toString(avaSpeed);
+                                Log.d(TAG, resultSpeed);
+                                trackInfo.setAvaPace(resultSpeed);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    thread.start();
+                    try {
+                        thread.join();
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }*/
+
+
 //                    Log.d(TAG, "a:" + a);
                     trackUpload = new TrackUpload(trackInfo);
 //                    trackUpload.setCheck();
+                    //
+                    /**
+                     * 后期取消upload相关代码对第一次验证的相关判断
+                     *
+                     */
                     if (trackUpload.isCheck()) {
-                        if (initializeTerminal.checkFirstPosting(MainActivity.this)) {
-                            /**
-                             * 如果已经上传
-                             */
+                        /**
+                         * 2020.01.18 modify
+                         * 测试需不需要判断
+                         *
+                         */
+                        /* if (initializeTerminal.checkFirstPosting(MainActivity.this)) {
+                         *//**
+                         * 如果已经上传
+                         *//*
                             trackUpload.upload();
                             trackUpload.addTrackCounts();
                         } else {
-                            /**
-                             * 第一次上传情况
-                             *
-                             */
-                            initializeTerminal.createTrackCounts(MainActivity.this, (Long) trackInfo.getTerminalID());
+                            *//**
+                         * 第一次上传情况
+                         *
+                         *//*
+//                            initializeTerminal.createTrackCounts(MainActivity.this, (Long) trackInfo.getTerminalID());//后期不需依赖此判断
                             trackUpload.upload();
                             trackUpload.addTrackCounts();
-                        }
+
+                    }*/
+                        trackUpload.upload();
+                        trackUpload.addTrackCounts();
 
                     } else {
                         /**
@@ -530,8 +609,11 @@ private                          String speed = null;
                          */
                       /*  trackUpload.upload();
                         trackUpload.addTrackCounts();*/
+                        trackUpload.upload();
+                        trackUpload.addTrackCounts();
+//                    dialogUtil.checkFalse(MainActivity.this);
 
-                        dialogUtil.checkFalse(MainActivity.this);
+
                     }
 //                    boolean a = (boolean) trackUpload.isCheck();//test
                 }
@@ -608,7 +690,34 @@ private                          String speed = null;
                     if (address.length() > 0) {
                         transmitGeographicDescription(address);
                     }
-                    float speed = aMapLocation.getSpeed();//速度显示在textView上
+                    /*Speed = aMapLocation.getSpeed();//速度显示在textView上
+                    sumSpeed += Speed;
+                    count += 1;*/
+
+                    /**
+                     * get gps signal rank
+                     *
+                     */
+                    Log.d(TAG, "x:" + aMapLocation.getGpsAccuracyStatus());
+                    trackSignal.setVisibility(View.VISIBLE);
+
+                    switch (aMapLocation.getGpsAccuracyStatus()) {
+
+                        case 1:
+
+                            trackSignal.setImageResource(R.drawable.gps_signal_good);
+                            break;
+                        case 0:
+                            trackSignal.setImageResource(R.drawable.gps_signal_bad);
+
+                            break;
+                        case -1:
+                            trackSignal.setImageResource(R.drawable.gps_signal_unknown);
+
+                            break;
+
+                    }
+//                    int x = aMapLocation.getGpsAccuracyStatus();
 
 //                    Log.d(TAG, "speed:" + speed);
 //                    Log.d(TAG, address + "\n" + address.length());
@@ -722,28 +831,16 @@ private                          String speed = null;
                 };*/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                /**
+                 *
+                 * 后期更新发送频率
+                 */
                 timerTask = new TimerTask() {
                     @Override
                     public void run() {
 //                        timer.schedule(timerTask, 5000,5000);
                         String content = "https://tsapi.amap.com/v1/track/terminal/trsearch?key=b26487968ee70a1647954c49b55828f2&sid="
-                                + Constants.ServiceID + "&tid="+initializeTerminal.getTerminal(TrackApplication.getContext())+"&trid="+TrackID+"&pagesize=999";
+                                + Constants.ServiceID + "&tid=" + initializeTerminal.getTerminal(TrackApplication.getContext()) + "&trid=" + TrackID + "&pagesize=999";
                         Request request = new Request.Builder().url(content).get().build();
                         try {
                             response = okHttpClient.newCall(request).execute();
@@ -758,12 +855,24 @@ private                          String speed = null;
 
                                 //是否需要判断counts是否为空
 
-                                     counts = Integer.parseInt(jsonArray.getJSONObject(0).getString("counts"));
-                                    Log.d(TAG, "counts:" + counts);
-                                    speed = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(counts - 1).getString("speed");
-                                startUnix = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(counts - 1).getString("locatetime");
-                                endUnix = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(0).getString("locatetime");
-                                distance = jsonArray.getJSONObject(0).getString("distance");
+                                counts = Integer.parseInt(jsonArray.getJSONObject(0).getString("counts"));
+                                Log.d(TAG, "counts:" + counts);
+                                speed = jsonArray.getJSONObject(0)
+                                        .getJSONArray("points")
+                                        .getJSONObject(counts - 1)
+                                        .getString("speed");
+
+                                startUnix = jsonArray.getJSONObject(0)
+                                        .getJSONObject("startPoint")
+                                        .getString("locatetime");
+
+                                endUnix = jsonArray.getJSONObject(0)
+                                        .getJSONObject("endPoint")
+                                        .getString("locatetime");
+
+                                distance = jsonArray.getJSONObject(0)
+                                        .getString("distance");
+                                trackInfo.setDistance(distance);
                                 Log.d(TAG, distance);
                                 /*if (null==speed||null==points||counts==0) {
                                     trackSpeed.setText("0.0 km/h");
@@ -834,22 +943,20 @@ private                          String speed = null;
                             @Override
                             public void run() {
                                 if (null == speed) {
-                                    trackSpeed.setText(0.0+" km/h");
+                                    trackSpeed.setText(0.0 + " km/h");
                                 } else {
-                                    trackSpeed.setText(speed+" km/h");
+                                    trackSpeed.setText(speed + " km/h");
                                 }
-                                if (null==distance) {
+                                if (null == distance) {
                                     trackDistance.setText("0.0 m");
                                 } else {
-                                    trackDistance.setText(distance+" m");
+                                    trackDistance.setText(distance + " m");
                                 }
                             }
                         });
                     }
                 };
-                timer.schedule(timerTask, 5000,7000);
-
-
+                timer.schedule(timerTask, 5000, 7000);
 
 
                 chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
@@ -857,8 +964,6 @@ private                          String speed = null;
                 chronometer.setFormat("0" + hour + ":%s");
                 aMapTrackClient.startGather(onTrackLifecycleListener);
                 aMapLocationClient.startLocation();
-
-
 
 
             } else if (i == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {

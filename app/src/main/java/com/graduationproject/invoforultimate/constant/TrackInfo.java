@@ -12,7 +12,7 @@ public class TrackInfo<T> {
     private T date;
     private T time;
     private T timeConsuming;
-//    private double distance;
+    private T distance;
 
     public T getTerminalID() {
         return terminalID;
@@ -54,14 +54,6 @@ public class TrackInfo<T> {
         this.time = time;
     }
 
-    /*public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }*/
-
     public T getTimeConsuming() {
         return timeConsuming;
     }
@@ -76,5 +68,14 @@ public class TrackInfo<T> {
 
     public void setServiceID(T serviceID) {
         this.serviceID = serviceID;
+    }
+
+
+    public T getDistance() {
+        return distance;
+    }
+
+    public void setDistance(T distance) {
+        this.distance = distance;
     }
 }

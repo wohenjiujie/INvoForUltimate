@@ -46,6 +46,7 @@ public class TrackUpload<T> {
                 jsonObject.put("date", trackInfo.getDate());
                 jsonObject.put("time", trackInfo.getTime());
                 jsonObject.put("description", trackInfo.getDesc());
+                jsonObject.put("mileage", trackInfo.getDistance());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

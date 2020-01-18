@@ -208,8 +208,25 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
             String po = jsonArray.getJSONObject(0).getString("points");
             Log.d("myPoints", po);
 
-            startUnix = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(0).getString("locatetime");
-            endUnix = jsonArray.getJSONObject(0).getJSONArray("points").getJSONObject(counts - 1).getString("locatetime");
+            /**
+             * 交换startUnix与endUnix
+             * 数据错乱
+             *
+             */
+
+            endUnix = jsonArray.getJSONObject(0).getJSONObject("endPoint").getString("locatetime");
+            startUnix = jsonArray.getJSONObject(0).getJSONObject("startPoint").getString("locatetime");
+
+            /*endUnix = jsonArray.getJSONObject(0)
+                    .getJSONArray("points")
+                    .getJSONObject(0)
+                    .getString("locatetime");
+
+
+            startUnix = jsonArray.getJSONObject(0)
+                    .getJSONArray("points")
+                    .getJSONObject(counts - 1)
+                    .getString("locatetime");*/
             Log.d("myStartUnix", startUnix);
             Log.d("myEndUnix", endUnix);
             if (null != startUnix && null != endUnix) {

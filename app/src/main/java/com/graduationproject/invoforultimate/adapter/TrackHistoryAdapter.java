@@ -78,10 +78,12 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
                 String desc = jsonObject.getString("description");
                 String date = jsonObject.getString("date");
                 String time = jsonObject.getString("time");
+                String distance = jsonObject.getString("mileage");
                 trackID[i] = Integer.parseInt(jsonObject.getString("track"));
                 holder.desc.setText(desc);
                 holder.time.setText(date);
-                holder.timeConsuming.setText("用时："+time);
+                holder.timeConsuming.setText("用时:"+time);
+                holder.distance.setText("里程:"+distance+"m");
 //                Log.d("my", "foreach:trackID:" + trackID);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -127,7 +129,7 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
      */
     class TrackHistoryViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView desc,timeConsuming,time;
+        private TextView desc,timeConsuming,time,distance;
         private final TextView delete;
 
         /**
@@ -140,6 +142,7 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
             time = itemView.findViewById(R.id.track_subtitle);
             timeConsuming = itemView.findViewById(R.id.track_extra_2);
             delete = itemView.findViewById(R.id.delete_track_info);
+            distance = itemView.findViewById(R.id.track_extra_1);
             JSONObject jsonObject = jsonArray.getJSONObject(0);
             String a = jsonObject.getString("time");
             Log.d("TrackHistoryViewHolder", a);

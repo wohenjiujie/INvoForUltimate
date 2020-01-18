@@ -11,9 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".TrackReplayActivity"></activity>
-        <activity android:name=".TrackHistoryActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".TrackReplayActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".TrackHistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
