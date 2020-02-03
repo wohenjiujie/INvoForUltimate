@@ -1,6 +1,7 @@
 package com.graduationproject.invoforultimate;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -263,6 +264,21 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     @Override
     protected void OnProcessCallBack(int msg) {
 
+
+    }
+
+    @Override
+    protected void initView(@Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected void initControls(Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected void initListener(Bundle savedInstanceState) {
 
     }
 

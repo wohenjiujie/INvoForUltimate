@@ -6,7 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.graduationproject.invoforultimate.util.ToastUtil;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by INvo
@@ -14,31 +19,67 @@ import androidx.annotation.Nullable;
  */
 public abstract class BaseActivity extends Activity {
     private static Context context;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(getContentViewId());
-
+        ButterKnife.bind(this);
+        initView(savedInstanceState);
+        initControls(savedInstanceState);
+        initListener(savedInstanceState);
     }
-    protected static  Context getContext(){
+
+    protected static Context getContext() {
         return context;
     }
+
     protected abstract int getContentViewId();
 
-    protected void ToastText(String text) {
+    protected void ToastText(String string) {
+        ToastUtil.shortToast(context, string);
+    }
 
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    protected void ToastTextLong(String string) {
+        ToastUtil.LongToast(context,string);
     }
 
     protected void ToastMsg(int msg) {
-
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        ToastUtil.shortToast(context, String.valueOf(msg));
     }
 
+    protected void ToastMsgLong(int msg) {
+        ToastUtil.LongToast(context, String.valueOf(msg));
+    }
 
+    /**
+     * 回调方法
+     *
+     * @param msg
+     */
     protected abstract void OnProcessCallBack(int msg);
 
+    /**
+     * 初始View
+     *
+     * @param savedInstanceState
+     */
+    protected abstract void initView(@NonNull Bundle savedInstanceState);
+
+    /**
+     * Controls settings
+     *
+     * @param savedInstanceState
+     */
+    protected abstract void initControls(@Nullable Bundle savedInstanceState);
+
+    /**
+     * init Listener
+     *
+     * @param savedInstanceState
+     */
+    protected abstract void initListener(@Nullable Bundle savedInstanceState);
 
     @Override
     protected void onStart() {

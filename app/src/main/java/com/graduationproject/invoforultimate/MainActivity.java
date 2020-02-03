@@ -15,6 +15,8 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,6 +47,7 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Polyline;
@@ -87,7 +91,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -165,15 +171,17 @@ public class MainActivity extends BaseActivity {
     private float avaSpeed = 0;
     private float sumSpeed = 0;
 
+    private ImageView trackTest;
+
 //    TrackThread trackThread = new TrackThread(getApplicationContext());
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initUI();
-        initView(savedInstanceState);
-        initListener();
+       /* initUI(sa);
+        initView(savedInstanceState);*/
+//        initListener();
         // 不要使用Activity作为Context传入
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
@@ -203,7 +211,90 @@ public class MainActivity extends BaseActivity {
         ImageView imageView = this.findViewById(R.id.history_map);
     }
 
-    protected void initUI() {
+    @Override
+    protected void initControls(Bundle savedInstanceState) {
+        mapView.onCreate(savedInstanceState);// 此方法必须重写
+        mapSetting = new MapSetting(mapView, aMap, myLocationStyle);
+        mapSetting.initialize();
+        startTrack.setVisibility(View.INVISIBLE);
+        startGather.setVisibility(View.INVISIBLE);
+        traceSetting.setVisibility(View.INVISIBLE);
+        createTrace.setVisibility(View.INVISIBLE);
+        startFor.setVisibility(View.INVISIBLE);
+        chronometer.setVisibility(View.INVISIBLE);
+        trackSpeed.setVisibility(View.INVISIBLE);
+        trackSignal.setVisibility(View.INVISIBLE);
+//        trackTest.setVisibility(View.VISIBLE);
+        builder = new AlertDialog.Builder(MainActivity.this);
+        bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
+        /*
+         * 判断是否第一次接入终端
+         * */
+        if (!initializeTerminal.checkTerminal(getApplicationContext())) {
+            dialogUtil.createTerminalID(MainActivity.this, MainActivity.this);
+        }
+        Long a = initializeTerminal.getTerminal(MainActivity.this);
+        Log.d(TAG, "a:" + a);
+
+        /*mapView = findViewById(R.id.basic_map);
+        bottomNavigationView = findViewById(R.id.nav_view);
+        startTrack = findViewById(R.id.start_track);
+        startGather = findViewById(R.id.start_gather);
+        traceSetting = findViewById(R.id.trace_setting);
+        createTrace = findViewById(R.id.create_trace);
+        startFor = findViewById(R.id.start_for);
+        chronometer = findViewById(R.id.time_task);
+        trackSpeed = this.findViewById(R.id.track_speed);
+        trackDistance = this.findViewById(R.id.track_distance);
+        trackSignal = this.findViewById(R.id.track_signal);
+        //初始化client
+        aMapLocationClient = new AMapLocationClient(this.getApplicationContext());
+        aMapLocationClientOption = getDefaultOption();
+        //设置定位参数
+        aMapLocationClient.setLocationOption(aMapLocationClientOption);
+        // 设置定位监听
+        aMapLocationClient.setLocationListener(aMapLocationListener);
+        trackTest = this.findViewById(R.id.track_drawable_test);*/
+    }
+
+    /**
+     * 设置定位参数
+     */
+    private AMapLocationClientOption getDefaultOption() {
+        AMapLocationClientOption mOption = new AMapLocationClientOption();
+        mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
+        mOption.setInterval(5000);
+        mOption.setOnceLocation(false);
+        mOption.setOnceLocationLatest(false);//开启连续定位
+        return mOption;
+    }
+    @Override
+    protected void initView(@NonNull Bundle savedInstanceState) {
+        /*mapView.onCreate(bundle);// 此方法必须重写
+        mapSetting = new MapSetting(mapView, aMap, myLocationStyle);
+        mapSetting.initialize();
+        startTrack.setVisibility(View.INVISIBLE);
+        startGather.setVisibility(View.INVISIBLE);
+        traceSetting.setVisibility(View.INVISIBLE);
+        createTrace.setVisibility(View.INVISIBLE);
+        startFor.setVisibility(View.INVISIBLE);
+        chronometer.setVisibility(View.INVISIBLE);
+        trackSpeed.setVisibility(View.INVISIBLE);
+        trackSignal.setVisibility(View.INVISIBLE);
+//        trackTest.setVisibility(View.VISIBLE);
+        builder = new AlertDialog.Builder(MainActivity.this);
+        bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
+        *//*
+         * 判断是否第一次接入终端
+         * *//*
+        if (!initializeTerminal.checkTerminal(getApplicationContext())) {
+            dialogUtil.createTerminalID(MainActivity.this, MainActivity.this);
+        }
+        Long a = initializeTerminal.getTerminal(MainActivity.this);
+        Log.d(TAG, "a:" + a);
+*/
+
+
         mapView = findViewById(R.id.basic_map);
         bottomNavigationView = findViewById(R.id.nav_view);
         startTrack = findViewById(R.id.start_track);
@@ -222,48 +313,36 @@ public class MainActivity extends BaseActivity {
         aMapLocationClient.setLocationOption(aMapLocationClientOption);
         // 设置定位监听
         aMapLocationClient.setLocationListener(aMapLocationListener);
+        trackTest = this.findViewById(R.id.track_drawable_test);
     }
 
-    /**
-     * 设置定位参数
-     */
-    private AMapLocationClientOption getDefaultOption() {
-        AMapLocationClientOption mOption = new AMapLocationClientOption();
-        mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
-        mOption.setInterval(5000);
-        mOption.setOnceLocation(false);
-        mOption.setOnceLocationLatest(false);//开启连续定位
-        return mOption;
-    }
-
-    protected void initView(@Nullable Bundle bundle) {
-        mapView.onCreate(bundle);// 此方法必须重写
-        mapSetting = new MapSetting(mapView, aMap, myLocationStyle);
-        mapSetting.initialize();
-        startTrack.setVisibility(View.INVISIBLE);
-        startGather.setVisibility(View.INVISIBLE);
-        traceSetting.setVisibility(View.INVISIBLE);
-        createTrace.setVisibility(View.INVISIBLE);
-        startFor.setVisibility(View.INVISIBLE);
-        chronometer.setVisibility(View.INVISIBLE);
-        trackSpeed.setVisibility(View.INVISIBLE);
-        trackSignal.setVisibility(View.INVISIBLE);
-        builder = new AlertDialog.Builder(MainActivity.this);
-        bottomNavigationUtil = new BottomNavigationUtil(MainActivity.this, builder, bottomNavigationView, createTrace, traceSetting, startTrack, startGather, startFor);
-        /*
-         * 判断是否第一次接入终端
-         * */
-
-        if (!initializeTerminal.checkTerminal(getApplicationContext())) {
-            dialogUtil.createTerminalID(MainActivity.this, MainActivity.this);
+    private Bitmap getViewBitmap(MapView v) {
+        v.clearFocus();
+        v.setPressed(false);
+        // 能画缓存就返回false
+        boolean willNotCache = v.willNotCacheDrawing();
+        v.setWillNotCacheDrawing(false);
+        int color = v.getDrawingCacheBackgroundColor();
+        v.setDrawingCacheBackgroundColor(0);
+        if (color != 0) {
+            v.destroyDrawingCache();
         }
-
-        Long a = initializeTerminal.getTerminal(MainActivity.this);
-        Log.d(TAG, "a:" + a);
+        v.buildDrawingCache();
+        Bitmap cacheBitmap = null;
+        while (cacheBitmap == null) {
+            cacheBitmap = v.getDrawingCache();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
+        // Restore the view
+        v.destroyDrawingCache();
+        v.setWillNotCacheDrawing(willNotCache);
+        v.setDrawingCacheBackgroundColor(color);
+        return bitmap;
     }
 
 
-    protected void initListener() {
+    @Override
+    protected void initListener(Bundle savedInstanceState) {
         /*
          * 底部导航栏监听
          * */
@@ -313,7 +392,7 @@ public class MainActivity extends BaseActivity {
                      *
                      */
 
-                    new Thread() {
+                   /* new Thread() {
                         @Override
                         public void run() {
 
@@ -343,7 +422,54 @@ public class MainActivity extends BaseActivity {
                                 }
                             }
                         }
-                    }.start();
+                    }.start();*/
+
+/**
+ * 缩略图制作
+ */
+//                    View view = MainActivity.this.getWindow().getDecorView().findViewById(R.id.basic_map);
+//
+                    View view = mapView;
+                    view.buildDrawingCache();
+                    view.setDrawingCacheEnabled(true);
+                    mapView.setDrawingCacheEnabled(true);
+
+                    mapView.buildDrawingCache();
+//                    Bitmap bitmap = MainActivity.this.mapView.getDrawingCache();
+
+                    Bitmap bitmap = view.getDrawingCache();
+                    trackTest.setImageBitmap(bitmap);
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                    byte[] b = byteArrayOutputStream.toByteArray();
+
+                    String aa =   Base64.encodeToString(b, Base64.DEFAULT);
+
+
+                    Handler mHandler = new Handler();
+                    Runnable mResetCache = new Runnable() {
+                        @Override
+                        public void run() {
+                            trackTest.setImageBitmap(null);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("bitmap", aa);
+                            Intent intent = new Intent();
+                            intent.putExtras(bundle);
+                            intent.setClass(MainActivity.this, TestActivity.class);
+                            startActivity(intent);
+                            try {
+                                byteArrayOutputStream.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            bitmap.recycle();
+//                            mapView.setDrawingCacheEnabled(false);
+//                            mapView.destroyDrawingCache();
+//                            view.setDrawingCacheEnabled(false);
+//                            view.destroyDrawingCache();
+                        }
+                    };
+                    mHandler.postDelayed(mResetCache, 500);
                     break;
                 /*
                  * 查询轨迹历史记录
@@ -370,6 +496,7 @@ public class MainActivity extends BaseActivity {
             }
             return true;
         });
+
 
         /*
          * createTrace & traceSetting暂时不需要
@@ -609,9 +736,10 @@ public class MainActivity extends BaseActivity {
                          */
                       /*  trackUpload.upload();
                         trackUpload.addTrackCounts();*/
-                        trackUpload.upload();
-                        trackUpload.addTrackCounts();
-//                    dialogUtil.checkFalse(MainActivity.this);
+
+//                        trackUpload.upload();
+//                        trackUpload.addTrackCounts();
+                    dialogUtil.checkFalse(MainActivity.this);
 
 
                     }

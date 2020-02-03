@@ -4,165 +4,177 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context=".MainActivity">
 
-   <!-- <RelativeLayout
+    <!-- <RelativeLayout
+         android:layout_height="match_parent"
+         android:layout_width="match_parent">-->
+
+    <com.amap.api.maps.MapView
+        android:id="@+id/basic_map"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">-->
+        android:background="@android:color/transparent">
 
-        <com.amap.api.maps.MapView
-            android:id="@+id/basic_map"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/nav_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/nav_view"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="740dp"
-                android:alpha="0.7"
-                android:background="@android:color/transparent"
-                app:menu="@menu/bottom_navigation"
-                tools:ignore="MissingConstraints" />
-        </com.amap.api.maps.MapView>
-
+            android:layout_height="55dp"
+            android:layout_marginTop="740dp"
+            android:alpha="0.7"
+            android:background="@android:color/transparent"
+            app:menu="@menu/bottom_navigation"
+            tools:ignore="MissingConstraints" />
+    </com.amap.api.maps.MapView>
+<!--            android:background="@android:color/transparent"
+-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
         android:layout_gravity="top"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="50dp"
         android:gravity="center"
-        android:orientation="horizontal"
-        >
-
-        <ImageView
-            android:id="@+id/track_signal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/gps_signal_good"
-            >
-
-        </ImageView>
-        <TextView
-            android:id="@+id/start_gather"
-            android:layout_width="0dp"
-            android:layout_weight="0.1"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:gravity="center"
-            android:text="@string/startGather"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/round_corner_btn_bg"/>
-
-
-
-        <EditText
-            android:id="@+id/create_trace"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1"
-            android:gravity="center"
-            android:alpha="1"
-            android:maxLines="1"
-            android:inputType="text"
-            android:visibility="gone"
-            android:hint="@string/createTrack"
-            android:background="@color/colorGreen">
-
-        </EditText>
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/trace_setting"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
-            android:visibility="gone"
+            android:background="@drawable/ic_setting"
 
-            android:background="@drawable/ic_setting" />
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/create_trace"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:alpha="1"
+            android:background="@color/colorGreen"
+            android:gravity="center"
+            android:hint="@string/createTrack"
+            android:inputType="text"
+            android:maxLines="1"
+            android:visibility="gone">
+
+        </EditText>
+
+        <ImageView
+            android:id="@+id/track_signal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/gps_signal_good">
+
+        </ImageView>
+
+
+        <ImageView
+            android:id="@+id/track_drawable_test"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:src="@drawable/gps_signal_good">
+
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/start_gather"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.1"
+            android:background="@drawable/round_corner_btn_bg"
+            android:gravity="center"
+            android:text="@string/startGather"
+            android:textColor="@color/colorBlack" />
+
         <TextView
             android:id="@+id/start_track"
             android:layout_width="0dp"
-            android:layout_weight="0.1"
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
+            android:layout_weight="0.1"
+            android:background="@drawable/round_corner_btn_bg"
             android:gravity="center"
             android:text="@string/startTrack"
-            android:textColor="@color/colorBlack"
-            android:background="@drawable/round_corner_btn_bg"/>
+            android:textColor="@color/colorBlack" />
 
         <TextView
             android:id="@+id/track_distance"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="@color/colorBlack"
             android:alpha="0.75"
+            android:gravity="center"
             android:text="0.0 km/h"
-            android:textSize="30sp"
-            />
-
+            android:textColor="@color/colorBlack"
+            android:textSize="30sp" />
 
 
     </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginBottom="80dp"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
 
-            <Chronometer
-                android:id="@+id/time_task"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:format="00:00:00"
-                android:gravity="center"
-                android:alpha="0.75"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/ring_grey"
-                android:textColor="@color/colorBlack"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="80dp"
+        android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/start_for"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
-                android:gravity="center"
-                android:text="@string/start"
-                android:textColor="@color/colorBlack"
-                android:background="@drawable/btn_start_end"/>
+        <Chronometer
+            android:id="@+id/time_task"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:alpha="0.75"
+            android:background="@drawable/ring_grey"
+            android:format="00:00:00"
+            android:gravity="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/track_speed"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
-                android:gravity="center"
-                android:textColor="@color/colorBlack"
-                android:alpha="0.75"
-                android:text="0.0 km/h"
-                android:background="@drawable/ring_grey"/>
+        <TextView
+            android:id="@+id/start_for"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_start_end"
+            android:gravity="center"
+            android:text="@string/start"
+            android:textColor="@color/colorBlack" />
+
+        <TextView
+            android:id="@+id/track_speed"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:alpha="0.75"
+            android:background="@drawable/ring_grey"
+            android:gravity="center"
+            android:text="0.0 km/h"
+            android:textColor="@color/colorBlack" />
 
 
-        </LinearLayout>
+    </LinearLayout>
+
+
 
 
     <!-- </RelativeLayout>-->
 
 
-
-
 </FrameLayout>
 
-<!--android.support.constraint.ConstraintLayout-->
-<!--androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--android.support.constraint.ConstraintLayout-->
+    <!--androidx.constraintlayout.widget.ConstraintLayout-->
