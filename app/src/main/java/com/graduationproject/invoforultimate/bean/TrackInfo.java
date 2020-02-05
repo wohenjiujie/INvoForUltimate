@@ -1,4 +1,6 @@
-package com.graduationproject.invoforultimate.constant;
+package com.graduationproject.invoforultimate.bean;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by INvo
@@ -77,5 +79,19 @@ public class TrackInfo<T> {
 
     public void setDistance(T distance) {
         this.distance = distance;
+    }
+
+    @Override
+    public String toString() {
+        return "TrackInfo{" +
+                "serviceID=" + serviceID +
+                ", terminalID=" + terminalID +
+                ", trackID=" + trackID +
+                ", desc=" + desc +
+                ", date=" + date +
+                ", time=" + time +
+                ", timeConsuming=" + timeConsuming +
+                ", distance=" + distance +
+                '}';
     }
 }

@@ -1,33 +1,13 @@
 package com.graduationproject.invoforultimate;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.TrackApplication;
-import com.graduationproject.invoforultimate.util.DatabaseUtil;
-import com.graduationproject.invoforultimate.util.ToastUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;

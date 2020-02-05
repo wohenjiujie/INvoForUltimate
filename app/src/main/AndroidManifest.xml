@@ -3,7 +3,7 @@
     package="com.graduationproject.invoforultimate">
     <!-- 用于获取运营商信息，用于支持提供运营商信息相关的接口 -->
     <application
-        android:name=".constant.TrackApplication"
+        android:name=".app.TrackApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

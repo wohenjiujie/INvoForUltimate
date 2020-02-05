@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.constant;
+package com.graduationproject.invoforultimate.app;
 
 import android.app.Application;
 import android.content.Context;

@@ -3,10 +3,9 @@ package com.graduationproject.invoforultimate.service;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.graduationproject.invoforultimate.adapter.TrackHistoryAdapter;
 import com.graduationproject.invoforultimate.constant.Constants;
 import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
-import com.graduationproject.invoforultimate.constant.TrackApplication;
+import com.graduationproject.invoforultimate.app.TrackApplication;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
 import org.json.JSONException;

@@ -24,14 +24,18 @@ import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
 import com.graduationproject.invoforultimate.adapter.TrackHistoryListener;
 import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.TrackApplication;
+import com.graduationproject.invoforultimate.app.TrackApplication;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import java.util.LinkedList;
 import java.util.List;
 import butterknife.BindView;
+import static com.graduationproject.invoforultimate.constant.TrackReplayConstants.*;
 
+/**
+ * 运动记录回放Activity
+ */
 public class TrackReplayActivity extends BaseActivity {
-
+    private static final String TAG = TAG_LOG;
     private AMapTrackClient aMapTrackClient;
     @BindView(R.id.history_map)
     TextureMapView textureMapView;
@@ -106,7 +110,6 @@ public class TrackReplayActivity extends BaseActivity {
         textureMapView.onCreate(savedInstanceState);
     }
 
-
     @Override
     protected void initControls(Bundle savedInstanceState) {
         aMapTrackClient = new AMapTrackClient(getApplicationContext());
@@ -119,9 +122,9 @@ public class TrackReplayActivity extends BaseActivity {
         long startUnix = Long.valueOf(bundle.getString("startUnix"));
         long endUnix = Long.valueOf(bundle.getString("endUnix"));
 
-        Log.d("TrackReplayActivity", "startUnix:" + startUnix);
-        Log.d("TrackReplayActivity", "trackID:" + trackID);
-        Log.d("TrackReplayActivity", "endUnix:" + endUnix);
+        Log.d(TAG, "startUnix:" + startUnix);
+        Log.d(TAG, "trackID:" + trackID);
+        Log.d(TAG, "endUnix:" + endUnix);
 
         clearTracksOnMap();
         aMapTrackClient.queryTerminal(new QueryTerminalRequest(Constants.ServiceID, initializeTerminal.getTerminalName(TrackApplication.getContext())), new TrackHistoryListener() {
@@ -163,7 +166,7 @@ public class TrackReplayActivity extends BaseActivity {
                                             }
                                         }
                                         if (allEmpty) {
-                                            ToastText("检索失败，可能是由于行动路径过短");
+                                            ToastText(ALL_EMPTY);
                                         } else {
                                             StringBuilder stringBuilder = new StringBuilder();
                                             stringBuilder.append("查询成功：本次运动的里程为");
@@ -173,26 +176,21 @@ public class TrackReplayActivity extends BaseActivity {
                                             ToastText(stringBuilder.toString());
                                         }
                                     } else {
-                                        ToastText("未获取到运动记录");
+                                        ToastText(TRACKS_EMPTY);
                                     }
                                 } else {
-                                    ToastText("查询运动记录失败,请检查您的网络设置");
+                                    ToastText(TRACK_NOT_RESPONSE);
                                 }
                             }
                         });
                     } else {
-                        ToastTextLong("该终端不存在，有Bug请联系开发者：1143803369@qq.com");
+                        ToastTextLong(TERMINAL_NOT_EXIST);
                     }
                 } else {
-                    ToastText("网络请求失败，错误原因: " + queryTerminalResponse.getErrorMsg());
+                    ToastText(NOT_NETWORK + queryTerminalResponse.getErrorMsg());
                 }
             }
         });
-    }
-
-    @Override
-    protected void initListener(Bundle savedInstanceState) {
-
     }
 
     @Override

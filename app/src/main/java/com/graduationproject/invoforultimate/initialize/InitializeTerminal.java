@@ -6,15 +6,10 @@ import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.TrackApplication;
 import com.graduationproject.invoforultimate.service.TrackHandler;
 import com.graduationproject.invoforultimate.util.HttpUtil;
-import com.graduationproject.invoforultimate.util.ToastUtil;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -87,6 +82,7 @@ public class InitializeTerminal {
         editor = sharedPreferences.edit();
         editor.putBoolean("firstPost", true);
         editor.commit();
+
     }
 
     /**

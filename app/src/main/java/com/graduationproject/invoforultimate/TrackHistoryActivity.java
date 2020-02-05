@@ -16,7 +16,7 @@ import android.view.View;
 
 import com.graduationproject.invoforultimate.adapter.TrackHistoryAdapter;
 import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
-import com.graduationproject.invoforultimate.constant.TrackApplication;
+import com.graduationproject.invoforultimate.app.TrackApplication;
 import com.graduationproject.invoforultimate.constant.OnTrackAdapterListener;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import com.graduationproject.invoforultimate.service.TrackAsync;

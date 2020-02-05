@@ -79,7 +79,9 @@ public abstract class BaseActivity extends Activity {
      *
      * @param savedInstanceState
      */
-    protected abstract void initListener(@Nullable Bundle savedInstanceState);
+    protected  void initListener(@Nullable Bundle savedInstanceState){
+
+    }
 
     @Override
     protected void onStart() {

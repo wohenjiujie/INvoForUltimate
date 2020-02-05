@@ -1,9 +1,8 @@
 package com.graduationproject.invoforultimate.service;
 
 import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.TrackInfo;
+import com.graduationproject.invoforultimate.bean.TrackInfo;
 
-import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 

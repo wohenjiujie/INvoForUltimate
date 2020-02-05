@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.graduationproject.invoforultimate.constant.Constants;
 import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
-import com.graduationproject.invoforultimate.constant.TrackInfo;
+import com.graduationproject.invoforultimate.bean.TrackInfo;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 import com.graduationproject.invoforultimate.util.HttpUtil;
 

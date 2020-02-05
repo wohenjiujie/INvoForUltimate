@@ -1,7 +1,7 @@
 package com.graduationproject.invoforultimate.service;
 
-import com.graduationproject.invoforultimate.constant.TrackApplication;
-import com.graduationproject.invoforultimate.constant.TrackInfo;
+import com.graduationproject.invoforultimate.app.TrackApplication;
+import com.graduationproject.invoforultimate.bean.TrackInfo;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
 import java.io.IOException;
