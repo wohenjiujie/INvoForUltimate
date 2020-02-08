@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate;
+package com.graduationproject.invoforultimate.ui.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,12 +14,17 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.amap.api.maps.TextureMapView;
+import com.graduationproject.invoforultimate.BaseActivity;
+import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.adapter.TrackHistoryAdapter;
 import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
 import com.graduationproject.invoforultimate.app.TrackApplication;
 import com.graduationproject.invoforultimate.constant.OnTrackAdapterListener;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
+import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.service.TrackAsync;
+import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 import com.graduationproject.invoforultimate.util.ToastUtil;
 
 import org.json.JSONArray;
@@ -72,6 +77,21 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
             new TrackAsync(1, this).execute();
 
         });
+    }
+
+    @Override
+    protected TextureMapView loadM(Bundle savedInstanceState) {
+        return null;
+    }
+
+    @Override
+    protected Presenter loadP() {
+        return null;
+    }
+
+    @Override
+    protected ViewCallback loadV() {
+        return null;
     }
 
     /**
@@ -261,11 +281,7 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
         super.ToastMsg(msg);
     }
 
-    @Override
-    protected void OnProcessCallBack(int msg) {
 
-
-    }
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
@@ -280,36 +296,6 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     @Override
     protected void initListener(Bundle savedInstanceState) {
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

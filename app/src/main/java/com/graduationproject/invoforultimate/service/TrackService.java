@@ -18,14 +18,14 @@ public class TrackService {
 
     public static void createTerminal(final Context context) {
         /*final AlertDialog.Builder builder= new AlertDialog.Builder(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.create_tid, null);
+        ViewCallback view = LayoutInflater.from(context).inflate(R.layout.create_tid, null);
         final Button button = view.findViewById(R.id.check_tid);
 //        final TextView textView = view.findViewById(R.id.notification_tid);
         builder.setTitle("diy4").setView(view).setCancelable(false);
         final AlertDialog dialog = builder.show();
-        button.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new ViewCallback.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(ViewCallback v) {
                 ToastUtil.showToast(context,"succeed");
                 dialog.dismiss();
             }

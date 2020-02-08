@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -13,12 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.constant.Constants;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
@@ -86,8 +82,8 @@ public class DialogUtil {
 //        String tid;
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.create_tid, null);
-        Button button = view.findViewById(R.id.check_tid);
-        final EditText editText = view.findViewById(R.id.create_tid);
+        Button button = view.findViewById(R.id.create_tid_btn);
+        final EditText editText = view.findViewById(R.id.create_tid_edit);
 //        final TextView textView = view.findViewById(R.id.notification_tid);
         builder.setTitle("该设备没有注册终端")
                 .setMessage("请创建你的终端ID以作为标识")

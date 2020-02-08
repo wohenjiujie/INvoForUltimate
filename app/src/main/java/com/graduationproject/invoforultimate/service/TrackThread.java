@@ -1,19 +1,15 @@
 package com.graduationproject.invoforultimate.service;
 
 
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.constant.OnTrackCountsPostListener;
 import com.graduationproject.invoforultimate.bean.TrackInfo;
-import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
-import com.graduationproject.invoforultimate.util.HttpUtil;
+import com.graduationproject.invoforultimate.connector.MyTrackThread;
+import com.graduationproject.invoforultimate.connector.TrackResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,157 +22,125 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.graduationproject.invoforultimate.bean.constants.HttpUrlConstants.*;
+import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.*;
+import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.*;
+
 /**
  * Created by INvo
  * on 2019-10-10.
  */
-public class TrackThread extends Thread {
-    private Context context;
-    private int anInt;
-    private InitializeTerminal initializeTerminal = new InitializeTerminal();
-    private String string;
-    private HttpUtil httpUtil;
-//    private boolean result=false;
+public class TrackThread extends Thread implements MyTrackThread {
+
+
     private String content;
-    private Response response;
-    private RequestBody requestBody = null;
-    private MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+    private RequestBody requestBody;
+    private MediaType mediaTypeCommon=MediaType.parse("application/x-www-form-urlencoded");
+    private  MediaType mediaTypeJson = MediaType.parse("application/json; charset=utf-8");
+
     private Request request;
     private OkHttpClient okHttpClient = new OkHttpClient();
-    private OnTrackCountsPostListener onTrackCountsPostListener;
-    private Bundle bundle;
+    private Response response;
+    private TrackResult trackResult;
+    private int threadType;
+    private String post;
     private TrackInfo trackInfo;
-//    private Handler handler;
-//    private Message message;
-
-
-    public void setOnTrackCountsPostListener(OnTrackCountsPostListener listener) {
-        this.onTrackCountsPostListener = listener;
-    }
-    public TrackThread(Context context, int CommandType, @Nullable String string,@Nullable Handler handler) {
-        this.context = context;
-        this.anInt = CommandType;
-        this.string = string;
-//        this.handler = handler;
+    public TrackThread(int threadType, String post, @Nullable TrackResult trackResult) {
+        super();
+        this.trackResult = trackResult;
+        this.threadType = threadType;
+        this.post = post;
     }
 
-    public TrackThread(TrackInfo trackInfo,int CommandType) {
+    public TrackThread(int threadType,TrackInfo trackInfo) {
         this.trackInfo = trackInfo;
-        this.anInt = CommandType;
+        this.threadType = threadType;
+    }
+    public TrackThread() {
+        super();
     }
 
-    /*public TrackThread(Context context, int CommandType, @Nullable String string) {
-
-        this.anInt = CommandType;
-        this.string = string;
-    }*/
-
-//    @SuppressLint("HandlerLeak")
-   /* Handler handler = new Handler() {
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-
-            String temporary = null;
-//            Message message=Message.obtain();
-            if (msg.what == Constants.CreateTerminalCommand) {
-                if (initializeTerminal.setTerminal(context, string)) {
-                    ToastUtil.showToast(context, Constants.CreateTerminalSucceed);
-                } else {
-                    ToastUtil.showToast(context, Constants.CreateTerminalFailure);
-                }
-            } else if (msg.what == Constants.MsgTerminalExistError) {
-                ToastUtil.showLongToast(context, Constants.TerminalExistError);
-//                message.what = -1;
-//                result = false;
-            } else if (msg.what == Constants.MsgTerminalInvalidError) {
-                ToastUtil.showLongToast(context, Constants.TerminalInvalidError);
-//                message.what = -1;
-//                result = false;
-            } else if (msg.what == Constants.MsgTerminalSuccess) {
-                try {
-                    JSONObject jsonObject = new JSONObject(msg.obj.toString());
-                   temporary = jsonObject.getJSONObject("data").getString("tid");
-//                    setResult(true);
-                    Log.d("mytid", temporary);
-//                    result = true;
-//                    message.what = 1;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (msg.what == Constants.MsgTerminalSuccess || msg.what == Constants.MsgTerminalInvalidError || msg.what == Constants.MsgTerminalExistError) {
-                boolean result;
-                if (msg.what == Constants.MsgTerminalSuccess) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                Log.d("myresult", "result:" + result);
-                bundle = new Bundle();
-                bundle.putBoolean("result", result);
-                bundle.putString("tid", temporary);
-//                setBundle(bundle);
-                ToastUtil.showLongToast(context, "bundle test");
-                onTrackCountsPostListener.onBundle(bundle);
-                Log.d("mybundle", "bundle:" + bundle);
-            }
-
+    @Override
+    public void createTrackCount(String s) {
+        String x = CREATE_TRACK_COUNT_URL + s;
+        Request request = new Request.Builder().url(x).get().build();
+        try {
+            okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    };*/
-
-/*
-    private void setBundle(Bundle bundle) {
-        this.bundle = bundle;
     }
 
-    public Bundle getBundle() {
-        return bundle;
-    }*/
+    @Override
+    public void uploadTrackInfo() {
+        content = ADD_TRACK_COUNT+trackInfo.getTerminalID();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("terminal", trackInfo.getTerminalID());
+            jsonObject.put("track", trackInfo.getTrackID());
+            jsonObject.put("date", trackInfo.getDate());
+            jsonObject.put("time", trackInfo.getTime());
+            jsonObject.put("description", trackInfo.getDesc());
+            jsonObject.put("mileage", trackInfo.getDistance());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        requestBody = RequestBody.create(mediaTypeJson, jsonObject.toString());
+        request = new Request.Builder().url(ADD_TRACK_INFO).post(requestBody).build();
+
+        try {
+            response = okHttpClient.newCall(request).execute();
+            request = new Request.Builder().url(content).get().build();
+            response = okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void run() {
-        if (anInt == Constants.CreateTerminalCommand) {
-//            handler.sendEmptyMessageDelayed(Constants.CreateTerminalCommand, 2000);
-        } else if (anInt == Constants.CreateTerminalService) {
+        super.run();
+        if (CREATE_TERMINAL == threadType) {
+            createTerminal(post);
+        }
+        if (CREATE_TRACK_COUNT == threadType) {
+            createTrackCount(post);
+        }
+        if (UPLOAD_TRACK_INFO == threadType) {
+            uploadTrackInfo();
+        }
+    }
 
-            new Thread() {
-                @Override
-                public void run() {
-                    content = "key="
-                            + Constants.Key + "&sid=" + Constants.ServiceID + "&&name=" + string;
-                    requestBody = RequestBody.create(mediaType, content);
-                    request = new Request.Builder().url(Constants.CreateTerminalUrl).post(requestBody).build();
-                    try {
-                        response = okHttpClient.newCall(request).execute();
-                        String accept = response.body().string();
-                        Log.d("myaccept", accept);
-                        JSONObject jsonObject = new JSONObject(accept);
-//                        JSONObject jsonObject = new JSONObject(accept);
-                        String errMsg = jsonObject.getString("errmsg");
-//                        Log.d("TrackThread", errMsg);
-                        Message message = Message.obtain();
-                        if (!errMsg.equals("OK")) {
-                            if (errMsg.equals("EXISTING_ELEMENT")) {
-                                message.what = Constants.MsgTerminalExistError;
-                            } else if (errMsg.equals("INVALID_PARAMS")) {
-                                message.what = Constants.MsgTerminalInvalidError;
-                            }
-//                            setResult(false);
-                        } else {
-                            message.what = Constants.MsgTerminalSuccess;
-                            message.obj = accept;
-//                            setResult(true);
-                        }
-//                        handler.sendMessage(message);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+    @Override
+    public void createTerminal(String s) {
+        content = TERMINAL_PREFIX + "&&name=" + s;
+        requestBody = RequestBody.create(mediaTypeCommon, content);
+        request = new Request.Builder().url(CREATE_TERMINAL_URL).post(requestBody).build();
+        try {
+            response = okHttpClient.newCall(request).execute();
+            String accept = response.body().string();
+            Log.d("myaccept", accept);
+            JSONObject jsonObject = new JSONObject(accept);
+            String errMsg = jsonObject.getString(CREATE_TERMINAL_MSG);
+            Message message = Message.obtain();
+            if (!errMsg.equals(CREATE_TERMINAL_MSG_OK)) {
+                if (errMsg.equals(CREATE_TERMINAL_MSG_EXISTING_ELEMENT)) {
+                    message.what = MSG_TERMINAL_EXIST_ERROR;
+                } else if (errMsg.equals(CREATE_TERMINAL_MSG_INVALID_PARAMS)) {
+                    message.what =MSG_TERMINAL_INVALID_ERROR;
                 }
-            }.start();
+            } else {
+                message.what = MSG_TERMINAL_SUCCESS;
+                message.obj = accept;
+            }
+
+
+            trackResult.trackResult(message);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

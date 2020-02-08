@@ -22,7 +22,9 @@ import okhttp3.*;
  * Created by INvo
  * on 2019-10-07.
  */
-public class HttpUtil {
+
+@Deprecated
+public class HttpUtil {/*
     private OkHttpClient okHttpClient = new OkHttpClient();
     private Response response;
     private Request request;
@@ -81,7 +83,7 @@ public class HttpUtil {
 
     public TrackThread getTrackThread() {
         return trackThread;
-    }
+    }*/
 
 
 }

@@ -5,16 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.graduationproject.invoforultimate.MainActivity;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.TrackHistoryActivity;
+import com.graduationproject.invoforultimate.ui.activity.TrackHistoryActivity;
 import com.graduationproject.invoforultimate.constant.OnLoadingStatus;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
 
@@ -22,13 +20,15 @@ import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
  * Created by INvo
  * on 2019-09-24.
  */
+
+@Deprecated
 public class BottomNavigationUtil {
     /*
      *整合底部导航栏功能
      *
      * */
 
-    private static AlertDialog.Builder builder;
+   /* private static AlertDialog.Builder builder;
     private static BottomNavigationView bottomNavigationView;
     //    private static int itemId;
     private static Context context;
@@ -42,9 +42,9 @@ public class BottomNavigationUtil {
     private boolean isLoad=false;
 
     public BottomNavigationUtil(Context context, AlertDialog.Builder builder, BottomNavigationView bottomNavigationView, EditText editText, Button button, TextView textView1, TextView textView2, TextView textView3) {
-        /*
+        *//*
          * 鹰眼服务构造方法
-         * */
+         * *//*
         this.bottomNavigationView = bottomNavigationView;
         this.builder = builder;
 //        this.itemId = itemId;
@@ -94,22 +94,22 @@ public class BottomNavigationUtil {
                     }).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    /*databaseUtil = new DatabaseUtil(context);
+                    *//*databaseUtil = new DatabaseUtil(context);
                     if (!databaseUtil.isRegistration()) {
                         check = false;
                         Log.d("my", "checkAfter:" + check);
-                    } */
+                    } *//*
 
                     bottomNavigationView.setVisibility(View.INVISIBLE);//底部导航关闭显示}
-//                        editText.setVisibility(View.VISIBLE);
-//                        button.setVisibility(View.VISIBLE);
-//                    textView1.setVisibility(View.VISIBLE);
-//                    textView2.setVisibility(View.VISIBLE);
+//                        editText.setVisibility(ViewCallback.VISIBLE);
+//                        button.setVisibility(ViewCallback.VISIBLE);
+//                    textView1.setVisibility(ViewCallback.VISIBLE);
+//                    textView2.setVisibility(ViewCallback.VISIBLE);
                     textView3.setVisibility(View.VISIBLE);
                     isItemSelected(true);
                 }
             }).setCancelable(false).show();
         }
 //        Log.d("my", "check:" + check);
-    }
+    }*/
 }

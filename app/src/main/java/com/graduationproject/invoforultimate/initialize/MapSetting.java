@@ -21,7 +21,7 @@ import java.util.List;
  * on 2019-09-24.
  */
 public class MapSetting {
-    private static MapView mapView;
+    private static TextureMapView mapView;
     private static AMap aMap;
     private static MyLocationStyle myLocationStyle;
     private static UiSettings uiSettings;//定义一个UiSettings对象
@@ -29,7 +29,7 @@ public class MapSetting {
 
     Polyline polyline;
 
-    public MapSetting(MapView mapView, AMap aMap, MyLocationStyle myLocationStyle) {
+    public MapSetting(TextureMapView mapView, AMap aMap, MyLocationStyle myLocationStyle) {
         this.mapView = mapView;
         this.aMap = aMap;
         this.myLocationStyle = myLocationStyle;

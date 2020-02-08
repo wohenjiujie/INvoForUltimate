@@ -4,12 +4,12 @@ package com.graduationproject.invoforultimate.constant;
  * Created by INvo
  * on 2019-09-25.
  */
-public class Constants {
+public final class Constants {
     public static final String Key = "b26487968ee70a1647954c49b55828f2";
     public static final long ServiceID = 72958;
     public static final String initializeTerminal = "Terminal";
     public static final String CreateTerminalUrl = "https://tsapi.amap.com/v1/track/terminal/add";
-    public static final String AddTrackInfo = "http://xiaomu1079.club/addTrackInfo";
+//    public static final String AddTrackInfo = "http://xiaomu1079.club/addTrackInfo";
     public static final String deleteTrackInfo = "http://xiaomu1079.club/deleteTrackInfo";
     public static final long TerminalID = 211539155;
     public static final long TID_TEST = 202911601;

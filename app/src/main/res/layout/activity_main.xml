@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
-    tools:context=".MainActivity">
+    tools:context=".ui.activity.MainActivity">
 
     <!-- <RelativeLayout
          android:layout_height="match_parent"
          android:layout_width="match_parent">-->
 
-    <com.amap.api.maps.MapView
+    <com.amap.api.maps.TextureMapView
         android:id="@+id/basic_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +26,7 @@
             android:background="@android:color/transparent"
             app:menu="@menu/bottom_navigation"
             tools:ignore="MissingConstraints" />
-    </com.amap.api.maps.MapView>
+    </com.amap.api.maps.TextureMapView>
 <!--            android:background="@android:color/transparent"
 -->
     <LinearLayout
@@ -39,29 +39,6 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/trace_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:background="@drawable/ic_setting"
-
-            android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/create_trace"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1"
-            android:alpha="1"
-            android:background="@color/colorGreen"
-            android:gravity="center"
-            android:hint="@string/createTrack"
-            android:inputType="text"
-            android:maxLines="1"
-            android:visibility="gone">
-
-        </EditText>
 
         <ImageView
             android:id="@+id/track_signal"
@@ -73,38 +50,6 @@
         </ImageView>
 
 
-        <ImageView
-            android:id="@+id/track_drawable_test"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="visible"
-            android:src="@drawable/gps_signal_good">
-
-
-        </ImageView>
-
-        <TextView
-            android:id="@+id/start_gather"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="0.1"
-            android:background="@drawable/round_corner_btn_bg"
-            android:gravity="center"
-            android:text="@string/startGather"
-            android:textColor="@color/colorBlack" />
-
-        <TextView
-            android:id="@+id/start_track"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0.1"
-            android:background="@drawable/round_corner_btn_bg"
-            android:gravity="center"
-            android:text="@string/startTrack"
-            android:textColor="@color/colorBlack" />
 
         <TextView
             android:id="@+id/track_distance"
@@ -113,7 +58,7 @@
             android:layout_weight="1"
             android:alpha="0.75"
             android:gravity="center"
-            android:text="0.0 km/h"
+            android:text="0 m"
             android:textColor="@color/colorBlack"
             android:textSize="30sp" />
 

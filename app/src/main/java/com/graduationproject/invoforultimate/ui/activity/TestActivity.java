@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate;
+package com.graduationproject.invoforultimate.ui.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +8,8 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.graduationproject.invoforultimate.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

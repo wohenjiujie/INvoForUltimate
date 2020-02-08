@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TrackReplayActivity">
+    tools:context=".ui.activity.TrackReplayActivity">
 
     <!--<com.amap.api.maps.MapView
         android:id="@+id/basic_map"

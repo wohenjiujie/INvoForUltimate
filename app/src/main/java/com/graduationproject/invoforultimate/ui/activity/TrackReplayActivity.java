@@ -1,9 +1,9 @@
-package com.graduationproject.invoforultimate;
+package com.graduationproject.invoforultimate.ui.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import androidx.annotation.NonNull;
+
 import androidx.annotation.Nullable;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.TextureMapView;
@@ -22,20 +22,26 @@ import com.amap.api.track.query.model.QueryTerminalRequest;
 import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
+import com.graduationproject.invoforultimate.BaseActivity;
+import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.adapter.TrackHistoryListener;
+import com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants;
 import com.graduationproject.invoforultimate.constant.Constants;
 import com.graduationproject.invoforultimate.app.TrackApplication;
 import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
+import com.graduationproject.invoforultimate.presenter.Presenter;
+import com.graduationproject.invoforultimate.ui.view.ViewCallback;
+
 import java.util.LinkedList;
 import java.util.List;
 import butterknife.BindView;
-import static com.graduationproject.invoforultimate.constant.TrackReplayConstants.*;
+import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.*;
 
 /**
  * 运动记录回放Activity
  */
 public class TrackReplayActivity extends BaseActivity {
-    private static final String TAG = TAG_LOG;
+    private static final String TAG = TrackReplayConstants.TAG;
     private AMapTrackClient aMapTrackClient;
     @BindView(R.id.history_map)
     TextureMapView textureMapView;
@@ -71,7 +77,7 @@ public class TrackReplayActivity extends BaseActivity {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            MapMarkers.add(textureMapView.getMap().addMarker(markerOptions));
+            MapMarkers.add(getM().getMap().addMarker(markerOptions));
         }
         if (points.size() > 1) {
             /**
@@ -83,16 +89,32 @@ public class TrackReplayActivity extends BaseActivity {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            MapMarkers.add(textureMapView.getMap().addMarker(markerOptions));
+            MapMarkers.add(getM().getMap().addMarker(markerOptions));
         }
         for (Point p : points) {
             LatLng latLng = new LatLng(p.getLat(), p.getLng());
             polylineOptions.add(latLng);
             boundsBuilder.include(latLng);
         }
-        Polyline polyline = textureMapView.getMap().addPolyline(polylineOptions);
+        Polyline polyline = getM().getMap().addPolyline(polylineOptions);
         polyLines.add(polyline);
-        textureMapView.getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 30));
+        getM().getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 30));
+    }
+
+    @Override
+    protected TextureMapView loadM(Bundle savedInstanceState) {
+        textureMapView.onCreate(savedInstanceState);
+        return textureMapView;
+    }
+
+    @Override
+    protected Presenter loadP() {
+        return null;
+    }
+
+    @Override
+    protected ViewCallback loadV() {
+        return null;
     }
 
     @Override
@@ -100,14 +122,9 @@ public class TrackReplayActivity extends BaseActivity {
         return R.layout.activity_track_replay;
     }
 
-    @Override
-    protected void OnProcessCallBack(int msg) {
-
-    }
 
     @Override
     protected void initView(@Nullable Bundle savedInstanceState) {
-        textureMapView.onCreate(savedInstanceState);
     }
 
     @Override
@@ -191,44 +208,5 @@ public class TrackReplayActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        textureMapView.onResume();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        textureMapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        textureMapView.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        textureMapView.onDestroy();
     }
 }

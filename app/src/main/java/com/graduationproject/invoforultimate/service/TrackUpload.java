@@ -29,14 +29,13 @@ public class TrackUpload<T> {
     private boolean check;
     public TrackUpload(TrackInfo trackInfo) {
         this.trackInfo = trackInfo;
-        check = (int)trackInfo.getTimeConsuming() >= 60 ? true : false;
+//        check = (int)trackInfo.getTimeConsuming() >= 60 ? true : false;
     }
 
 
 
     public void upload(){
         Thread thread = new Thread(() ->{
-//            content = "http://xiaomu1079.club/increaseCounts/"+trackInfo.getTerminalID();
             mediaType = MediaType.parse("application/json; charset=utf-8");
             JSONObject jsonObject = new JSONObject();
             try {
@@ -51,7 +50,7 @@ public class TrackUpload<T> {
             }
 //            StringEntity entity = new StringEntity(jsonObject.toString(), "utf-8");
             requestBody = RequestBody.create(mediaType, jsonObject.toString());
-            request = new Request.Builder().url(Constants.AddTrackInfo).post(requestBody).build();
+//            request = new Request.Builder().url(Constants.AddTrackInfo).post(requestBody).build();
             try {
                 response = okHttpClient.newCall(request).execute();
             } catch (IOException e) {

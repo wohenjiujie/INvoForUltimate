@@ -3,12 +3,14 @@ package com.graduationproject.invoforultimate;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.amap.api.maps.TextureMapView;
+import com.graduationproject.invoforultimate.presenter.Presenter;
+import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 import com.graduationproject.invoforultimate.util.ToastUtil;
 
 import butterknife.ButterKnife;
@@ -17,8 +19,11 @@ import butterknife.ButterKnife;
  * Created by INvo
  * on 2019-09-24.
  */
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V>, M extends TextureMapView> extends Activity {
     private static Context context;
+    private P p;
+    private V v;
+    private M m;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,6 +31,18 @@ public abstract class BaseActivity extends Activity {
         context = getApplicationContext();
         setContentView(getContentViewId());
         ButterKnife.bind(this);
+        if (null == this.m) {
+            this.m = loadM(savedInstanceState);
+        }
+        if (null == this.p) {
+            this.p = loadP();
+        }
+        if (null == this.v) {
+            this.v = loadV();
+        }
+        if (null != this.p && null != this.v) {
+            this.p.attachV(this.v);
+        }
         initView(savedInstanceState);
         initControls(savedInstanceState);
         initListener(savedInstanceState);
@@ -35,6 +52,20 @@ public abstract class BaseActivity extends Activity {
         return context;
     }
 
+    protected abstract M loadM(Bundle savedInstanceState);
+
+    protected abstract P loadP();
+
+    protected abstract V loadV();
+
+    protected P getP() {
+        return this.p;
+    }
+
+    protected M getM() {
+        return this.m;
+    }
+
     protected abstract int getContentViewId();
 
     protected void ToastText(String string) {
@@ -42,7 +73,7 @@ public abstract class BaseActivity extends Activity {
     }
 
     protected void ToastTextLong(String string) {
-        ToastUtil.LongToast(context,string);
+        ToastUtil.LongToast(context, string);
     }
 
     protected void ToastMsg(int msg) {
@@ -53,12 +84,6 @@ public abstract class BaseActivity extends Activity {
         ToastUtil.LongToast(context, String.valueOf(msg));
     }
 
-    /**
-     * 回调方法
-     *
-     * @param msg
-     */
-    protected abstract void OnProcessCallBack(int msg);
 
     /**
      * 初始View
@@ -79,37 +104,42 @@ public abstract class BaseActivity extends Activity {
      *
      * @param savedInstanceState
      */
-    protected  void initListener(@Nullable Bundle savedInstanceState){
+    protected void initListener(@Nullable Bundle savedInstanceState) {
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (null != this.m) {
+            m.onResume();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (null != this.m) {
+            m.onPause();
+        }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (null != this.m) {
+            m.onSaveInstanceState(outState);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (null != this.p && null != this.v) {
+            this.p.detachV();
+        }
+        if (null != this.m) {
+            m.onDestroy();
+        }
     }
 }

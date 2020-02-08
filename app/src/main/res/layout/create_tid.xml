@@ -7,7 +7,7 @@
     android:alpha="0.4">
 
     <EditText
-        android:id="@+id/create_tid"
+        android:id="@+id/create_tid_edit"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="@string/createTidHint"
@@ -17,12 +17,12 @@
         android:textColor="@color/colorBlack"/>
 
     <Button
-        android:id="@+id/check_tid"
+        android:id="@+id/create_tid_btn"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_below="@id/create_tid"
-        android:layout_alignStart="@+id/create_tid"
-        android:layout_alignEnd="@+id/create_tid"
+        android:layout_below="@id/create_tid_edit"
+        android:layout_alignStart="@+id/create_tid_edit"
+        android:layout_alignEnd="@+id/create_tid_edit"
         android:layout_marginStart="85dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="86dp"
