@@ -90,20 +90,17 @@ public class DialogUtil {
                 .setCancelable(false)
                 .setView(view);
         final AlertDialog alertDialog = builder.show();
-        editText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                //监听回车按下事件
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    if (event.getAction() == KeyEvent.ACTION_UP) {
-                        InputUtil.hideAllInputMethod(activity);
-                        if (0 == editText.getText().toString().length()) {
-                            ToastUtil.showToast(context, Constants.InputEmpty);
-                        }
+        editText.setOnKeyListener((v, keyCode, event) -> {
+            //监听回车按下事件
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (event.getAction() == KeyEvent.ACTION_UP) {
+                    InputUtil.hideAllInputMethod(activity);
+                    if (0 == editText.getText().toString().length()) {
+                        ToastUtil.showToast(context, Constants.InputEmpty);
                     }
                 }
-                return false;
             }
+            return false;
         });
         button.setOnClickListener(new View.OnClickListener() {
             @Override

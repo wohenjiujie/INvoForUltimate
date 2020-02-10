@@ -1,19 +1,20 @@
 package com.graduationproject.invoforultimate.presenter.impl;
 
-import android.app.ProgressDialog;
 import android.widget.Chronometer;
 
-import com.graduationproject.invoforultimate.model.TerminalModule;
+import com.amap.api.maps.AMap;
+import com.graduationproject.invoforultimate.model.TerminalModel;
 import com.graduationproject.invoforultimate.model.TrackServiceModel;
-import com.graduationproject.invoforultimate.model.impl.TerminalModuleImpl;
+import com.graduationproject.invoforultimate.model.impl.TerminalModelImpl;
+import com.graduationproject.invoforultimate.model.impl.TrackLocationImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackServiceImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
-import com.graduationproject.invoforultimate.service.TrackService;
 import com.graduationproject.invoforultimate.ui.view.MainViewCallback;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_INIT;
+import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_START;
+import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_STOP;
 
 
 /**
@@ -23,13 +24,14 @@ import java.util.TimerTask;
 public class MainBuilderImpl extends Presenter<MainViewCallback> implements MainBuilderPresenter {
 
 
-    private TerminalModuleImpl terminalModuleImpl;
+    private TerminalModelImpl terminalModelImpl;
     private TrackServiceImpl trackServiceImpl;
+    private TrackLocationImpl trackLocationImpl;
 
     private TrackServiceModel trackServiceModel = new TrackServiceModel() {
         @Override
-        public void onStartTrackCallback(int x, String s) {
-            getV().onStartTrackResult(x, s);
+        public void onTrackCallback(int x, String s) {
+            getV().onTrackResult(x, s);
         }
 
         @Override
@@ -53,7 +55,7 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
 
     public MainBuilderImpl() {
         super();
-        this.terminalModuleImpl = new TerminalModuleImpl(new TerminalModule() {
+        this.terminalModelImpl = new TerminalModelImpl(new TerminalModel() {
             @Override
             public void createTerminalCallback(String s) {
                 getV().onCreateTerminalResult(s);
@@ -64,24 +66,39 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
                 getV().onCheckTerminalResult(x);
             }
         });
+        this.trackLocationImpl = new TrackLocationImpl();
+    }
+
+    public void setCamera(boolean type) {
+        trackLocationImpl.setCameraModel(type);
+    }
+
+    public void mapSettings(AMap aMap) {
+        trackLocationImpl.mapSettings(aMap);
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_INIT, latLng -> {
+            getV().onInitLocation(latLng,CAMERA_FOLLOW_INIT);
+        });
     }
 
     public void stopTrack() {
         trackServiceImpl.onStopTrack();
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP, latLng -> getV().onInitLocation(latLng,CAMERA_FOLLOW_STOP));
+
     }
 
     public void startTrack(Chronometer chronometer) {
         this.trackServiceImpl = new TrackServiceImpl(chronometer);
         trackServiceImpl.onStartTrack(trackServiceModel);
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START, latLng -> getV().onInitLocation(latLng,CAMERA_FOLLOW_START));
     }
 
     @Override
     public void createTerminal(String s) {
-        terminalModuleImpl.createTerminal(s);
+        terminalModelImpl.createTerminal(s);
     }
 
     @Override
     public void checkTerminal() {
-        terminalModuleImpl.checkTerminal();
+        terminalModelImpl.checkTerminal();
     }
 }

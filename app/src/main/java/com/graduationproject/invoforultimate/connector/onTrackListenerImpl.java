@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.model.impl;
+package com.graduationproject.invoforultimate.connector;
 
 import com.amap.api.track.query.model.AddTerminalResponse;
 import com.amap.api.track.query.model.AddTrackResponse;

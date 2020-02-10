@@ -11,7 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".ui.activity.TestActivity"></activity>
         <activity
             android:name=".ui.activity.TrackReplayActivity"
             android:screenOrientation="portrait" />

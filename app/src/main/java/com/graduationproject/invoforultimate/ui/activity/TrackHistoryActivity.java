@@ -80,7 +80,7 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
     }
 
     @Override
-    protected TextureMapView loadM(Bundle savedInstanceState) {
+    protected TextureMapView loadMap(Bundle savedInstanceState) {
         return null;
     }
 

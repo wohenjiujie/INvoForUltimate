@@ -3,11 +3,10 @@ package com.graduationproject.invoforultimate;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.amap.api.maps.TextureMapView;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
@@ -19,20 +18,20 @@ import butterknife.ButterKnife;
  * Created by INvo
  * on 2019-09-24.
  */
-public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V>, M extends TextureMapView> extends Activity {
+public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V>, Map extends TextureMapView> extends Activity {
     private static Context context;
     private P p;
     private V v;
-    private M m;
-
+    private Map map;
+    @CallSuper
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(getContentViewId());
         ButterKnife.bind(this);
-        if (null == this.m) {
-            this.m = loadM(savedInstanceState);
+        if (null == this.map) {
+            this.map = loadMap(savedInstanceState);
         }
         if (null == this.p) {
             this.p = loadP();
@@ -52,7 +51,7 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         return context;
     }
 
-    protected abstract M loadM(Bundle savedInstanceState);
+    protected abstract Map loadMap(Bundle savedInstanceState);
 
     protected abstract P loadP();
 
@@ -62,8 +61,8 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         return this.p;
     }
 
-    protected M getM() {
-        return this.m;
+    protected Map getMap() {
+        return this.map;
     }
 
     protected abstract int getContentViewId();
@@ -84,13 +83,14 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         ToastUtil.LongToast(context, String.valueOf(msg));
     }
 
-
     /**
      * 初始View
      *
      * @param savedInstanceState
      */
-    protected abstract void initView(@NonNull Bundle savedInstanceState);
+    protected  void initView(@NonNull Bundle savedInstanceState){
+
+    }
 
     /**
      * Controls settings
@@ -111,24 +111,24 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
     @Override
     protected void onResume() {
         super.onResume();
-        if (null != this.m) {
-            m.onResume();
+        if (null != this.map) {
+            map.onResume();
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (null != this.m) {
-            m.onPause();
+        if (null != this.map) {
+            map.onPause();
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (null != this.m) {
-            m.onSaveInstanceState(outState);
+        if (null != this.map) {
+            map.onSaveInstanceState(outState);
         }
     }
 
@@ -138,8 +138,8 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         if (null != this.p && null != this.v) {
             this.p.detachV();
         }
-        if (null != this.m) {
-            m.onDestroy();
+        if (null != this.map) {
+            map.onDestroy();
         }
     }
 }

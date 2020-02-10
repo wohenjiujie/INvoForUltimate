@@ -1,5 +1,7 @@
 package com.graduationproject.invoforultimate.presenter;
 
+import androidx.annotation.CallSuper;
+
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 
 /**
@@ -13,14 +15,17 @@ public abstract class Presenter<V extends ViewCallback> {
         super();
     }
 
+    @CallSuper
     public V getV() {
         return this.v;
     }
 
+    @CallSuper
     public V attachV(V v) {
         return this.v = v;
     }
 
+    @CallSuper
     public void detachV() {
         if (null != this.v) {
             this.v = null;

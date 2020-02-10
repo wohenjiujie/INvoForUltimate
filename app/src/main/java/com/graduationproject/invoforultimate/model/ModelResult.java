@@ -6,6 +6,5 @@ package com.graduationproject.invoforultimate.model;
  */
 public interface ModelResult {
 
-    void onResult(boolean isSuccess);
 
 }

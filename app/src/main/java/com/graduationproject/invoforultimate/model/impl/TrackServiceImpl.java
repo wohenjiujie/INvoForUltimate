@@ -6,7 +6,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
@@ -16,9 +15,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
@@ -28,9 +24,8 @@ import com.amap.api.track.query.model.AddTrackResponse;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.bean.TerminalInfo;
 import com.graduationproject.invoforultimate.bean.TrackInfo;
-import com.graduationproject.invoforultimate.connector.TrackTimerResult;
+import com.graduationproject.invoforultimate.connector.onTrackListenerImpl;
 import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.model.TerminalModule;
 import com.graduationproject.invoforultimate.model.TrackServiceModel;
 import com.graduationproject.invoforultimate.service.TrackThread;
 import com.graduationproject.invoforultimate.service.TrackTimer;
@@ -57,33 +52,28 @@ public class TrackServiceImpl {
     void init() {
         //初始化client
         aMapLocationClient = new AMapLocationClient(getContext());
-        aMapLocationClientOption = getDefaultOption();
+        setDefaultOption();
         //设置定位参数
         aMapLocationClient.setLocationOption(aMapLocationClientOption);
         // 设置定位监听
         aMapLocationClient.setLocationListener(aMapLocationListener);
     }
-
     private TrackInfo trackInfo = new TrackInfo();
     private TrackParam trackParam;
     private TrackServiceModel trackServiceModel;
     private Chronometer chronometer;
     UnixUtil unixUtil = new UnixUtil();
-
     private TrackTimer trackTimer;
     private Timer timer;
-
 
     /**
      * 设置定位参数
      */
-    private AMapLocationClientOption getDefaultOption() {
-        AMapLocationClientOption mOption = new AMapLocationClientOption();
-        mOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
-        mOption.setInterval(5000);
-        mOption.setOnceLocation(false);
-        mOption.setOnceLocationLatest(false);//开启连续定位
-        return mOption;
+    private AMapLocationClientOption setDefaultOption() {
+        aMapLocationClientOption = new AMapLocationClientOption();
+        aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
+        aMapLocationClientOption.setInterval(2000);//设定连续定位间隔
+        return aMapLocationClientOption;
     }
 
     public TrackServiceImpl(Chronometer chronometer) {
@@ -92,17 +82,14 @@ public class TrackServiceImpl {
         aMapTrackClient.setInterval(GATHER_TIME, 30);
         init();
         this.chronometer = chronometer;
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                int temp0 = Integer.parseInt(chronometer.getText().toString().split(":")[0]);
-                int temp1 = Integer.parseInt(chronometer.getText().toString().split(":")[1]);
-                int temp2 = Integer.parseInt(chronometer.getText().toString().split(":")[2]);
-                int timeConsuming = temp0 * 3600 + temp1 * 60 + temp2;
-                String timeConsumingStr = chronometer.getText().toString();
-                trackInfo.setTimeConsuming(timeConsuming);
-                trackInfo.setTime(timeConsumingStr);
-            }
+        chronometer.setOnChronometerTickListener(chronometer1 -> {
+            int temp0 = Integer.parseInt(chronometer1.getText().toString().split(":")[0]);
+            int temp1 = Integer.parseInt(chronometer1.getText().toString().split(":")[1]);
+            int temp2 = Integer.parseInt(chronometer1.getText().toString().split(":")[2]);
+            int timeConsuming = temp0 * 3600 + temp1 * 60 + temp2;
+            String timeConsumingStr = chronometer1.getText().toString();
+            trackInfo.setTimeConsuming(timeConsuming);
+            trackInfo.setTime(timeConsumingStr);
         });
     }
 
@@ -158,15 +145,12 @@ public class TrackServiceImpl {
         @Override
         public void onStartTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
-                trackServiceModel.onStartTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
+                trackServiceModel.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
                 timer = new Timer();
                 chronometer.start();
-                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), new TrackTimerResult() {
-                    @Override
-                    public void onTimerCallback(String s1, String s2) {
-                        trackServiceModel.onTrackChangedCallback(s1, s2);
-                        trackInfo.setDistance(s2);
-                    }
+                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), (s1, s2) -> {
+                    trackServiceModel.onTrackChangedCallback(s1, s2);
+                    trackInfo.setDistance(s2);
                 });
                 /**
                  * 后期更新发送频率
@@ -179,7 +163,7 @@ public class TrackServiceImpl {
                 aMapTrackClient.startGather(onTrackLifecycleListener);
                 aMapLocationClient.startLocation();
             } else {
-                trackServiceModel.onStartTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
+                trackServiceModel.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
             }
         }
 
@@ -187,12 +171,11 @@ public class TrackServiceImpl {
         public void onStopGatherCallback(int i, String s) {
 
         }
-
         @Override
         public void onStopTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 theFirstTransmit = false;
-                trackServiceModel.onStartTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
+                trackServiceModel.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
             }
         }
     };
