@@ -63,8 +63,6 @@ public class TrackHistoryActivity extends BaseActivity implements OnTrackCountsP
         swipeRefreshLayout = this.findViewById(R.id.swipe_refresh);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorBlack, R.color.colorGreen, R.color.colorBlue, R.color.colorAccent);
-
-
         recyclerView = findViewById(R.id.track_history);
         recyclerView.setLayoutManager(new LinearLayoutManager(TrackHistoryActivity.this));
         recyclerView.addItemDecoration(new Decoration());
