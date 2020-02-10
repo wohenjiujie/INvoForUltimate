@@ -4,10 +4,10 @@ package com.graduationproject.invoforultimate.model;
  * Created by INvo
  * on 2020-02-08.
  */
-public interface TrackServiceModel {
+public interface TrackServiceModel extends ModelResult {
 
 
-    void onStartTrackCallback(int x,String s);
+    void onTrackCallback(int x,String s);
 
     void onTrackChangedCallback(String s1,String s2);
 
