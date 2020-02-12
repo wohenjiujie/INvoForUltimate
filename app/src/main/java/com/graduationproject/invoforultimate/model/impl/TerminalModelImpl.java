@@ -2,9 +2,10 @@ package com.graduationproject.invoforultimate.model.impl;
 
 import android.util.Log;
 
-import com.graduationproject.invoforultimate.bean.TerminalInfo;
+import com.graduationproject.invoforultimate.utils.TerminalUtil;
+import com.graduationproject.invoforultimate.listener.TrackResult;
 import com.graduationproject.invoforultimate.model.TerminalModel;
-import com.graduationproject.invoforultimate.service.TrackThread;
+import com.graduationproject.invoforultimate.utils.TrackThread;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,8 +36,8 @@ public class TerminalModelImpl {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } finally {
-                    TerminalInfo.setTerminal(tid, s);
-                    new TrackThread(CREATE_TRACK_COUNT, tid, null).start();
+                    TerminalUtil.setTerminal(tid, s);
+                    new TrackThread(CREATE_TRACK_COUNT, tid, (TrackResult) null).start();
                     terminalModel.createTerminalCallback(RESULT_TERMINAL_MSG_SUCCESS);
                 }
             }
@@ -56,7 +57,7 @@ public class TerminalModelImpl {
     }
 
     public void checkTerminal() {
-        Long l = TerminalInfo.getTerminal();
+        Long l = TerminalUtil.getTerminal();
         if (l == 0) {
             terminalModel.checkTerminalCallback(false);
         } else {

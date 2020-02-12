@@ -11,15 +11,12 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.presenter.impl.ReplayBuilderImpl;
-import com.graduationproject.invoforultimate.ui.view.ReplayViewCallback;
+import com.graduationproject.invoforultimate.ui.view.impl.ReplayViewCallback;
+import static com.graduationproject.invoforultimate.R2.id.history_map;
 
-
-/**
- * 运动记录回放Activity
- */
 public class TrackReplayActivity extends BaseActivity<ReplayViewCallback, ReplayBuilderImpl, TextureMapView> implements ReplayViewCallback {
 //    private static final String TAG = TrackReplayConstants.TAG;
-    @BindView(R.id.history_map)
+    @BindView(history_map)
     TextureMapView textureMapView;
 
     @CheckResult

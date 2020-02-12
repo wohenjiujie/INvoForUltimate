@@ -3,22 +3,18 @@ package com.graduationproject.invoforultimate.presenter.impl;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
-import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
-import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.track.query.entity.Point;
 import com.graduationproject.invoforultimate.model.TrackReplayModel;
 import com.graduationproject.invoforultimate.model.impl.TrackReplayImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.ReplayBuilderPresenter;
-import com.graduationproject.invoforultimate.ui.view.ReplayViewCallback;
+import com.graduationproject.invoforultimate.ui.view.impl.ReplayViewCallback;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**

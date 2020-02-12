@@ -10,16 +10,15 @@ import com.amap.api.track.query.model.QueryTerminalRequest;
 import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
-import com.graduationproject.invoforultimate.adapter.TrackHistoryListener;
-import com.graduationproject.invoforultimate.app.TrackApplication;
-import com.graduationproject.invoforultimate.bean.TerminalInfo;
-import com.graduationproject.invoforultimate.constant.Constants;
-import com.graduationproject.invoforultimate.initialize.InitializeTerminal;
+import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
+import com.graduationproject.invoforultimate.utils.TerminalUtil;
+import com.graduationproject.invoforultimate.bean.TrackIntentParcelable;
 import com.graduationproject.invoforultimate.model.TrackReplayModel;
 
 import java.util.List;
 
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
+import static com.graduationproject.invoforultimate.bean.constants.HttpUrlConstants.SERVICE_ID;
 import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.ALL_EMPTY;
 import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.NOT_NETWORK;
 import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.TERMINAL_NOT_EXIST;
@@ -44,19 +43,20 @@ public class TrackReplayImpl {
     }
 
     public void trackReplay() {
-        int trackID = bundle.getInt("trackID");
-        long startUnix = Long.valueOf(bundle.getString("startUnix"));
-        long endUnix = Long.valueOf(bundle.getString("endUnix"));
-        aMapTrackClient = new AMapTrackClient(getContext());
+        TrackIntentParcelable trackIntentParcelable = bundle.getParcelable("track_history");
 
-        aMapTrackClient.queryTerminal(new QueryTerminalRequest(Constants.ServiceID, TerminalInfo.getTerminalName()), new TrackHistoryListener() {
+        int trackID = trackIntentParcelable.getTrackID();
+        long startUnix = trackIntentParcelable.getStartUnix();
+        long endUnix = trackIntentParcelable.getEndUnix();
+        aMapTrackClient = new AMapTrackClient(getContext());
+        aMapTrackClient.queryTerminal(new QueryTerminalRequest(SERVICE_ID, TerminalUtil.getTerminalName()), new OnTrackListenerImpl() {
             @Override
             public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
                 if (queryTerminalResponse.isSuccess()) {
                     if (queryTerminalResponse.isTerminalExist()) {
                         QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
-                                Constants.ServiceID,
-                                TerminalInfo.getTerminal(),
+                                SERVICE_ID,
+                                TerminalUtil.getTerminal(),
                                 trackID,     // 轨迹ID
                                 startUnix,  //开始时间戳
                                 endUnix,    //结束时间戳
@@ -70,7 +70,7 @@ public class TrackReplayImpl {
                                 1,  // 返回1：1数据
                                 100    // 一页不超过100条
                         );
-                        aMapTrackClient.queryTerminalTrack(queryTrackRequest, new TrackHistoryListener() {
+                        aMapTrackClient.queryTerminalTrack(queryTrackRequest, new OnTrackListenerImpl() {
                             @Override
                             public void onQueryTrackCallback(QueryTrackResponse queryTrackResponse) {
                                 if (queryTrackResponse.isSuccess()) {

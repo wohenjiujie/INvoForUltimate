@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import com.amap.api.maps.TextureMapView;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
-import com.graduationproject.invoforultimate.util.ToastUtil;
+import com.graduationproject.invoforultimate.utils.ToastUtil;
 
 import butterknife.ButterKnife;
 
@@ -42,9 +42,7 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         if (null != this.p && null != this.v) {
             this.p.attachV(this.v);
         }
-        initView(savedInstanceState);
         initControls(savedInstanceState);
-        initListener(savedInstanceState);
     }
 
     protected static Context getContext() {
@@ -75,38 +73,7 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         ToastUtil.LongToast(context, string);
     }
 
-    protected void ToastMsg(int msg) {
-        ToastUtil.shortToast(context, String.valueOf(msg));
-    }
-
-    protected void ToastMsgLong(int msg) {
-        ToastUtil.LongToast(context, String.valueOf(msg));
-    }
-
-    /**
-     * 初始View
-     *
-     * @param savedInstanceState
-     */
-    protected  void initView(@NonNull Bundle savedInstanceState){
-
-    }
-
-    /**
-     * Controls settings
-     *
-     * @param savedInstanceState
-     */
     protected abstract void initControls(@Nullable Bundle savedInstanceState);
-
-    /**
-     * init Listener
-     *
-     * @param savedInstanceState
-     */
-    protected void initListener(@Nullable Bundle savedInstanceState) {
-
-    }
 
     @Override
     protected void onResume() {

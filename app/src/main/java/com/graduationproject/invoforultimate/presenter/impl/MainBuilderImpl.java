@@ -10,7 +10,7 @@ import com.graduationproject.invoforultimate.model.impl.TrackLocationImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackServiceImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
-import com.graduationproject.invoforultimate.ui.view.MainViewCallback;
+import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
 
 import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_INIT;
 import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_START;

@@ -4,11 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,12 +13,9 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.CallSuper;
 import androidx.annotation.CheckResult;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
@@ -30,65 +24,43 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.bean.constants.MainConstants;
-import com.graduationproject.invoforultimate.connector.TrackDialog;
+import com.graduationproject.invoforultimate.utils.TrackDialog;
 import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
-import com.graduationproject.invoforultimate.ui.view.MainViewCallback;
-import com.graduationproject.invoforultimate.util.InputUtil;
-
+import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
+import com.graduationproject.invoforultimate.utils.InputUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import butterknife.*;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
-import butterknife.OnClick;
-import butterknife.OnItemClick;
-import butterknife.OnItemSelected;
-import butterknife.OnLongClick;
-
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.ALTER_DIALOG_POSITIVE;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_INIT;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_START;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_STOP;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CHECK_BOX_CAMERA;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CHECK_BOX_MARKER;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_CREATE_TERMINAL;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_EXIT_APP;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_NEGATIVE_CHOICE;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_POSITIVE_CHOICE;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_START_TRACK;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_STOP_TRACK;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.DIALOG_TRACK_NOT_UPLOAD;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.INPUT_EMPTY;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.TRACK_START;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.TRACK_STOP;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.TRACK_UPLOAD;
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.RESULT_TERMINAL_MSG_EXISTING_ELEMENT;
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.RESULT_TERMINAL_MSG_INVALID_PARAMS;
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.RESULT_TERMINAL_MSG_SUCCESS;
-import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.TRACK_RESULT_FAILURE;
-import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.TRACK_RESULT_START;
-import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.TRACK_RESULT_STOP;
-
+import static com.graduationproject.invoforultimate.R2.id.basic_map;
+import static com.graduationproject.invoforultimate.R2.id.nav_view;
+import static com.graduationproject.invoforultimate.R2.id.time_task;
+import static com.graduationproject.invoforultimate.R2.id.track_camera;
+import static com.graduationproject.invoforultimate.R2.id.track_controller;
+import static com.graduationproject.invoforultimate.R2.id.track_distance;
+import static com.graduationproject.invoforultimate.R2.id.track_signal;
+import static com.graduationproject.invoforultimate.R2.id.track_speed;
+import static com.graduationproject.invoforultimate.bean.constants.MainConstants.*;
+import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.*;
+import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.*;
 
 public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl, TextureMapView> implements MainViewCallback {
-    @BindView(R.id.basic_map)
+    @BindView(basic_map)
     TextureMapView textureMapView;
-    @BindView(R.id.nav_view)
+    @BindView(nav_view)
     BottomNavigationView bottomNavigationView;
-    @BindView(R.id.track_signal)
+    @BindView(track_signal)
     ImageView trackSignal;
-    @BindView(R.id.track_distance)
+    @BindView(track_distance)
     TextView trackDistance;
-    @BindView(R.id.time_task)
+    @BindView(time_task)
     Chronometer chronometer;
-    @BindView(R.id.track_controller)
+    @BindView(track_controller)
     TextView trackController;
-    @BindView(R.id.track_speed)
+    @BindView(track_speed)
     TextView trackSpeed;
-    @BindView(R.id.track_camera)
+    @BindView(track_camera)
     CheckBox trackCamera;
 //    private static final String TAG = MainConstants.TAG;
     private static List<LatLng> coordinate = new ArrayList<>();

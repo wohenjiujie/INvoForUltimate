@@ -6,5 +6,4 @@ package com.graduationproject.invoforultimate.model;
  */
 public interface ModelResult {
 
-
 }

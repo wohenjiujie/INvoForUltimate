@@ -17,20 +17,19 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
-import com.amap.api.track.OnTrackLifecycleListener;
 import com.amap.api.track.TrackParam;
 import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.bean.TerminalInfo;
+import com.graduationproject.invoforultimate.listener.OnTrackLifecycleListenerImpl;
+import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
+import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import com.graduationproject.invoforultimate.bean.TrackInfo;
-import com.graduationproject.invoforultimate.connector.onTrackListenerImpl;
-import com.graduationproject.invoforultimate.constant.Constants;
 import com.graduationproject.invoforultimate.model.TrackServiceModel;
-import com.graduationproject.invoforultimate.service.TrackThread;
-import com.graduationproject.invoforultimate.service.TrackTimer;
+import com.graduationproject.invoforultimate.utils.TrackThread;
+import com.graduationproject.invoforultimate.utils.TrackTimer;
 import com.graduationproject.invoforultimate.ui.activity.MainActivity;
-import com.graduationproject.invoforultimate.util.UnixUtil;
+import com.graduationproject.invoforultimate.utils.UnixUtil;
 
 import java.util.Timer;
 
@@ -47,7 +46,47 @@ public class TrackServiceImpl {
     private AMapLocationClient aMapLocationClient = null;
     private AMapLocationClientOption aMapLocationClientOption = null;
     private boolean theFirstTransmit = false;
+    private TrackInfo trackInfo = new TrackInfo();
+    private TrackParam trackParam;
+    private TrackServiceModel trackServiceModel;
+    private Chronometer chronometer;
+    UnixUtil unixUtil = new UnixUtil();
+    private TrackTimer trackTimer;
+    private Timer timer;
+    private OnTrackLifecycleListenerImpl onTrackLifecycleListener = new OnTrackLifecycleListenerImpl() {
+        @Override
+        public void onStartTrackCallback(int i, String s) {
+            if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
+                trackServiceModel.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
+                timer = new Timer();
+                chronometer.start();
+                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), (s1, s2) -> {
+                    trackServiceModel.onTrackChangedCallback(s1, s2);
+                    trackInfo.setDistance(s2);
+                });
+                /**
+                 * 后期更新发送频率
+                 */
+                timer.schedule(trackTimer, 5000, 7000);
+                trackInfo.setDate(unixUtil.getDate());
+                chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
+                int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
+                chronometer.setFormat("0" + hour + ":%s");
+                aMapTrackClient.startGather(onTrackLifecycleListener);
+                aMapLocationClient.startLocation();
+            } else {
+                trackServiceModel.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
+            }
+        }
 
+        @Override
+        public void onStopTrackCallback(int i, String s) {
+            if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
+                theFirstTransmit = false;
+                trackServiceModel.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
+            }
+        }
+    };
 
     void init() {
         //初始化client
@@ -58,13 +97,6 @@ public class TrackServiceImpl {
         // 设置定位监听
         aMapLocationClient.setLocationListener(aMapLocationListener);
     }
-    private TrackInfo trackInfo = new TrackInfo();
-    private TrackParam trackParam;
-    private TrackServiceModel trackServiceModel;
-    private Chronometer chronometer;
-    UnixUtil unixUtil = new UnixUtil();
-    private TrackTimer trackTimer;
-    private Timer timer;
 
     /**
      * 设置定位参数
@@ -99,19 +131,18 @@ public class TrackServiceImpl {
 
     public void onStopTrack() {
         aMapTrackClient.stopGather(onTrackLifecycleListener);
-        aMapTrackClient.stopTrack(new TrackParam(Constants.ServiceID, Constants.TerminalID), onTrackLifecycleListener);
+        aMapTrackClient.stopTrack(new TrackParam(SERVICE_ID, TerminalUtil.getTerminal()), onTrackLifecycleListener);
         chronometer.stop();
         timer.cancel();
         aMapLocationClient.stopLocation();
         trackServiceModel.onTrackUploadCallback((int)trackInfo.getTimeConsuming() >= 60 ? true : false);
     }
 
-
     public void onStartTrack(TrackServiceModel trackServiceModel) {
         this.trackServiceModel = trackServiceModel;
-        trackInfo.setTerminalID(TerminalInfo.getTerminal());
+        trackInfo.setTerminalID(TerminalUtil.getTerminal());
         trackInfo.setServiceID(SERVICE_ID);
-        aMapTrackClient.addTrack(new AddTrackRequest((long) trackInfo.getServiceID(), (long) trackInfo.getTerminalID()), new onTrackListenerImpl() {
+        aMapTrackClient.addTrack(new AddTrackRequest((long) trackInfo.getServiceID(), (long) trackInfo.getTerminalID()), new OnTrackListenerImpl() {
             @Override
             public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
                 if (addTrackResponse.isSuccess()) {
@@ -122,63 +153,13 @@ public class TrackServiceImpl {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         trackParam.setNotification(createNotification());
                     }
-
                     aMapTrackClient.startTrack(trackParam, onTrackLifecycleListener);
                 } else {
-//                    ("网络请求失败，" + addTrackResponse.getErrorMsg());
-                    //onFailure interface
+                    trackServiceModel.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESPONSE+addTrackResponse.getErrorMsg());
                 }
             }
         });
     }
-
-    private OnTrackLifecycleListener onTrackLifecycleListener = new OnTrackLifecycleListener() {
-        @Override
-        public void onBindServiceCallback(int i, String s) {
-        }
-
-        @Override
-        public void onStartGatherCallback(int i, String s) {
-
-        }
-
-        @Override
-        public void onStartTrackCallback(int i, String s) {
-            if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
-                trackServiceModel.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
-                timer = new Timer();
-                chronometer.start();
-                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), (s1, s2) -> {
-                    trackServiceModel.onTrackChangedCallback(s1, s2);
-                    trackInfo.setDistance(s2);
-                });
-                /**
-                 * 后期更新发送频率
-                 */
-                timer.schedule(trackTimer, 5000, 7000);
-                trackInfo.setDate(unixUtil.getDate());
-                chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
-                int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
-                chronometer.setFormat("0" + hour + ":%s");
-                aMapTrackClient.startGather(onTrackLifecycleListener);
-                aMapLocationClient.startLocation();
-            } else {
-                trackServiceModel.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
-            }
-        }
-
-        @Override
-        public void onStopGatherCallback(int i, String s) {
-
-        }
-        @Override
-        public void onStopTrackCallback(int i, String s) {
-            if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
-                theFirstTransmit = false;
-                trackServiceModel.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
-            }
-        }
-    };
 
     /**
      * 在8.0以上手机，如果app切到后台，系统会限制定位相关接口调用频率
@@ -208,7 +189,6 @@ public class TrackServiceImpl {
     /**
      * 定位监听
      */
-
     AMapLocationListener aMapLocationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {

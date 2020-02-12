@@ -1,6 +1,5 @@
 package com.graduationproject.invoforultimate;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -15,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 //import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.AndroidJUnit4;
-
-import com.graduationproject.invoforultimate.util.DatabaseUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +30,7 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 
 public class ExampleInstrumentedTest {
+
     private Runnable runnable;
     private Handler handler;
     @Test
@@ -69,10 +67,10 @@ public class ExampleInstrumentedTest {
     public void TestDataBase() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        DatabaseUtil databaseUtil = new DatabaseUtil(context);
+//        DatabaseUtil databaseUtil = new DatabaseUtil(context);
         Log.d("ExampleInstrumentedTest", "context:" + context);
         System.out.println("ahhahhahha");
-        Log.d("ExampleInstrumentedTest", "databaseUtil.isRegistration():" + databaseUtil.isRegistration());
+//        Log.d("ExampleInstrumentedTest", "databaseUtil.isRegistration():" + databaseUtil.isRegistration());
     }
 
     public void testTimeTask(Context context) {
