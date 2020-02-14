@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.graduationproject.invoforultimate">
     <!-- 用于获取运营商信息，用于支持提供运营商信息相关的接口 -->
+
+
     <application
         android:name=".app.TrackApplication"
         android:allowBackup="true"
@@ -11,6 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        <receiver android:name=".service.TrackBroadcast">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".ui.activity.TrackReplayActivity"
             android:screenOrientation="portrait" />

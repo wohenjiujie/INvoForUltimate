@@ -2,6 +2,9 @@ package com.graduationproject.invoforultimate;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import androidx.annotation.CallSuper;
@@ -9,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.amap.api.maps.TextureMapView;
 import com.graduationproject.invoforultimate.presenter.Presenter;
+import com.graduationproject.invoforultimate.service.TrackBroadcast;
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 import com.graduationproject.invoforultimate.utils.ToastUtil;
 
@@ -23,6 +27,8 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
     private P p;
     private V v;
     private Map map;
+    private boolean isRegistered = false;
+    private TrackBroadcast trackBroadcast;
     @CallSuper
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +48,14 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         if (null != this.p && null != this.v) {
             this.p.attachV(this.v);
         }
+        trackBroadcast = new TrackBroadcast();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(trackBroadcast, filter);
+        isRegistered = true;
+
         initControls(savedInstanceState);
     }
 
@@ -107,6 +121,10 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         }
         if (null != this.map) {
             map.onDestroy();
+        }
+        if (isRegistered) {
+            unregisterReceiver(trackBroadcast);
+            trackBroadcast = null;
         }
     }
 }

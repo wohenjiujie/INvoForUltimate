@@ -5,7 +5,7 @@ import android.util.Log;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import com.graduationproject.invoforultimate.listener.TrackResult;
 import com.graduationproject.invoforultimate.model.TerminalModel;
-import com.graduationproject.invoforultimate.utils.TrackThread;
+import com.graduationproject.invoforultimate.service.TrackThread;
 
 import org.json.JSONException;
 import org.json.JSONObject;

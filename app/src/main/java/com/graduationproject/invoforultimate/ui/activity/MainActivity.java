@@ -1,9 +1,12 @@
 package com.graduationproject.invoforultimate.ui.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,9 @@ import android.widget.TextView;
 import androidx.annotation.CheckResult;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
@@ -24,6 +30,7 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
+import com.graduationproject.invoforultimate.bean.constants.MainConstants;
 import com.graduationproject.invoforultimate.utils.TrackDialog;
 import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
@@ -33,6 +40,10 @@ import java.util.LinkedList;
 import java.util.List;
 import butterknife.*;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.graduationproject.invoforultimate.R2.id.basic_map;
 import static com.graduationproject.invoforultimate.R2.id.nav_view;
 import static com.graduationproject.invoforultimate.R2.id.time_task;
@@ -62,7 +73,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
     TextView trackSpeed;
     @BindView(track_camera)
     CheckBox trackCamera;
-//    private static final String TAG = MainConstants.TAG;
+    private static final String TAG = MainConstants.TAG;
     private static List<LatLng> coordinate = new ArrayList<>();
     private static Polyline polyline;
     private static boolean isStart = false;
@@ -117,6 +128,9 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
 
     @Override
     protected void initControls(Bundle savedInstanceState) {
+        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)!= PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 1);
+        }
         getP().mapSettings(getMap().getMap());
         getP().checkTerminal();
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {

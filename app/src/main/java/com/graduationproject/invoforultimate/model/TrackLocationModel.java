@@ -6,6 +6,7 @@ import com.amap.api.maps.model.LatLng;
  * Created by INvo
  * on 2020-02-09.
  */
+@FunctionalInterface
 public interface TrackLocationModel extends ModelResult {
     void onLatLngCallback(LatLng latLng);
 }

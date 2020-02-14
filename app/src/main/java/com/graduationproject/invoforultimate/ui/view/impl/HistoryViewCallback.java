@@ -17,5 +17,6 @@ public interface HistoryViewCallback extends ViewCallback {
 
     void onGetIntentResult(@Nullable Parcelable parcelable);
 
+
     void onDeleteResult();
 }

@@ -6,11 +6,18 @@ package com.graduationproject.invoforultimate.bean.constants;
  */
 public final class MainConstants {
 
+
+
+
     public static String TAG = "mainLog";
     public static String TRACK_UPLOAD = "正在上传数据";
     public static String TRACK_START = "开始";
     public static String TRACK_STOP = "结束";
 
+    public static String NETWORK_BROADCAST_WIFI = "Wifi";
+    public static String NETWORK_BROADCAST_MOBILE = "蜂窝数据";
+    public static String NETWORK_BROADCAST_CONNECT = "已连接";
+    public static String NETWORK_BROADCAST_NOT_CONNECT = "已断开";
 
     public static String BOTTOM_NAVIGATION_TITLE = "开始运动";
     public static String BOTTOM_NAVIGATION_MESSAGE = "是否开始运动记录";

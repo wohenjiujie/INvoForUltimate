@@ -8,7 +8,7 @@ import com.graduationproject.invoforultimate.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.bean.TrackIntentParcelable;
 import com.graduationproject.invoforultimate.model.TrackHistoryModel;
 import com.graduationproject.invoforultimate.presenter.HistoryBuilderPresenter;
-import com.graduationproject.invoforultimate.utils.TrackThread;
+import com.graduationproject.invoforultimate.service.TrackThread;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -26,8 +26,8 @@ import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import com.graduationproject.invoforultimate.bean.TrackInfo;
 import com.graduationproject.invoforultimate.model.TrackServiceModel;
-import com.graduationproject.invoforultimate.utils.TrackThread;
-import com.graduationproject.invoforultimate.utils.TrackTimer;
+import com.graduationproject.invoforultimate.service.TrackThread;
+import com.graduationproject.invoforultimate.service.TrackTimer;
 import com.graduationproject.invoforultimate.ui.activity.MainActivity;
 import com.graduationproject.invoforultimate.utils.UnixUtil;
 

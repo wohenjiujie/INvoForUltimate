@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.utils;
+package com.graduationproject.invoforultimate.service;
 
 
 import android.os.Message;
@@ -12,6 +12,7 @@ import com.graduationproject.invoforultimate.bean.TrackInfo;
 import com.graduationproject.invoforultimate.listener.MyTrackThread;
 import com.graduationproject.invoforultimate.listener.TrackResult;
 import com.graduationproject.invoforultimate.model.TrackHistoryModel;
+import com.graduationproject.invoforultimate.utils.TerminalUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;

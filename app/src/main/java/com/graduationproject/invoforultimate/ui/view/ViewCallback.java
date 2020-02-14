@@ -6,5 +6,6 @@ package com.graduationproject.invoforultimate.ui.view;
  * 抽象V回调接口
  */
 
+
 public interface ViewCallback {
 }
