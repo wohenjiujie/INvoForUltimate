@@ -1,7 +1,6 @@
 package com.graduationproject.invoforultimate.service;
 
 
-import android.graphics.Bitmap;
 import android.os.Message;
 import android.util.Log;
 
@@ -12,14 +11,15 @@ import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.entity.bean.TrackInfo;
 import com.graduationproject.invoforultimate.listener.MyTrackThread;
 import com.graduationproject.invoforultimate.listener.TrackReplayTem;
-import com.graduationproject.invoforultimate.listener.TrackResult;
-import com.graduationproject.invoforultimate.model.TrackHistoryModel;
+import com.graduationproject.invoforultimate.model.TrackReplay;
+import com.graduationproject.invoforultimate.model.TrackTerminal;
+import com.graduationproject.invoforultimate.model.TrackHistory;
+import com.graduationproject.invoforultimate.model.TrackModel;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -33,7 +33,6 @@ import static com.graduationproject.invoforultimate.entity.constants.TerminalMod
 import static com.graduationproject.invoforultimate.entity.constants.TrackHistoryConstants.*;
 import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_LATLNG;
 import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
-import static com.graduationproject.invoforultimate.ui.activity.TrackHistoryActivity.TAG;
 
 /**
  * Created by INvo
@@ -50,7 +49,7 @@ public class TrackThread extends Thread implements MyTrackThread {
     private Request request;
     private OkHttpClient okHttpClient = new OkHttpClient();
     private Response response;
-    private TrackResult trackResult;
+    private TrackTerminal trackTerminal;
     private int threadType;
     private String post;
     private TrackInfo trackInfo;
@@ -58,12 +57,12 @@ public class TrackThread extends Thread implements MyTrackThread {
     private String content2;
     private Request request2;
     private Response response2;
-    private TrackHistoryModel trackHistoryModel;
-    private TrackReplayTem trackReplayTem;
+    private TrackHistory trackHistory;
+    private TrackReplay trackReplay;
     private int TrackID;
 
-    public TrackThread(int threadType, String post, @Nullable TrackResult trackResult) {
-        this.trackResult = trackResult;
+    public TrackThread(int threadType, String post, @Nullable TrackModel trackModel) {
+        this.trackTerminal = (TrackTerminal) trackModel;
         this.threadType = threadType;
         this.post = post;
     }
@@ -75,12 +74,11 @@ public class TrackThread extends Thread implements MyTrackThread {
 
     /**
      * 本身就有Async的依赖，所以不需要执行run()方法
-     *
      * @param threadType
-     * @param trackHistoryModel
+     * @param trackModel
      */
-    public TrackThread(int threadType, TrackHistoryModel trackHistoryModel) {
-        this.trackHistoryModel = trackHistoryModel;
+    public TrackThread(int threadType, TrackModel trackModel) {
+        this.trackHistory = (TrackHistory)trackModel;
         if (GET_TRACK_HISTORY_INFO == threadType) {
             getTrackHistoryInfo();
         }
@@ -91,10 +89,10 @@ public class TrackThread extends Thread implements MyTrackThread {
      *
      * @param threadType
      * @param var
-     * @param trackHistoryModel
+     * @param trackModel
      */
-    public TrackThread(int threadType, @NonNull Object var, @NonNull TrackHistoryModel trackHistoryModel) {
-        this.trackHistoryModel = trackHistoryModel;
+    public TrackThread(int threadType, @NonNull Object var, @NonNull TrackModel trackModel) {
+        this.trackHistory = (TrackHistory) trackModel;
         if (GET_TRACK_INTENT_INFO == threadType) {
             getIntentInfo(var);
         }
@@ -103,9 +101,9 @@ public class TrackThread extends Thread implements MyTrackThread {
         }
     }
 
-    public TrackThread(int threadType, int TrackID, TrackReplayTem TrackReplayTem) {
+    public TrackThread(int threadType, int TrackID, TrackModel trackModel) {
         this.threadType = threadType;
-        this.trackReplayTem = TrackReplayTem;
+        this.trackReplay = (TrackReplay) trackModel;
         this.TrackID = TrackID;
     }
 
@@ -140,7 +138,7 @@ public class TrackThread extends Thread implements MyTrackThread {
             e.printStackTrace();
         } finally {
             try {
-                trackHistoryModel.onTrackHistoryIntentCallback(response.body().string());
+                trackHistory.onTrackHistoryIntentCallback(response.body().string());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -159,14 +157,13 @@ public class TrackThread extends Thread implements MyTrackThread {
             e.printStackTrace();
         } finally {
             try {
-                trackHistoryModel.onTrackHistoryCallback(response.body().string(), response2.body().string());
+                trackHistory.onTrackHistoryCallback(response.body().string(), response2.body().string());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    @Override
     public void createTrackCount(String s) {
         String x = CREATE_TRACK_COUNT_URL + s;
         Request request = new Request.Builder().url(x).get().build();
@@ -177,7 +174,6 @@ public class TrackThread extends Thread implements MyTrackThread {
         }
     }
 
-    @Override
     public void uploadTrackInfo() {
         content = ADD_TRACK_COUNT + trackInfo.getTerminalID();
         JSONObject jsonObject = new JSONObject();
@@ -231,14 +227,13 @@ public class TrackThread extends Thread implements MyTrackThread {
         } finally {
             try {
                 String result = response.body().string();
-                trackReplayTem.onGetListTem(result);
+                trackReplay.onGetListTem(result);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    @Override
     public void createTerminal(String s) {
         content = TERMINAL_PREFIX + "&&name=" + s;
         requestBody = RequestBody.create(mediaTypeCommon, content);
@@ -260,7 +255,7 @@ public class TrackThread extends Thread implements MyTrackThread {
                 message.what = MSG_TERMINAL_SUCCESS;
                 message.obj = accept;
             }
-            trackResult.trackResult(message);
+            trackTerminal.createTrackCallback(message);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

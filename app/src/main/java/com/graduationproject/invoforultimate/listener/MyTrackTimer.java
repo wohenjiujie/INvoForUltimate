@@ -5,7 +5,7 @@ package com.graduationproject.invoforultimate.listener;
  * on 2020-02-08.
  */
 
-@FunctionalInterface
+@Deprecated
 public interface MyTrackTimer {
-    void updateTrack();
+//    void updateTrack();
 }

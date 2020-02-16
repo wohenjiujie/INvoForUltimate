@@ -4,13 +4,14 @@ package com.graduationproject.invoforultimate.listener;
  * Created by INvo
  * on 2020-02-07.
  */
+@Deprecated
 public interface MyTrackThread {
 
     //hou qi gai cheng hui diao han shu as trackTimer
 
-    void createTerminal(String s);
+    /*void createTerminal(String s);
 
     void createTrackCount(String s);
 
-    void uploadTrackInfo();
+    void uploadTrackInfo();*/
 }

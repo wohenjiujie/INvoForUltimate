@@ -6,7 +6,8 @@ import androidx.annotation.Nullable;
  * Created by INvo
  * on 2020-02-12.
  */
-public interface TrackHistoryModel {
+public interface TrackHistory extends TrackModel{
+
     void onTrackHistoryCallback(@Nullable String var1, @Nullable String var2);
 
     void onTrackHistoryIntentCallback(String result);

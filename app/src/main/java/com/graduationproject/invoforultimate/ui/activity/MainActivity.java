@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -33,7 +32,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.entity.constants.MainConstants;
-import com.graduationproject.invoforultimate.listener.TrackScreenShot;
+import com.graduationproject.invoforultimate.listener.TrackScreenShotImpl;
 import com.graduationproject.invoforultimate.utils.TrackDialog;
 import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
@@ -117,7 +116,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         if (KeyEvent.KEYCODE_BACK == keyCode && View.VISIBLE == trackController.getVisibility()) {
             if (isStart) {
                 new TrackDialog(this, DIALOG_STOP_TRACK)
-                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShot(){
+                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
                             @Override
                             public void onMapScreenShot(Bitmap bitmap) {
                                 getP().stopTrack(bitmap);
@@ -153,7 +152,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                  */
                 case R.id.tools1:
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    getMap().getMap().getMapScreenShot(new TrackScreenShot(){
+                    getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
                         @Override
                         public void onMapScreenShot(Bitmap bitmap) {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
@@ -188,7 +187,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
     public void trackStop() {
         if (isStart) {
             isLocate = false;
-            getMap().getMap().getMapScreenShot(new TrackScreenShot(){
+            getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
 
                 @Override
                 public void onMapScreenShot(Bitmap bitmap) {

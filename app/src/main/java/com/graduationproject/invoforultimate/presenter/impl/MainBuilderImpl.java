@@ -3,10 +3,11 @@ package com.graduationproject.invoforultimate.presenter.impl;
 import android.graphics.Bitmap;
 import android.widget.Chronometer;
 
+import androidx.annotation.NonNull;
+
 import com.amap.api.maps.AMap;
-import com.graduationproject.invoforultimate.model.TerminalModel;
-import com.graduationproject.invoforultimate.model.TrackServiceModel;
-import com.graduationproject.invoforultimate.model.impl.TerminalModelImpl;
+import com.amap.api.maps.model.LatLng;
+import com.graduationproject.invoforultimate.model.impl.TrackTerminalImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackLocationImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackServiceImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
@@ -25,11 +26,16 @@ import static com.graduationproject.invoforultimate.entity.constants.MainConstan
 public class MainBuilderImpl extends Presenter<MainViewCallback> implements MainBuilderPresenter {
 
 
-    private TerminalModelImpl terminalModelImpl;
+    private TrackTerminalImpl trackTerminalImpl;
     private TrackServiceImpl trackServiceImpl;
     private TrackLocationImpl trackLocationImpl;
 
-    private TrackServiceModel trackServiceModel = new TrackServiceModel() {
+    public MainBuilderImpl() {
+        this.trackTerminalImpl = new TrackTerminalImpl(this);
+        this.trackLocationImpl = new TrackLocationImpl(this);
+    }
+
+    /*private TrackServiceTrackModel trackServiceModel = new TrackServiceTrackModel() {
         @Override
         public void onTrackCallback(int x, String s) {
             getV().onTrackResult(x, s);
@@ -37,7 +43,7 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
 
         @Override
         public void onTrackChangedCallback(String s1, String s2) {
-            getV().onTrackChangedResult(s1,s2);
+            getV().onTrackChangedResult(s1, s2);
         }
 
         @Override
@@ -52,22 +58,17 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
                 trackServiceImpl.onUploadTrackCheck();
             }
         }
-    };
+    };*/
 
-    public MainBuilderImpl() {
-        super();
-        this.terminalModelImpl = new TerminalModelImpl(new TerminalModel() {
-            @Override
-            public void createTerminalCallback(String s) {
-                getV().onCreateTerminalResult(s);
-            }
+    public void stopTrack(Bitmap bitmap) {
+        trackServiceImpl.onStopTrack(bitmap);
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP);
+    }
 
-            @Override
-            public void checkTerminalCallback(boolean x) {
-                getV().onCheckTerminalResult(x);
-            }
-        });
-        this.trackLocationImpl = new TrackLocationImpl();
+    public void startTrack(Chronometer chronometer) {
+        this.trackServiceImpl = new TrackServiceImpl(chronometer,this);
+        trackServiceImpl.onStartTrack();
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START);
     }
 
     public void setCamera(boolean type) {
@@ -76,29 +77,58 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
 
     public void mapSettings(AMap aMap) {
         trackLocationImpl.mapSettings(aMap);
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_INIT, latLng -> {
-            getV().onInitLocationResult(latLng,CAMERA_FOLLOW_INIT);
-        });
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_INIT);
     }
 
-    public void stopTrack(Bitmap bitmap) {
-        trackServiceImpl.onStopTrack(bitmap);
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP, latLng -> getV().onInitLocationResult(latLng,CAMERA_FOLLOW_STOP));
-    }
-
-    public void startTrack(Chronometer chronometer) {
-        this.trackServiceImpl = new TrackServiceImpl(chronometer);
-        trackServiceImpl.onStartTrack(trackServiceModel);
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START, latLng -> getV().onInitLocationResult(latLng,CAMERA_FOLLOW_START));
-    }
-
-    @Override
     public void createTerminal(String s) {
-        terminalModelImpl.createTerminal(s);
+        trackTerminalImpl.createTerminal(s);
+    }
+
+    public void checkTerminal() {
+        trackTerminalImpl.checkTerminal();
     }
 
     @Override
-    public void checkTerminal() {
-        terminalModelImpl.checkTerminal();
+    public void createTerminalCallback(String s) {
+        getV().onCreateTerminalResult(s);
+    }
+
+    @Override
+    public void checkTerminalCallback(boolean x) {
+        getV().onCheckTerminalResult(x);
+    }
+
+    @Override
+    public void onLatLngCallback(LatLng latLng, @NonNull Integer type) {
+        if (CAMERA_FOLLOW_INIT == type) {
+            getV().onInitLocationResult(latLng, type);
+        } else if (CAMERA_FOLLOW_STOP == type) {
+            getV().onInitLocationResult(latLng, type);
+        } else if (CAMERA_FOLLOW_START == type) {
+            getV().onInitLocationResult(latLng, type);
+        }
+    }
+
+    @Override
+    public void onTrackCallback(int x, String s) {
+        getV().onTrackResult(x, s);
+    }
+
+    @Override
+    public void onTrackChangedCallback(String s1, String s2) {
+        getV().onTrackChangedResult(s1, s2);
+    }
+
+    @Override
+    public void onTrackLocationCallback(double d1, double d2, int i) {
+        getV().onTrackLocationResult(d1, d2, i);
+    }
+
+    @Override
+    public void onTrackUploadCallback(boolean x) {
+        getV().onTrackUploadResult(x);
+        if (x) {
+            trackServiceImpl.onUploadTrackCheck();
+        }
     }
 }

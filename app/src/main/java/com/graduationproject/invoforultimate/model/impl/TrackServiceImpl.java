@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.SystemClock;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Chronometer;
 
@@ -25,9 +24,11 @@ import com.amap.api.track.query.model.AddTrackResponse;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.listener.OnTrackLifecycleListenerImpl;
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
+import com.graduationproject.invoforultimate.listener.TrackTimerListener;
+import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
+import com.graduationproject.invoforultimate.presenter.TrackPresenter;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import com.graduationproject.invoforultimate.entity.bean.TrackInfo;
-import com.graduationproject.invoforultimate.model.TrackServiceModel;
 import com.graduationproject.invoforultimate.service.TrackThread;
 import com.graduationproject.invoforultimate.service.TrackTimer;
 import com.graduationproject.invoforultimate.ui.activity.MainActivity;
@@ -35,8 +36,6 @@ import com.graduationproject.invoforultimate.utils.UnixUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Timer;
-
-import org.apache.commons.codec.*;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
@@ -46,30 +45,33 @@ import static com.graduationproject.invoforultimate.entity.constants.TrackServic
  * Created by INvo
  * on 2020-02-08.
  */
-public class TrackServiceImpl {
+public class TrackServiceImpl  {
     private AMapTrackClient aMapTrackClient;
     private AMapLocationClient aMapLocationClient = null;
     private AMapLocationClientOption aMapLocationClientOption = null;
     private boolean theFirstTransmit = false;
     private TrackInfo trackInfo = new TrackInfo();
     private TrackParam trackParam;
-    private TrackServiceModel trackServiceModel;
+//    private TrackServiceTrackModel trackServiceModel;
     private Chronometer chronometer;
     UnixUtil unixUtil = new UnixUtil();
     private TrackTimer trackTimer;
     private Timer timer;
     private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
+    private MainBuilderPresenter mainBuilderPresenter;
     private OnTrackLifecycleListenerImpl onTrackLifecycleListener = new OnTrackLifecycleListenerImpl() {
         @Override
         public void onStartTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
-                trackServiceModel.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
+                mainBuilderPresenter.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
                 timer = new Timer();
                 chronometer.start();
-                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), (s1, s2) -> {
-                    trackServiceModel.onTrackChangedCallback(s1, s2);
-                    trackInfo.setDistance(s2);
+                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), new TrackTimerListener() {
+                    @Override
+                    public void onTimerCallback(String s1, String s2) {
+                        mainBuilderPresenter.onTrackChangedCallback(s1, s2);
+                        trackInfo.setDistance(s2);
+                    }
                 });
                 /**
                  * 后期更新发送频率
@@ -82,7 +84,7 @@ public class TrackServiceImpl {
                 aMapTrackClient.startGather(onTrackLifecycleListener);
                 aMapLocationClient.startLocation();
             } else {
-                trackServiceModel.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
+                mainBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
             }
         }
 
@@ -90,7 +92,7 @@ public class TrackServiceImpl {
         public void onStopTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 theFirstTransmit = false;
-                trackServiceModel.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
+                mainBuilderPresenter.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
             }
         }
     };
@@ -115,8 +117,8 @@ public class TrackServiceImpl {
         return aMapLocationClientOption;
     }
 
-    public TrackServiceImpl(Chronometer chronometer) {
-        super();
+    public TrackServiceImpl(Chronometer chronometer, TrackPresenter trackPresenter) {
+        this.mainBuilderPresenter = (MainBuilderPresenter) trackPresenter;
         aMapTrackClient = new AMapTrackClient(getContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
         init();
@@ -145,11 +147,11 @@ public class TrackServiceImpl {
         chronometer.stop();
         timer.cancel();
         aMapLocationClient.stopLocation();
-        trackServiceModel.onTrackUploadCallback((int) trackInfo.getTimeConsuming() >= 60 ? true : false);
+        mainBuilderPresenter.onTrackUploadCallback((int) trackInfo.getTimeConsuming() >= 60 ? true : false);
     }
 
-    public void onStartTrack(TrackServiceModel trackServiceModel) {
-        this.trackServiceModel = trackServiceModel;
+    public void onStartTrack() {
+//        this.trackServiceModel = trackServiceModel;
         trackInfo.setTerminalID(TerminalUtil.getTerminal());
         trackInfo.setServiceID(SERVICE_ID);
         aMapTrackClient.addTrack(new AddTrackRequest((long) trackInfo.getServiceID(), (long) trackInfo.getTerminalID()), new OnTrackListenerImpl() {
@@ -165,7 +167,7 @@ public class TrackServiceImpl {
                     }
                     aMapTrackClient.startTrack(trackParam, onTrackLifecycleListener);
                 } else {
-                    trackServiceModel.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESPONSE + addTrackResponse.getErrorMsg());
+                    mainBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESPONSE + addTrackResponse.getErrorMsg());
                 }
             }
         });
@@ -196,9 +198,6 @@ public class TrackServiceImpl {
         return notification;
     }
 
-    /**
-     * 定位监听
-     */
     AMapLocationListener aMapLocationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation aMapLocation) {
@@ -206,21 +205,20 @@ public class TrackServiceImpl {
                 if (aMapLocation.getErrorCode() == 0) {
                     double longitude = aMapLocation.getLongitude();
                     double latitude = aMapLocation.getLatitude();
-                    trackServiceModel.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
+                    mainBuilderPresenter.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
                     String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
                     if (address.length() > 0 && !theFirstTransmit) {
                         trackInfo.setDesc(address);
                         theFirstTransmit = true;
                     }
-                } else {
-                    //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+                }
+                /*else {
                     Log.e(TAG, "location Error, ErrCode:"
                             + aMapLocation.getErrorCode() + ", errInfo:"
                             + aMapLocation.getErrorInfo());
-                }
+                }*/
             }
         }
-
     };
 }
 

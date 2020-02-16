@@ -10,7 +10,6 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.track.query.entity.Point;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.model.TrackReplayModel;
 import com.graduationproject.invoforultimate.model.impl.TrackReplayImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.ReplayBuilderPresenter;
@@ -25,27 +24,9 @@ import java.util.List;
 public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements ReplayBuilderPresenter {
     private TrackReplayImpl trackReplayImpl;
 
-    public ReplayBuilderImpl() {
-        super();
-    }
 
     public void trackReplay(Bundle bundle) {
-        trackReplayImpl= new TrackReplayImpl(bundle, new TrackReplayModel() {
-            @Override
-            public void onTrackPointsCallback(List<Point> pointList) {
-                drawPolyline(pointList);
-            }
-
-            @Override
-            public void onTrackPointsResultCallback(String s) {
-                getV().onTrackReplayResult(s);
-            }
-
-            @Override
-            public void onMarkerReplayCallback(LatLng latLng) {
-                getV().onMarkerPositionResult(latLng);
-            }
-        });
+        trackReplayImpl= new TrackReplayImpl(bundle, this);
     }
 
     public void MarkerReplay() {
@@ -86,5 +67,20 @@ public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements 
             boundsBuilder.include(latLng);
         }
         getV().onTrackReplayResult(markerOptions1, markerOptions2, polylineOptions, boundsBuilder,markerOptions3);
+    }
+
+    @Override
+    public void onTrackPointsCallback(List<Point> pointList) {
+        drawPolyline(pointList);
+    }
+
+    @Override
+    public void onTrackPointsResultCallback(String s) {
+        getV().onTrackReplayResult(s);
+    }
+
+    @Override
+    public void onMarkerReplayCallback(LatLng latLng) {
+        getV().onMarkerPositionResult(latLng);
     }
 }

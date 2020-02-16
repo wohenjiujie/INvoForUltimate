@@ -7,7 +7,8 @@ import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.graduationproject.invoforultimate.model.TrackLocationModel;
+import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
+import com.graduationproject.invoforultimate.presenter.TrackPresenter;
 
 /**
  * Created by INvo
@@ -16,8 +17,10 @@ import com.graduationproject.invoforultimate.model.TrackLocationModel;
 public class TrackLocationImpl {
     private LatLng latLng;
     private AMap aMap;
-    public TrackLocationImpl() {
-        super();
+    private MainBuilderPresenter mainBuilderPresenter;
+
+    public TrackLocationImpl(TrackPresenter trackPresenter) {
+        this.mainBuilderPresenter = (MainBuilderPresenter) trackPresenter;
     }
 
     public void mapSettings(AMap aMap){
@@ -51,10 +54,10 @@ public class TrackLocationImpl {
         );
     }
 
-    public void cameraFollow(int type, TrackLocationModel trackLocationModel) {
+    public void cameraFollow(int type) {
         aMap.setOnMyLocationChangeListener(location -> {
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            trackLocationModel.onLatLngCallback(latLng);
+            mainBuilderPresenter.onLatLngCallback(latLng, type);
         });
     }
 }

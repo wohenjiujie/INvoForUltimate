@@ -8,7 +8,8 @@ import java.util.ArrayList;
  * Created by INvo
  * on 2020-02-15.
  */
+@Deprecated
 public interface TrackReplayTem {
 
-    void onGetListTem(String result);
+//    void onGetListTem(String result);
 }

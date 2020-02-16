@@ -3,14 +3,14 @@ package com.graduationproject.invoforultimate.model.impl;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.entity.bean.TrackIntentParcelable;
-import com.graduationproject.invoforultimate.model.TrackHistoryModel;
+import com.graduationproject.invoforultimate.model.TrackHistory;
 import com.graduationproject.invoforultimate.presenter.HistoryBuilderPresenter;
+import com.graduationproject.invoforultimate.presenter.TrackPresenter;
 import com.graduationproject.invoforultimate.service.TrackThread;
 
 import org.apache.commons.codec.binary.Base64;
@@ -21,13 +21,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.graduationproject.invoforultimate.entity.constants.TrackHistoryConstants.*;
-import static com.graduationproject.invoforultimate.ui.activity.TrackHistoryActivity.TAG;
 
 /**
  * Created by INvo
  * on 2020-02-12.
  */
-public class TrackHistoryServiceImpl extends AsyncTask<String, Integer, String> implements TrackHistoryModel {
+public class TrackHistoryImpl extends AsyncTask<String, Integer, String> implements TrackHistory {
     private int type;
     private static TrackHistoryInfo trackHistoryInfo = new TrackHistoryInfo();
     private HistoryBuilderPresenter historyBuilderPresenter;
@@ -39,10 +38,10 @@ public class TrackHistoryServiceImpl extends AsyncTask<String, Integer, String> 
     private ArrayList<Bitmap> bitmap = new ArrayList<>();
     private Object var;
 
-    public TrackHistoryServiceImpl(int type, @Nullable Object var, HistoryBuilderPresenter historyBuilderPresenter) {
+    public TrackHistoryImpl(int type, @Nullable Object var, TrackPresenter trackPresenter) {
         super();
         this.type = type;
-        this.historyBuilderPresenter = historyBuilderPresenter;
+        this.historyBuilderPresenter = (HistoryBuilderPresenter) trackPresenter;
         this.var = var;
     }
 

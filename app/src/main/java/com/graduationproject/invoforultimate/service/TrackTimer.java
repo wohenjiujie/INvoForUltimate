@@ -5,7 +5,9 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.graduationproject.invoforultimate.listener.MyTrackTimer;
-import com.graduationproject.invoforultimate.listener.TrackTimerResult;
+import com.graduationproject.invoforultimate.listener.TrackListener;
+import com.graduationproject.invoforultimate.model.TrackModel;
+import com.graduationproject.invoforultimate.listener.TrackTimerListener;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 
 import org.json.JSONArray;
@@ -32,12 +34,12 @@ public class TrackTimer extends TimerTask implements MyTrackTimer {
     private Response response;
     private OkHttpClient okHttpClient=new OkHttpClient();
     private Object object;
-    private TrackTimerResult trackTimerResult;
+    private TrackTimerListener trackTimerListener;
 
-    public TrackTimer(int timerType,@Nullable Object data,@Nullable TrackTimerResult trackTimerResult ) {
+    public TrackTimer(int timerType,@Nullable Object data,@Nullable TrackListener trackListener) {
         this.timerType = timerType;
         this.object = data;
-        this.trackTimerResult = trackTimerResult;
+        this.trackTimerListener =(TrackTimerListener) trackListener;
     }
 
     @Override
@@ -47,7 +49,6 @@ public class TrackTimer extends TimerTask implements MyTrackTimer {
         }
     }
 
-    @Override
     public void updateTrack() {
         String content = SEARCH_TRACK_HISTORY +"&tid=" + TerminalUtil.getTerminal() + "&trid=" + object + "&pagesize=999";
         request = new Request.Builder().url(content).get().build();
@@ -70,7 +71,7 @@ public class TrackTimer extends TimerTask implements MyTrackTimer {
                 String object2 = jsonArray.getJSONObject(0)
                         .getString("distance");
                 Log.d(TAG, object1+"\n"+object2);
-                trackTimerResult.onTimerCallback(object1,object2);
+                trackTimerListener.onTimerCallback(object1,object2);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
