@@ -156,7 +156,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                         @Override
                         public void onMapScreenShot(Bitmap bitmap) {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                            byte[] bytes = byteArrayOutputStream.toByteArray();// 转为byte数组
+                            byte[] bytes = byteArrayOutputStream.toByteArray();
                             String y = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
                             byte[] bytess = Base64.decodeBase64(y);
                            Bitmap  bitmaps= BitmapFactory.decodeByteArray(bytess,0,bytess.length);
@@ -188,7 +188,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         if (isStart) {
             isLocate = false;
             getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
-
                 @Override
                 public void onMapScreenShot(Bitmap bitmap) {
                     getP().stopTrack(bitmap);
@@ -273,6 +272,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                 for (Polyline p : polyLines) {
                     p.remove();
                 }
+                coordinate.clear();
                 polyLines.clear();
             }
             if (TRACK_RESULT_FAILURE == callback) {
