@@ -1,5 +1,6 @@
 package com.graduationproject.invoforultimate.ui.view.impl;
 
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.PolylineOptions;
@@ -13,5 +14,7 @@ public interface ReplayViewCallback extends ViewCallback {
 
     void onTrackReplayResult(String s);
 
-    void onTrackReplayCallback(MarkerOptions var1, MarkerOptions var2, PolylineOptions var3, LatLngBounds.Builder builder);
+    void onTrackReplayResult(MarkerOptions var1, MarkerOptions var2, PolylineOptions var3, LatLngBounds.Builder builder, MarkerOptions var4);
+
+    void onMarkerPositionResult(LatLng latLng);
 }

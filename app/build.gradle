@@ -46,6 +46,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
-    //    implementation files('libs/mysql-connector-java-8.0.17.jar')
-//    implementation files('libs/mysql-connector-java-8.0.17.jar')
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
+
 }

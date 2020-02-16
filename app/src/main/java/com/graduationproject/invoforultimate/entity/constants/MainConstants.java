@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.bean.constants;
+package com.graduationproject.invoforultimate.entity.constants;
 
 /**
  * Created by INvo
@@ -16,7 +16,7 @@ public final class MainConstants {
 
     public static String NETWORK_BROADCAST_WIFI = "Wifi";
     public static String NETWORK_BROADCAST_MOBILE = "蜂窝数据";
-    public static String NETWORK_BROADCAST_CONNECT = "已连接";
+//    public static String NETWORK_BROADCAST_CONNECT = "已连接";
     public static String NETWORK_BROADCAST_NOT_CONNECT = "已断开";
 
     public static String BOTTOM_NAVIGATION_TITLE = "开始运动";

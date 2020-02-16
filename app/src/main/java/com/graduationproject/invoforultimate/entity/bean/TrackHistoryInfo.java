@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.bean;
+package com.graduationproject.invoforultimate.entity.bean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ public class TrackHistoryInfo<E> {
     private ArrayList<E> time = new ArrayList<>();
     private ArrayList<E> distance = new ArrayList<>();
     private ArrayList<E> TrackID = new ArrayList<>();
+    private ArrayList<E> bitmap = new ArrayList<>();
 
     public E getCounts() {
         return counts;
@@ -73,5 +74,13 @@ public class TrackHistoryInfo<E> {
                 ", distance=" + distance +
                 ", TrackID=" + TrackID +
                 '}';
+    }
+
+    public ArrayList<E> getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(ArrayList<E> bitmap) {
+        this.bitmap = bitmap;
     }
 }

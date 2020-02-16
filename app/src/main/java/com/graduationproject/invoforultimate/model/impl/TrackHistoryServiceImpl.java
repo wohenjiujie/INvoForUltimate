@@ -1,22 +1,27 @@
 package com.graduationproject.invoforultimate.model.impl;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.graduationproject.invoforultimate.bean.TrackHistoryInfo;
-import com.graduationproject.invoforultimate.bean.TrackIntentParcelable;
+import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
+import com.graduationproject.invoforultimate.entity.bean.TrackIntentParcelable;
 import com.graduationproject.invoforultimate.model.TrackHistoryModel;
 import com.graduationproject.invoforultimate.presenter.HistoryBuilderPresenter;
 import com.graduationproject.invoforultimate.service.TrackThread;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.graduationproject.invoforultimate.bean.constants.TrackHistoryConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TrackHistoryConstants.*;
+import static com.graduationproject.invoforultimate.ui.activity.TrackHistoryActivity.TAG;
 
 /**
  * Created by INvo
@@ -24,20 +29,21 @@ import static com.graduationproject.invoforultimate.bean.constants.TrackHistoryC
  */
 public class TrackHistoryServiceImpl extends AsyncTask<String, Integer, String> implements TrackHistoryModel {
     private int type;
-    private TrackHistoryInfo trackHistoryInfo = new TrackHistoryInfo();
+    private static TrackHistoryInfo trackHistoryInfo = new TrackHistoryInfo();
     private HistoryBuilderPresenter historyBuilderPresenter;
     private ArrayList<String> desc = new ArrayList<>();
     private ArrayList<String> date = new ArrayList<>();
     private ArrayList<String> time = new ArrayList<>();
     private ArrayList<String> distance = new ArrayList<>();
     private ArrayList<String> TrackID = new ArrayList<>();
+    private ArrayList<Bitmap> bitmap = new ArrayList<>();
     private Object var;
 
     public TrackHistoryServiceImpl(int type, @Nullable Object var, HistoryBuilderPresenter historyBuilderPresenter) {
         super();
         this.type = type;
         this.historyBuilderPresenter = historyBuilderPresenter;
-        this.var=var;
+        this.var = var;
     }
 
     @Override
@@ -69,15 +75,18 @@ public class TrackHistoryServiceImpl extends AsyncTask<String, Integer, String> 
         trackHistoryInfo.setTime(time);
         trackHistoryInfo.setDistance(distance);
         trackHistoryInfo.setTrackID(TrackID);
+        trackHistoryInfo.setBitmap(bitmap);
         try {
             JSONArray jsonArray = new JSONArray(var2);
-            for (int i = 0; i <= Integer.parseInt(var1); i++) {
+            for (int i = 0; i < Integer.parseInt(var1); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 trackHistoryInfo.getDesc().add(jsonObject.getString("description"));
                 trackHistoryInfo.getDate().add(jsonObject.getString("date"));
                 trackHistoryInfo.getTime().add(jsonObject.getString("time"));
                 trackHistoryInfo.getDistance().add(jsonObject.getString("mileage"));
                 trackHistoryInfo.getTrackID().add(jsonObject.getString("track"));
+                byte[] bytes = Base64.decodeBase64(jsonObject.getString("bitmap"));
+                trackHistoryInfo.getBitmap().add(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
             }
             historyBuilderPresenter.onGetTrackHistoryCallback(trackHistoryInfo);
         } catch (JSONException e) {

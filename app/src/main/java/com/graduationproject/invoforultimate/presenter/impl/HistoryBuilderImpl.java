@@ -2,13 +2,13 @@ package com.graduationproject.invoforultimate.presenter.impl;
 
 import android.os.Parcelable;
 
-import com.graduationproject.invoforultimate.bean.TrackHistoryInfo;
+import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.model.impl.TrackHistoryServiceImpl;
 import com.graduationproject.invoforultimate.presenter.HistoryBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.ui.view.impl.HistoryViewCallback;
 
-import static com.graduationproject.invoforultimate.bean.constants.TrackHistoryConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TrackHistoryConstants.*;
 
 /**
  * Created by INvo

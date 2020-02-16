@@ -1,7 +1,9 @@
 package com.graduationproject.invoforultimate.model.impl;
 
 import android.os.Bundle;
+import android.os.Looper;
 
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.query.entity.DriveMode;
 import com.amap.api.track.query.entity.Point;
@@ -11,19 +13,26 @@ import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
+import com.graduationproject.invoforultimate.service.TrackThread;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
-import com.graduationproject.invoforultimate.bean.TrackIntentParcelable;
+import com.graduationproject.invoforultimate.entity.bean.TrackIntentParcelable;
 import com.graduationproject.invoforultimate.model.TrackReplayModel;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
-import static com.graduationproject.invoforultimate.bean.constants.HttpUrlConstants.SERVICE_ID;
-import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.ALL_EMPTY;
-import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.NOT_NETWORK;
-import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.TERMINAL_NOT_EXIST;
-import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.TRACKS_EMPTY;
-import static com.graduationproject.invoforultimate.bean.constants.TrackReplayConstants.TRACK_NOT_RESPONSE;
+import static com.graduationproject.invoforultimate.entity.constants.HttpUrlConstants.SERVICE_ID;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.ALL_EMPTY;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.NOT_NETWORK;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TERMINAL_NOT_EXIST;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACKS_EMPTY;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_LATLNG;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_NOT_RESPONSE;
 
 /**
  * Created by INvo
@@ -34,12 +43,42 @@ public class TrackReplayImpl {
     private AMapTrackClient aMapTrackClient;
     private Bundle bundle;
     private TrackReplayModel trackReplayModel;
+    private ArrayList<LatLng> latLngArrayList = new ArrayList<>();
+    private boolean canReplay;
+    private int replayCounts;
+    private LatLng replayLatLng;
 
     public TrackReplayImpl(Bundle bundle, TrackReplayModel trackReplayModel) {
         this.bundle = bundle;
         this.trackReplayModel = trackReplayModel;
         trackReplay();
+    }
 
+    public void markerReplay() {
+        canReplay = true;
+        replayCounts = 0;
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                while (canReplay) {
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (replayCounts < latLngArrayList.size()) {
+                        replayLatLng = latLngArrayList.get(replayCounts);
+                        trackReplayModel.onMarkerReplayCallback(replayLatLng);
+                        replayCounts++;
+                    } else {
+                        canReplay = false;
+                    }
+                }
+            }
+        };
+        thread.start();
+        Looper.loop();
     }
 
     public void trackReplay() {
@@ -113,5 +152,25 @@ public class TrackReplayImpl {
                 }
             }
         });
+
+        Thread thread = new TrackThread(TRACK_LATLNG, trackID, result -> {
+            try {
+                JSONObject jsonObject = new JSONObject(result).getJSONObject("data").getJSONArray("tracks").getJSONObject(0);
+                JSONArray jsonArray = jsonObject.getJSONArray("points");
+                int count = Integer.parseInt(jsonObject.getString("counts"));
+                for (int i = 0; i < count; i++) {
+                    String latLng = jsonArray.getJSONObject(i).getString("location");
+                    latLngArrayList.add(new LatLng(Double.valueOf(latLng.split(",")[1]), Double.valueOf(latLng.split(",")[0])));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

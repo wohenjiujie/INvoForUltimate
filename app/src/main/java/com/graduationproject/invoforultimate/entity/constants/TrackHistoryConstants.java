@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.bean.constants;
+package com.graduationproject.invoforultimate.entity.constants;
 
 /**
  * Created by INvo
@@ -12,4 +12,6 @@ public final class TrackHistoryConstants {
     public static  int DELETE_TRACK_INFO = 0x303;
     public static  String UPGRADE_STATUS = "更新成功";
     public static  String DELETE_STATUS = "更新成功";
+    public static  String PROGRESS_DIALOG_MESSAGE = "加载中";
+
 }

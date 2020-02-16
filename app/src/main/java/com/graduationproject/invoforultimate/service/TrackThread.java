@@ -1,15 +1,17 @@
 package com.graduationproject.invoforultimate.service;
 
 
+import android.graphics.Bitmap;
 import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.graduationproject.invoforultimate.bean.TrackHistoryInfo;
-import com.graduationproject.invoforultimate.bean.TrackInfo;
+import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
+import com.graduationproject.invoforultimate.entity.bean.TrackInfo;
 import com.graduationproject.invoforultimate.listener.MyTrackThread;
+import com.graduationproject.invoforultimate.listener.TrackReplayTem;
 import com.graduationproject.invoforultimate.listener.TrackResult;
 import com.graduationproject.invoforultimate.model.TrackHistoryModel;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
@@ -17,6 +19,7 @@ import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -25,10 +28,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.graduationproject.invoforultimate.bean.constants.HttpUrlConstants.*;
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.*;
-import static com.graduationproject.invoforultimate.bean.constants.TrackHistoryConstants.*;
-import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.HttpUrlConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TerminalModuleConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TrackHistoryConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_LATLNG;
+import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
+import static com.graduationproject.invoforultimate.ui.activity.TrackHistoryActivity.TAG;
 
 /**
  * Created by INvo
@@ -54,9 +59,10 @@ public class TrackThread extends Thread implements MyTrackThread {
     private Request request2;
     private Response response2;
     private TrackHistoryModel trackHistoryModel;
+    private TrackReplayTem trackReplayTem;
+    private int TrackID;
 
     public TrackThread(int threadType, String post, @Nullable TrackResult trackResult) {
-        super();
         this.trackResult = trackResult;
         this.threadType = threadType;
         this.post = post;
@@ -67,16 +73,27 @@ public class TrackThread extends Thread implements MyTrackThread {
         this.threadType = threadType;
     }
 
+    /**
+     * 本身就有Async的依赖，所以不需要执行run()方法
+     *
+     * @param threadType
+     * @param trackHistoryModel
+     */
     public TrackThread(int threadType, TrackHistoryModel trackHistoryModel) {
-        super();
         this.trackHistoryModel = trackHistoryModel;
         if (GET_TRACK_HISTORY_INFO == threadType) {
             getTrackHistoryInfo();
         }
     }
 
+    /**
+     * 本身就有Async的依赖，所以不需要执行run()方法
+     *
+     * @param threadType
+     * @param var
+     * @param trackHistoryModel
+     */
     public TrackThread(int threadType, @NonNull Object var, @NonNull TrackHistoryModel trackHistoryModel) {
-        super();
         this.trackHistoryModel = trackHistoryModel;
         if (GET_TRACK_INTENT_INFO == threadType) {
             getIntentInfo(var);
@@ -84,6 +101,12 @@ public class TrackThread extends Thread implements MyTrackThread {
         if (DELETE_TRACK_INFO == threadType) {
             deleteTrack(var);
         }
+    }
+
+    public TrackThread(int threadType, int TrackID, TrackReplayTem TrackReplayTem) {
+        this.threadType = threadType;
+        this.trackReplayTem = TrackReplayTem;
+        this.TrackID = TrackID;
     }
 
     private void deleteTrack(Object var) {
@@ -165,6 +188,7 @@ public class TrackThread extends Thread implements MyTrackThread {
             jsonObject.put("time", trackInfo.getTime());
             jsonObject.put("description", trackInfo.getDesc());
             jsonObject.put("mileage", trackInfo.getDistance());
+            jsonObject.put("bitmap", trackInfo.getBitmap());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -190,6 +214,27 @@ public class TrackThread extends Thread implements MyTrackThread {
         }
         if (UPLOAD_TRACK_INFO == threadType) {
             uploadTrackInfo();
+        }
+        if (TRACK_LATLNG == threadType) {
+            getTrackLatLngList();
+        }
+    }
+
+    private void getTrackLatLngList() {
+        content = SEARCH_TRACK_HISTORY + "&tid=" + TerminalUtil.getTerminal() + "&trid=" + TrackID + "&pagesize=999";
+        request = new Request.Builder().url(content).get().build();
+        try {
+            response = okHttpClient.newCall(request).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                String result = response.body().string();
+                trackReplayTem.onGetListTem(result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

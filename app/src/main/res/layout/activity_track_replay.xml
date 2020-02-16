@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.TrackReplayActivity">
 
-    <!--<com.amap.api.maps.MapView
-        android:id="@+id/basic_map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.amap.api.maps.MapView>-->
 
     <com.amap.api.maps.TextureMapView
         android:id="@+id/history_map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/trace_replay"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:text="replay"
+            android:textSize="16sp"
+            android:textAllCaps="false">
+        </Button>
+    </com.amap.api.maps.TextureMapView>
+
 
 </FrameLayout>

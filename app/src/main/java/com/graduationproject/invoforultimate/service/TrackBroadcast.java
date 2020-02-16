@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import com.graduationproject.invoforultimate.utils.ToastUtil;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.MainConstants.*;
 
 /**
  * Created by INvo
@@ -27,24 +26,10 @@ public class TrackBroadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent.getAction())) {
-            int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
-            switch (wifiState) {
-                case WifiManager.WIFI_STATE_DISABLED:
-                    break;
-                case WifiManager.WIFI_STATE_DISABLING:
-                    break;
-            }
-        }
-
         if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
             NetworkInfo info = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             if (info != null) {
-                if (NetworkInfo.State.CONNECTED == info.getState() && info.isAvailable()) {
-                    if (info.getType() == ConnectivityManager.TYPE_WIFI || info.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        ToastUtil.shortToast(context,getConnectionType(info.getType()) +NETWORK_BROADCAST_CONNECT);
-                    }
-                } else {
+                if (!(NetworkInfo.State.CONNECTED == info.getState() && info.isAvailable())) {
                     ToastUtil.shortToast(context,getConnectionType(info.getType()) +NETWORK_BROADCAST_NOT_CONNECT);
                 }
             }

@@ -67,6 +67,13 @@
             android:checked="true">
         </CheckBox>
 
+        <ImageView
+            android:id="@+id/track_shot2"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+        </ImageView>
+
     </LinearLayout>
 
     <LinearLayout

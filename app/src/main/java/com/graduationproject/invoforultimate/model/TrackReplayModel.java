@@ -1,5 +1,6 @@
 package com.graduationproject.invoforultimate.model;
 
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.track.query.entity.Point;
 
 import java.util.List;
@@ -13,4 +14,7 @@ public interface TrackReplayModel extends ModelResult {
     void onTrackPointsCallback(List<Point> pointList);
 
     void onTrackPointsResultCallback(String s);
+
+    void onMarkerReplayCallback(LatLng latLng);
+
 }

@@ -10,7 +10,7 @@ import com.graduationproject.invoforultimate.service.TrackThread;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TerminalModuleConstants.*;
 
 /**
  * Created by INvo

@@ -9,6 +9,7 @@ import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.track.query.entity.Point;
+import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.model.TrackReplayModel;
 import com.graduationproject.invoforultimate.model.impl.TrackReplayImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
@@ -22,13 +23,14 @@ import java.util.List;
  * on 2020-02-10.
  */
 public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements ReplayBuilderPresenter {
+    private TrackReplayImpl trackReplayImpl;
 
     public ReplayBuilderImpl() {
         super();
     }
 
     public void trackReplay(Bundle bundle) {
-        new TrackReplayImpl(bundle, new TrackReplayModel() {
+        trackReplayImpl= new TrackReplayImpl(bundle, new TrackReplayModel() {
             @Override
             public void onTrackPointsCallback(List<Point> pointList) {
                 drawPolyline(pointList);
@@ -38,14 +40,23 @@ public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements 
             public void onTrackPointsResultCallback(String s) {
                 getV().onTrackReplayResult(s);
             }
+
+            @Override
+            public void onMarkerReplayCallback(LatLng latLng) {
+                getV().onMarkerPositionResult(latLng);
+            }
         });
+    }
+
+    public void MarkerReplay() {
+        trackReplayImpl.markerReplay();
     }
 
     private void drawPolyline(List<Point> points) {
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         PolylineOptions polylineOptions = new PolylineOptions();
         polylineOptions.color(Color.BLUE).width(20);
-        MarkerOptions markerOptions1 = null, markerOptions2 = null;
+        MarkerOptions markerOptions1 = null, markerOptions2 = null,markerOptions3=null;
         if (points.size() > 0) {
             /**
              * 起点
@@ -55,7 +66,8 @@ public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements 
             LatLng latLng = new LatLng(p.getLat(), p.getLng());
             markerOptions1 = new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start));
+            markerOptions3 = new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.walk));
         }
         if (points.size() > 1) {
             /**
@@ -66,13 +78,13 @@ public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements 
             LatLng latLng = new LatLng(p.getLat(), p.getLng());
             markerOptions2 = new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end));
         }
         for (Point p : points) {
             LatLng latLng = new LatLng(p.getLat(), p.getLng());
             polylineOptions.add(latLng);
             boundsBuilder.include(latLng);
         }
-        getV().onTrackReplayCallback(markerOptions1, markerOptions2, polylineOptions, boundsBuilder);
+        getV().onTrackReplayResult(markerOptions1, markerOptions2, polylineOptions, boundsBuilder,markerOptions3);
     }
 }

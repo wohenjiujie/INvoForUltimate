@@ -2,7 +2,7 @@ package com.graduationproject.invoforultimate.presenter;
 
 import android.os.Parcelable;
 
-import com.graduationproject.invoforultimate.bean.TrackHistoryInfo;
+import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 
 /**
  * Created by INvo

@@ -24,5 +24,5 @@ public interface MainViewCallback extends ViewCallback {
 
     void onTrackUploadResult(boolean x);
 
-    void onInitLocation(LatLng latLng,@NonNull Integer type);
+    void onInitLocationResult(LatLng latLng,@NonNull Integer type);
 }

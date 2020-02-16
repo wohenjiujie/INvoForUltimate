@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.bean;
+package com.graduationproject.invoforultimate.entity.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;

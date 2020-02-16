@@ -19,8 +19,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.graduationproject.invoforultimate.bean.constants.HttpUrlConstants.SEARCH_TRACK_HISTORY;
-import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.HttpUrlConstants.SEARCH_TRACK_HISTORY;
+import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 
 /**
  * Created by INvo

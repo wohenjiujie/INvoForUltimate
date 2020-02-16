@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.bean.constants;
+package com.graduationproject.invoforultimate.entity.constants;
 
 /**
  * Created by INvo
@@ -17,5 +17,4 @@ public final class HttpUrlConstants {
     public static  String GET_TERMINAL_INFO = "http://xiaomu1079.club/getTerminalInfo/";
     public static String DECREASE_TRACK_COUNT = "http://xiaomu1079.club/decreaseCounts/";
     public static  String DELETE_TRACK_DATA = "http://xiaomu1079.club/deleteTrackInfo";
-
 }

@@ -1,5 +1,6 @@
 package com.graduationproject.invoforultimate.presenter.impl;
 
+import android.graphics.Bitmap;
 import android.widget.Chronometer;
 
 import com.amap.api.maps.AMap;
@@ -12,9 +13,9 @@ import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
 
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_INIT;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_START;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.CAMERA_FOLLOW_STOP;
+import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_INIT;
+import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_START;
+import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_STOP;
 
 
 /**
@@ -76,20 +77,19 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
     public void mapSettings(AMap aMap) {
         trackLocationImpl.mapSettings(aMap);
         trackLocationImpl.cameraFollow(CAMERA_FOLLOW_INIT, latLng -> {
-            getV().onInitLocation(latLng,CAMERA_FOLLOW_INIT);
+            getV().onInitLocationResult(latLng,CAMERA_FOLLOW_INIT);
         });
     }
 
-    public void stopTrack() {
-        trackServiceImpl.onStopTrack();
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP, latLng -> getV().onInitLocation(latLng,CAMERA_FOLLOW_STOP));
-
+    public void stopTrack(Bitmap bitmap) {
+        trackServiceImpl.onStopTrack(bitmap);
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP, latLng -> getV().onInitLocationResult(latLng,CAMERA_FOLLOW_STOP));
     }
 
     public void startTrack(Chronometer chronometer) {
         this.trackServiceImpl = new TrackServiceImpl(chronometer);
         trackServiceImpl.onStartTrack(trackServiceModel);
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START, latLng -> getV().onInitLocation(latLng,CAMERA_FOLLOW_START));
+        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START, latLng -> getV().onInitLocationResult(latLng,CAMERA_FOLLOW_START));
     }
 
     @Override

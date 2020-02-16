@@ -1,4 +1,4 @@
-package com.graduationproject.invoforultimate.bean.constants;
+package com.graduationproject.invoforultimate.entity.constants;
 
 /**
  * Created by INvo

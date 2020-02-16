@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.graduationproject.invoforultimate.R;
 
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.MainConstants.*;
 
 /**
  * Created by INvo

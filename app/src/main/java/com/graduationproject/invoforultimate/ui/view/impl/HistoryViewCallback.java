@@ -4,7 +4,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.Nullable;
 
-import com.graduationproject.invoforultimate.bean.TrackHistoryInfo;
+import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 
 /**
@@ -16,7 +16,6 @@ public interface HistoryViewCallback extends ViewCallback {
     void onGetTrackHistoryResult(@Nullable TrackHistoryInfo trackHistoryInfo);
 
     void onGetIntentResult(@Nullable Parcelable parcelable);
-
 
     void onDeleteResult();
 }

@@ -1,6 +1,7 @@
-package com.graduationproject.invoforultimate.bean;
+package com.graduationproject.invoforultimate.entity.bean;
 
-import androidx.annotation.NonNull;
+
+import android.graphics.Bitmap;
 
 /**
  * Created by INvo
@@ -15,6 +16,7 @@ public class TrackInfo<T> {
     private T time;
     private T timeConsuming;
     private T distance;
+    private T bitmap;
 
     public T getTerminalID() {
         return terminalID;
@@ -79,6 +81,14 @@ public class TrackInfo<T> {
 
     public void setDistance(T distance) {
         this.distance = distance;
+    }
+
+    public T getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(T bitmap) {
+        this.bitmap = bitmap;
     }
 
     @Override

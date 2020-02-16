@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 
 import static com.graduationproject.invoforultimate.app.TrackApplication.*;
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TerminalModuleConstants.*;
 
 /**
  * Created by INvo

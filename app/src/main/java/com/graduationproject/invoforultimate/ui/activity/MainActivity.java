@@ -1,10 +1,11 @@
 package com.graduationproject.invoforultimate.ui.activity;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,6 +17,7 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -30,14 +32,20 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.bean.constants.MainConstants;
+import com.graduationproject.invoforultimate.entity.constants.MainConstants;
+import com.graduationproject.invoforultimate.listener.TrackScreenShot;
 import com.graduationproject.invoforultimate.utils.TrackDialog;
 import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
 import com.graduationproject.invoforultimate.utils.InputUtil;
+
+import org.apache.commons.codec.binary.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import butterknife.*;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -52,9 +60,9 @@ import static com.graduationproject.invoforultimate.R2.id.track_controller;
 import static com.graduationproject.invoforultimate.R2.id.track_distance;
 import static com.graduationproject.invoforultimate.R2.id.track_signal;
 import static com.graduationproject.invoforultimate.R2.id.track_speed;
-import static com.graduationproject.invoforultimate.bean.constants.MainConstants.*;
-import static com.graduationproject.invoforultimate.bean.constants.TerminalModuleConstants.*;
-import static com.graduationproject.invoforultimate.bean.constants.TrackServiceConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.MainConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TerminalModuleConstants.*;
+import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 
 public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl, TextureMapView> implements MainViewCallback {
     @BindView(basic_map)
@@ -109,9 +117,12 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         if (KeyEvent.KEYCODE_BACK == keyCode && View.VISIBLE == trackController.getVisibility()) {
             if (isStart) {
                 new TrackDialog(this, DIALOG_STOP_TRACK)
-                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> {
-                            getP().stopTrack();
-                        }).setNegativeButton(DIALOG_NEGATIVE_CHOICE, (dialog, which) -> dialog.dismiss()).show();
+                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShot(){
+                            @Override
+                            public void onMapScreenShot(Bitmap bitmap) {
+                                getP().stopTrack(bitmap);
+                            }
+                        })).setNegativeButton(DIALOG_NEGATIVE_CHOICE, (dialog, which) -> dialog.dismiss()).show();
             } else {
                 trackController.setVisibility(View.INVISIBLE);
                 bottomNavigationView.setVisibility(View.VISIBLE);
@@ -128,18 +139,31 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
 
     @Override
     protected void initControls(Bundle savedInstanceState) {
-        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)!= PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 1);
         }
         getP().mapSettings(getMap().getMap());
         getP().checkTerminal();
+         ImageView imageView = findViewById(R.id.track_shot2);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 /*
                  * 暂定
                  */
                 case R.id.tools1:
-
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    getMap().getMap().getMapScreenShot(new TrackScreenShot(){
+                        @Override
+                        public void onMapScreenShot(Bitmap bitmap) {
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                            byte[] bytes = byteArrayOutputStream.toByteArray();// 转为byte数组
+                            String y = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
+                            byte[] bytess = Base64.decodeBase64(y);
+                           Bitmap  bitmaps= BitmapFactory.decodeByteArray(bytess,0,bytess.length);
+                           imageView.setImageBitmap(bitmaps);
+                        }
+                    });
                     break;
 
                 case R.id.tools2:
@@ -158,29 +182,34 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             return true;
         });
     }
+    @MainThread
+    @OnLongClick(track_controller)
+    @NonNull
+    public void trackStop() {
+        if (isStart) {
+            isLocate = false;
+            getMap().getMap().getMapScreenShot(new TrackScreenShot(){
 
-    @OnCheckedChanged(R.id.track_camera)
+                @Override
+                public void onMapScreenShot(Bitmap bitmap) {
+                    getP().stopTrack(bitmap);
+                }
+            });
+        }
+    }
+
+    @OnCheckedChanged(track_camera)
     public void setCameraModel(boolean isChecked) {
         trackCamera.setText(isChecked ? CHECK_BOX_CAMERA : CHECK_BOX_MARKER);
         getP().setCamera(isChecked);
     }
 
-    @OnClick(R.id.track_controller)
+    @OnClick(track_controller)
     @NonNull
     public void trackStart() {
         if (!isStart) {
             isLocate = false;
             getP().startTrack(chronometer);
-        }
-    }
-
-    @MainThread
-    @OnLongClick(R.id.track_controller)
-    @NonNull
-    public void trackStop() {
-        if (isStart) {
-            isLocate = false;
-            getP().stopTrack();
         }
     }
 
@@ -231,6 +260,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         runOnUiThread(() -> {
             if (TRACK_RESULT_START == callback) {
                 ToastText(s);
+                Log.d(TAG, s);
                 isStart = true;
                 updateBtnStatus();
                 getMap().getMap().moveCamera(CameraUpdateFactory.zoomTo(21));
@@ -287,7 +317,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
     }
 
     @Override
-    public void onInitLocation(LatLng latLng, @NonNull Integer type) {
+    public void onInitLocationResult(LatLng latLng, @NonNull Integer type) {
         if (CAMERA_FOLLOW_INIT == type) {
             if (!isLocate) {
                 getMap().getMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
