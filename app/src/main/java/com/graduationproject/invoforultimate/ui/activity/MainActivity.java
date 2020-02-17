@@ -142,31 +142,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         }
         return super.onKeyDown(keyCode, event);
     }
-    public static String sHA1(Context context){
-        try {
-            PackageInfo info = context.getPackageManager().getPackageInfo(
-                    context.getPackageName(), PackageManager.GET_SIGNATURES);
-            byte[] cert = info.signatures[0].toByteArray();
-            MessageDigest md = MessageDigest.getInstance("SHA1");
-            byte[] publicKey = md.digest(cert);
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < publicKey.length; i++) {
-                String appendString = Integer.toHexString(0xFF & publicKey[i])
-                        .toUpperCase(Locale.US);
-                if (appendString.length() == 1)
-                    hexString.append("0");
-                hexString.append(appendString);
-                hexString.append(":");
-            }
-            String result = hexString.toString();
-            return result.substring(0, result.length()-1);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Override
     protected void initControls(Bundle savedInstanceState) {
@@ -174,9 +149,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 1);
         }
         getP().checkTerminal();
-//        getP().mapSettings(getMap().getMap());
-        String sha1 = sHA1(getContext());
-        Log.d(TAG, sha1);
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 /*
@@ -246,6 +218,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
             if (RESULT_TERMINAL_MSG_SUCCESS.equals(s)) {
                 ToastText(s);
+                getP().mapSettings(getMap().getMap());
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
