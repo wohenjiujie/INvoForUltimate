@@ -16,12 +16,15 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.location.CoordinateConverter;
+import com.amap.api.location.DPoint;
 import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.TrackParam;
 import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.graduationproject.invoforultimate.R;
+import com.graduationproject.invoforultimate.entity.bean.TrackLatLng;
 import com.graduationproject.invoforultimate.listener.OnTrackLifecycleListenerImpl;
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
 import com.graduationproject.invoforultimate.listener.TrackTimerListener;
@@ -38,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Timer;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.amap.api.location.CoordinateConverter.calculateLineDistance;
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
 import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 
@@ -55,17 +59,25 @@ public class TrackServiceImpl  {
 //    private TrackServiceTrackModel trackServiceModel;
     private Chronometer chronometer;
     UnixUtil unixUtil = new UnixUtil();
-    private TrackTimer trackTimer;
-    private Timer timer;
+//    private TrackTimer trackTimer;
+//    private Timer timer;
     private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     private MainBuilderPresenter mainBuilderPresenter;
+    private TrackLatLng trackLatLng;
+    private  CoordinateConverter coordinateConverter = new CoordinateConverter(getContext());
+    private float sum = 0;
     private OnTrackLifecycleListenerImpl onTrackLifecycleListener = new OnTrackLifecycleListenerImpl() {
         @Override
         public void onStartTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
                 mainBuilderPresenter.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
-                timer = new Timer();
+
                 chronometer.start();
+                trackLatLng = new TrackLatLng();
+                /**
+                 * update
+                 */
+               /* timer = new Timer();
                 trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), new TrackTimerListener() {
                     @Override
                     public void onTimerCallback(String s1, String s2) {
@@ -73,10 +85,7 @@ public class TrackServiceImpl  {
                         trackInfo.setDistance(s2);
                     }
                 });
-                /**
-                 * 后期更新发送频率
-                 */
-                timer.schedule(trackTimer, 5000, 7000);
+                timer.schedule(trackTimer, 5000, 7000);*/
                 trackInfo.setDate(unixUtil.getDate());
                 chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
@@ -92,6 +101,7 @@ public class TrackServiceImpl  {
         public void onStopTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 theFirstTransmit = false;
+                sum = 0;
                 mainBuilderPresenter.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
             }
         }
@@ -100,7 +110,10 @@ public class TrackServiceImpl  {
     void init() {
         //初始化client
         aMapLocationClient = new AMapLocationClient(getContext());
-        setDefaultOption();
+//        setDefaultOption();
+        aMapLocationClientOption = new AMapLocationClientOption();
+        aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
+        aMapLocationClientOption.setInterval(2000);//设定连续定位间隔
         //设置定位参数
         aMapLocationClient.setLocationOption(aMapLocationClientOption);
         // 设置定位监听
@@ -111,9 +124,9 @@ public class TrackServiceImpl  {
      * 设置定位参数
      */
     private AMapLocationClientOption setDefaultOption() {
-        aMapLocationClientOption = new AMapLocationClientOption();
+        /*aMapLocationClientOption = new AMapLocationClientOption();
         aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
-        aMapLocationClientOption.setInterval(2000);//设定连续定位间隔
+        aMapLocationClientOption.setInterval(2000);//设定连续定位间隔*/
         return aMapLocationClientOption;
     }
 
@@ -139,19 +152,17 @@ public class TrackServiceImpl  {
     }
 
     public void onStopTrack(Bitmap bitmap) {
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.WEBP, 1, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         trackInfo.setBitmap(org.apache.commons.codec.binary.Base64.encodeBase64String(bytes));
+        aMapLocationClient.stopLocation();
         aMapTrackClient.stopGather(onTrackLifecycleListener);
         aMapTrackClient.stopTrack(new TrackParam(SERVICE_ID, TerminalUtil.getTerminal()), onTrackLifecycleListener);
         chronometer.stop();
-        timer.cancel();
-        aMapLocationClient.stopLocation();
         mainBuilderPresenter.onTrackUploadCallback((int) trackInfo.getTimeConsuming() >= 60 ? true : false);
     }
 
     public void onStartTrack() {
-//        this.trackServiceModel = trackServiceModel;
         trackInfo.setTerminalID(TerminalUtil.getTerminal());
         trackInfo.setServiceID(SERVICE_ID);
         aMapTrackClient.addTrack(new AddTrackRequest((long) trackInfo.getServiceID(), (long) trackInfo.getTerminalID()), new OnTrackListenerImpl() {
@@ -205,6 +216,19 @@ public class TrackServiceImpl  {
                 if (aMapLocation.getErrorCode() == 0) {
                     double longitude = aMapLocation.getLongitude();
                     double latitude = aMapLocation.getLatitude();
+                    DPoint dPoint = new DPoint();
+                    dPoint.setLatitude(latitude);
+                    dPoint.setLongitude(longitude);
+                    if (!theFirstTransmit) {
+                        trackLatLng.setStartDPoint(dPoint);
+                    }
+                    trackLatLng.setEndDPoint(dPoint);
+                    float distance =  coordinateConverter.calculateLineDistance(trackLatLng.getStartDPoint(), trackLatLng.getEndDPoint());
+                    sum += distance;
+                    trackLatLng.setStartDPoint(trackLatLng.getEndDPoint());
+                    trackLatLng.setEndDPoint(null);
+                    trackInfo.setDistance(String.format("%.1f", sum));
+                    mainBuilderPresenter.onTrackChangedCallback(String.valueOf(aMapLocation.getSpeed()), String.format("%.1f", sum));
                     mainBuilderPresenter.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
                     String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
                     if (address.length() > 0 && !theFirstTransmit) {
@@ -212,11 +236,6 @@ public class TrackServiceImpl  {
                         theFirstTransmit = true;
                     }
                 }
-                /*else {
-                    Log.e(TAG, "location Error, ErrCode:"
-                            + aMapLocation.getErrorCode() + ", errInfo:"
-                            + aMapLocation.getErrorInfo());
-                }*/
             }
         }
     };

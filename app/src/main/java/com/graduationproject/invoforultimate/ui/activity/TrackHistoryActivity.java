@@ -18,6 +18,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.ProgressBar;
 
+import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;

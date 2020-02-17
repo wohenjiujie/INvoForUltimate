@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-
     <item
         android:id="@+id/tools1"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="@string/tools1" />
+        android:icon="@drawable/sport"
+        android:title="" />
 
     <item
         android:id="@+id/tools2"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="@string/tools2" />
+        android:icon="@drawable/history_record"
+        android:title="" />
 
     <item
         android:id="@+id/tools3"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="@string/tools3" />
+        android:icon="@drawable/sport"
+        android:title="" />
 
 </menu>

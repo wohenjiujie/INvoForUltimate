@@ -36,7 +36,7 @@ public class ReplayBuilderImpl extends Presenter<ReplayViewCallback> implements 
     private void drawPolyline(List<Point> points) {
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.color(Color.BLUE).width(20);
+        polylineOptions.color(Color.argb(180,139 ,58, 98)).width(20);
         MarkerOptions markerOptions1 = null, markerOptions2 = null,markerOptions3=null;
         if (points.size() > 0) {
             /**

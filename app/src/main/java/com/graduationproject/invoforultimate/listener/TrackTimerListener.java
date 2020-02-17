@@ -6,8 +6,8 @@ import com.graduationproject.invoforultimate.model.TrackModel;
  * Created by INvo
  * on 2020-02-08.
  */
-@FunctionalInterface
+@Deprecated
 public interface TrackTimerListener extends TrackListener {
 
-    void onTimerCallback(String s1,String s2);
+//    void onTimerCallback(String s1,String s2);
 }

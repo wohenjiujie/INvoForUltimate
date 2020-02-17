@@ -5,6 +5,7 @@ import android.widget.Button;
 import androidx.annotation.CheckResult;
 import androidx.annotation.MainThread;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
@@ -24,7 +25,7 @@ import static com.graduationproject.invoforultimate.R2.id.trace_replay;
 public class TrackReplayActivity extends BaseActivity<ReplayViewCallback, ReplayBuilderImpl, TextureMapView> implements ReplayViewCallback {
 //    private static final String TAG = TrackReplayConstants.TAG;
     @BindView(history_map)
-    TextureMapView textureMapView;
+TextureMapView textureMapView;
     @BindView(trace_replay)
     Button traceReplay;
     private Marker maker;
@@ -64,7 +65,7 @@ public class TrackReplayActivity extends BaseActivity<ReplayViewCallback, Replay
 
     @Override
     public void onTrackReplayResult(String s) {
-        runOnUiThread(() -> ToastText(s));
+        runOnUiThread(() -> ToastTextLong(s));
     }
 
     @Override

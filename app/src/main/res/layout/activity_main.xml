@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_marginTop="740dp"
-            android:alpha="0.7"
-            android:background="@android:color/transparent"
+            android:alpha="0.8"
+            android:background="@color/colorRed"
             app:menu="@menu/bottom_navigation"
             tools:ignore="MissingConstraints" />
     </com.amap.api.maps.TextureMapView>
@@ -29,7 +29,7 @@
         android:layout_height="40dp"
         android:layout_gravity="top"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="50dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -51,7 +51,7 @@
             android:alpha="0.75"
             android:gravity="center"
             android:text="0 m"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/colorSienna"
             android:textSize="30sp"
             android:visibility="invisible" />
 
@@ -66,13 +66,6 @@
             android:alpha="0.8"
             android:checked="true">
         </CheckBox>
-
-        <ImageView
-            android:id="@+id/track_shot2"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-        </ImageView>
 
     </LinearLayout>
 
@@ -91,7 +84,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:alpha="0.75"
+            android:alpha="0.5"
             android:background="@drawable/ring_grey"
             android:format="00:00:00"
             android:gravity="center"
@@ -108,6 +101,7 @@
             android:background="@drawable/btn_start_end"
             android:gravity="center"
             android:text="@string/start"
+            android:alpha="0.75"
             android:textColor="@color/colorBlack"
             android:visibility="invisible" />
 
@@ -117,7 +111,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:alpha="0.75"
+            android:alpha="0.5"
             android:background="@drawable/ring_grey"
             android:gravity="center"
             android:text="0.0 km/h"

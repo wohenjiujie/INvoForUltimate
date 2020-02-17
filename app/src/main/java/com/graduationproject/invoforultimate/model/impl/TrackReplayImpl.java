@@ -13,7 +13,6 @@ import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
-import com.graduationproject.invoforultimate.listener.TrackReplayTem;
 import com.graduationproject.invoforultimate.model.TrackReplay;
 import com.graduationproject.invoforultimate.presenter.ReplayBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.TrackPresenter;
@@ -30,12 +29,7 @@ import java.util.List;
 
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
 import static com.graduationproject.invoforultimate.entity.constants.HttpUrlConstants.SERVICE_ID;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.ALL_EMPTY;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.NOT_NETWORK;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TERMINAL_NOT_EXIST;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACKS_EMPTY;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_LATLNG;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_NOT_RESPONSE;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.*;
 
 /**
  * Created by INvo
@@ -134,7 +128,7 @@ public class TrackReplayImpl implements TrackReplay {
                                             replayBuilderPresenter.onTrackPointsResultCallback(ALL_EMPTY);
                                         } else {
                                             StringBuilder stringBuilder = new StringBuilder();
-                                            stringBuilder.append("查询成功：本次运动的里程为");
+                                            stringBuilder.append(TRACK_REPLAY_SUCCESS);
                                             for (Track track : tracks) {
                                                 stringBuilder.append(track.getDistance()).append("m");
                                             }
@@ -157,7 +151,7 @@ public class TrackReplayImpl implements TrackReplay {
             }
         });
 
-        Thread thread = new TrackThread(TRACK_LATLNG, trackID, this);
+        Thread thread = new TrackThread(TRACK_COORDINATE, trackID, this);
         thread.start();
         try {
             thread.join();

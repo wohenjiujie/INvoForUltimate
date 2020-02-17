@@ -19,7 +19,7 @@ public class TrackDialog extends AlertDialog.Builder {
         if (DIALOG_START_TRACK == type) {
             setTitle(BOTTOM_NAVIGATION_TITLE)
                     .setMessage(BOTTOM_NAVIGATION_MESSAGE)
-                    .setIcon(R.drawable.ic_launcher_background)
+                    .setIcon(R.drawable.sport)
                     .setCancelable(true);
         }
         if (DIALOG_TRACK_NOT_UPLOAD == type) {

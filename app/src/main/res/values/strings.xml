@@ -16,7 +16,7 @@
     <string name="end">结束</string>
     <string name="continuance">继续</string>
     <string name="createTrack">创建轨迹以保存</string>
-    <string name="camera_model">镜头跟随模式</string>
+    <string name="camera_model">镜头跟随</string>
 
     <string name="checkTid">0x03</string>
 

@@ -10,6 +10,8 @@ import android.os.Bundle;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.service.TrackBroadcast;

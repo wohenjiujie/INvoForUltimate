@@ -44,8 +44,8 @@ public final class MainConstants {
     public static String ALTER_DIALOG_POSITIVE = "好";
     public static String INPUT_EMPTY = "输入为空!";
 
-    public static String CHECK_BOX_CAMERA = "镜头跟随模式";
-    public static String CHECK_BOX_MARKER= "定位跟随模式";
+    public static String CHECK_BOX_CAMERA = "镜头跟随";
+    public static String CHECK_BOX_MARKER= "定位跟随";
 
 
 

@@ -28,8 +28,13 @@ import static com.graduationproject.invoforultimate.entity.constants.TrackServic
  * Created by INvo
  * on 2020-02-08.
  */
-public class TrackTimer extends TimerTask implements MyTrackTimer {
-    private int timerType;
+
+@Deprecated
+public class TrackTimer {
+
+   //public class TrackTimer extends TimerTask implements MyTrackTimer {
+
+    /*private int timerType;
     private Request request;
     private Response response;
     private OkHttpClient okHttpClient=new OkHttpClient();
@@ -63,14 +68,12 @@ public class TrackTimer extends TimerTask implements MyTrackTimer {
                 JSONArray jsonArray = jsonObject.getJSONArray("tracks");
 
                 int counts = Integer.parseInt(jsonArray.getJSONObject(0).getString("counts"));
-                Log.d(TAG, "counts:" + counts);
                 String object1 = jsonArray.getJSONObject(0)
                         .getJSONArray("points")
                         .getJSONObject(counts - 1)
                         .getString("speed");
                 String object2 = jsonArray.getJSONObject(0)
                         .getString("distance");
-                Log.d(TAG, object1+"\n"+object2);
                 trackTimerListener.onTimerCallback(object1,object2);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -78,5 +81,5 @@ public class TrackTimer extends TimerTask implements MyTrackTimer {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 }

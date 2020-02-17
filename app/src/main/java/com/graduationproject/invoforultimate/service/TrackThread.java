@@ -31,7 +31,7 @@ import okhttp3.Response;
 import static com.graduationproject.invoforultimate.entity.constants.HttpUrlConstants.*;
 import static com.graduationproject.invoforultimate.entity.constants.TerminalModuleConstants.*;
 import static com.graduationproject.invoforultimate.entity.constants.TrackHistoryConstants.*;
-import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_LATLNG;
+import static com.graduationproject.invoforultimate.entity.constants.TrackReplayConstants.TRACK_COORDINATE;
 import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 
 /**
@@ -211,7 +211,7 @@ public class TrackThread extends Thread implements MyTrackThread {
         if (UPLOAD_TRACK_INFO == threadType) {
             uploadTrackInfo();
         }
-        if (TRACK_LATLNG == threadType) {
+        if (TRACK_COORDINATE == threadType) {
             getTrackLatLngList();
         }
     }

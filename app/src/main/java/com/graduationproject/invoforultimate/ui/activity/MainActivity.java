@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Polyline;
@@ -116,7 +117,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         if (KeyEvent.KEYCODE_BACK == keyCode && View.VISIBLE == trackController.getVisibility()) {
             if (isStart) {
                 new TrackDialog(this, DIALOG_STOP_TRACK)
-                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
+                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
                             @Override
                             public void onMapScreenShot(Bitmap bitmap) {
                                 getP().stopTrack(bitmap);
@@ -143,7 +144,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         }
         getP().mapSettings(getMap().getMap());
         getP().checkTerminal();
-         ImageView imageView = findViewById(R.id.track_shot2);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
@@ -152,15 +152,16 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                  */
                 case R.id.tools1:
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
+                    getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
                         @Override
                         public void onMapScreenShot(Bitmap bitmap) {
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                            bitmap.compress(Bitmap.CompressFormat.WEBP, 1, byteArrayOutputStream);
                             byte[] bytes = byteArrayOutputStream.toByteArray();
                             String y = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
-                            byte[] bytess = Base64.decodeBase64(y);
-                           Bitmap  bitmaps= BitmapFactory.decodeByteArray(bytess,0,bytess.length);
-                           imageView.setImageBitmap(bitmaps);
+
+
+                            Log.d(TAG, y + "\n");
+                            Log.d(TAG, "bytes:" + (bytes.length / 1024) + "/KB");
                         }
                     });
                     break;
@@ -181,13 +182,14 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             return true;
         });
     }
+
     @MainThread
     @OnLongClick(track_controller)
     @NonNull
     public void trackStop() {
         if (isStart) {
             isLocate = false;
-            getMap().getMap().getMapScreenShot(new TrackScreenShotImpl(){
+            getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
                 @Override
                 public void onMapScreenShot(Bitmap bitmap) {
                     getP().stopTrack(bitmap);
@@ -298,7 +300,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
             coordinate.add(new LatLng(latitude, longitude));
             polyline = getMap().getMap().addPolyline(new PolylineOptions().
-                    addAll(coordinate).width(10).color(Color.argb(255, 1, 1, 1)));
+                    addAll(coordinate).width(10).color(Color.argb(255, 65, 105, 225)));
             polyLines.add(polyline);
         });
     }

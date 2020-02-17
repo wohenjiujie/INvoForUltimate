@@ -35,31 +35,6 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
         this.trackLocationImpl = new TrackLocationImpl(this);
     }
 
-    /*private TrackServiceTrackModel trackServiceModel = new TrackServiceTrackModel() {
-        @Override
-        public void onTrackCallback(int x, String s) {
-            getV().onTrackResult(x, s);
-        }
-
-        @Override
-        public void onTrackChangedCallback(String s1, String s2) {
-            getV().onTrackChangedResult(s1, s2);
-        }
-
-        @Override
-        public void onTrackLocationCallback(double d1, double d2, int i) {
-            getV().onTrackLocationResult(d1, d2, i);
-        }
-
-        @Override
-        public void onTrackUploadCallback(boolean x) {
-            getV().onTrackUploadResult(x);
-            if (x) {
-                trackServiceImpl.onUploadTrackCheck();
-            }
-        }
-    };*/
-
     public void stopTrack(Bitmap bitmap) {
         trackServiceImpl.onStopTrack(bitmap);
         trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP);
