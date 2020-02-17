@@ -7,8 +7,8 @@ android {
         applicationId "com.graduationproject.invoforultimate"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -26,10 +26,18 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-
-/*
-*     targetSdkVersion 29
-*/
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+        // 防止在发布的时候出现因MissingTranslation导致Build Failed!
+        disable 'MissingTranslation'
+    }
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                outputFileName = "毕业设计.apk"
+            }
+    }
 }
 
 dependencies {

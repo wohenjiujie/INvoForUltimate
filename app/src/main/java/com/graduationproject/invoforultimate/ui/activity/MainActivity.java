@@ -142,8 +142,8 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 1);
         }
-        getP().mapSettings(getMap().getMap());
         getP().checkTerminal();
+//        getP().mapSettings(getMap().getMap());
 
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
@@ -226,6 +226,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
             if (RESULT_TERMINAL_MSG_SUCCESS.equals(s)) {
                 ToastText(s);
+                getP().mapSettings(getMap().getMap());
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
