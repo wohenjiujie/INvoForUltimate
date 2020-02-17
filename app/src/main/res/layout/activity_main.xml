@@ -26,7 +26,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="25dp"
         android:layout_gravity="top"
         android:layout_marginLeft="50dp"
         android:layout_marginTop="15dp"
@@ -47,14 +47,13 @@
             android:id="@+id/track_distance"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:alpha="0.75"
             android:gravity="center"
             android:text="0 m"
             android:textColor="@color/colorSienna"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:visibility="invisible" />
-
         <CheckBox
             android:id="@+id/track_camera"
             android:layout_width="0dp"
@@ -68,6 +67,8 @@
         </CheckBox>
 
     </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
