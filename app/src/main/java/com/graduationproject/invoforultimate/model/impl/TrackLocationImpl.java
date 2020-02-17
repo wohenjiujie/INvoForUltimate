@@ -1,6 +1,7 @@
 package com.graduationproject.invoforultimate.model.impl;
 
 import android.graphics.Color;
+import android.location.Location;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
@@ -55,9 +56,12 @@ public class TrackLocationImpl {
     }
 
     public void cameraFollow(int type) {
-        aMap.setOnMyLocationChangeListener(location -> {
-            latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            mainBuilderPresenter.onLatLngCallback(latLng, type);
+        aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                mainBuilderPresenter.onLatLngCallback(latLng, type);
+            }
         });
     }
 }

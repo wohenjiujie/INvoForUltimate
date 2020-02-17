@@ -1,7 +1,10 @@
 package com.graduationproject.invoforultimate.ui.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -42,9 +45,12 @@ import com.graduationproject.invoforultimate.utils.InputUtil;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.*;
 
@@ -136,6 +142,31 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         }
         return super.onKeyDown(keyCode, event);
     }
+    public static String sHA1(Context context){
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(
+                    context.getPackageName(), PackageManager.GET_SIGNATURES);
+            byte[] cert = info.signatures[0].toByteArray();
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            byte[] publicKey = md.digest(cert);
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < publicKey.length; i++) {
+                String appendString = Integer.toHexString(0xFF & publicKey[i])
+                        .toUpperCase(Locale.US);
+                if (appendString.length() == 1)
+                    hexString.append("0");
+                hexString.append(appendString);
+                hexString.append(":");
+            }
+            String result = hexString.toString();
+            return result.substring(0, result.length()-1);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     protected void initControls(Bundle savedInstanceState) {
@@ -144,26 +175,15 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         }
         getP().checkTerminal();
 //        getP().mapSettings(getMap().getMap());
-
+        String sha1 = sHA1(getContext());
+        Log.d(TAG, sha1);
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 /*
                  * 暂定
                  */
                 case R.id.tools1:
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
-                        @Override
-                        public void onMapScreenShot(Bitmap bitmap) {
-                            bitmap.compress(Bitmap.CompressFormat.WEBP, 1, byteArrayOutputStream);
-                            byte[] bytes = byteArrayOutputStream.toByteArray();
-                            String y = org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
-
-
-                            Log.d(TAG, y + "\n");
-                            Log.d(TAG, "bytes:" + (bytes.length / 1024) + "/KB");
-                        }
-                    });
+                    ToastText("No Function");
                     break;
 
                 case R.id.tools2:
@@ -226,7 +246,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
             if (RESULT_TERMINAL_MSG_SUCCESS.equals(s)) {
                 ToastText(s);
-                getP().mapSettings(getMap().getMap());
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
@@ -261,7 +280,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         runOnUiThread(() -> {
             if (TRACK_RESULT_START == callback) {
                 ToastText(s);
-                Log.d(TAG, s);
                 isStart = true;
                 updateBtnStatus();
                 getMap().getMap().moveCamera(CameraUpdateFactory.zoomTo(21));
@@ -369,6 +387,8 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             if (!x) {
                 bottomNavigationView.setVisibility(View.INVISIBLE);
                 terminalCreateAlterDialog();
+            } else {
+                getP().mapSettings(getMap().getMap());
             }
         });
     }
