@@ -1,6 +1,7 @@
 package com.graduationproject.invoforultimate.ui.activity;
 
 import androidx.annotation.CheckResult;
+import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,12 +62,10 @@ public class TrackHistoryActivity extends BaseActivity<HistoryViewCallback, Hist
         progressDialog.show();
     }
 
+    @MainThread
     @Override
     public void onGetTrackHistoryResult(@Nullable TrackHistoryInfo trackHistoryInfo) {
         runOnUiThread(() -> {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
             recyclerView.setAdapter(new TrackHistoryAdapter(trackHistoryInfo, this));
             if (swipeRefreshLayout.isRefreshing()) {
                 ToastText(UPGRADE_STATUS);

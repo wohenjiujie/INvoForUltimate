@@ -108,8 +108,8 @@ public class TrackThread extends Thread implements MyTrackThread {
     }
 
     private void deleteTrack(Object var) {
-        content = DECREASE_TRACK_COUNT + TerminalUtil.getTerminal();
-        request = new Request.Builder().url(content).get().build();
+//        content = DECREASE_TRACK_COUNT + TerminalUtil.getTerminal();
+//        request = new Request.Builder().url(content).get().build();
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -121,7 +121,7 @@ public class TrackThread extends Thread implements MyTrackThread {
         requestBody = RequestBody.create(mediaTypeJson, jsonObject.toString());
         request2 = new Request.Builder().url(DELETE_TRACK_DATA).post(requestBody).build();
         try {
-            response = okHttpClient.newCall(request).execute();
+//            response = okHttpClient.newCall(request).execute();
             response2 = okHttpClient.newCall(request2).execute();
         } catch (IOException e) {
             e.printStackTrace();
@@ -174,8 +174,12 @@ public class TrackThread extends Thread implements MyTrackThread {
         }
     }
 
+    /**
+     * modify upload constructor
+     *
+     */
     public void uploadTrackInfo() {
-        content = ADD_TRACK_COUNT + trackInfo.getTerminalID();
+//        content = ADD_TRACK_COUNT + trackInfo.getTerminalID();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("terminal", trackInfo.getTerminalID());
@@ -192,8 +196,8 @@ public class TrackThread extends Thread implements MyTrackThread {
         request = new Request.Builder().url(ADD_TRACK_INFO).post(requestBody).build();
         try {
             response = okHttpClient.newCall(request).execute();
-            request = new Request.Builder().url(content).get().build();
-            response = okHttpClient.newCall(request).execute();
+//            request = new Request.Builder().url(content).get().build();
+//            response = okHttpClient.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

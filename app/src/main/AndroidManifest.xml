@@ -26,6 +26,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
+
         <receiver android:name=".service.TrackBroadcast">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -53,6 +54,10 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b5c9067a77ad3db4ecda4cf3e7f0fb39" />
+
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.2" />
 
         <service android:name="com.amap.api.track.AMapTrackService" />
         <service android:name="com.amap.api.location.APSService" />
