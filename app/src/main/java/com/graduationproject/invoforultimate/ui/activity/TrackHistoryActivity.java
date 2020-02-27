@@ -66,6 +66,7 @@ public class TrackHistoryActivity extends BaseActivity<HistoryViewCallback, Hist
     @Override
     public void onGetTrackHistoryResult(@Nullable TrackHistoryInfo trackHistoryInfo) {
         runOnUiThread(() -> {
+            progressDialog.dismiss();
             recyclerView.setAdapter(new TrackHistoryAdapter(trackHistoryInfo, this));
             if (swipeRefreshLayout.isRefreshing()) {
                 ToastText(UPGRADE_STATUS);
