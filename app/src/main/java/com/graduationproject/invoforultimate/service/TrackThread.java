@@ -9,8 +9,6 @@ import androidx.annotation.Nullable;
 
 import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.entity.bean.TrackInfo;
-import com.graduationproject.invoforultimate.listener.MyTrackThread;
-import com.graduationproject.invoforultimate.listener.TrackReplayTem;
 import com.graduationproject.invoforultimate.model.TrackReplay;
 import com.graduationproject.invoforultimate.model.TrackTerminal;
 import com.graduationproject.invoforultimate.model.TrackHistory;
@@ -38,7 +36,7 @@ import static com.graduationproject.invoforultimate.entity.constants.TrackServic
  * Created by INvo
  * on 2019-10-10.
  */
-public class TrackThread extends Thread implements MyTrackThread {
+public class TrackThread extends Thread {
 
 
     private String content;

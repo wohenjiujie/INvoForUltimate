@@ -27,22 +27,17 @@ import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.entity.bean.TrackLatLng;
 import com.graduationproject.invoforultimate.listener.OnTrackLifecycleListenerImpl;
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
-import com.graduationproject.invoforultimate.listener.TrackTimerListener;
-import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.RecordBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.TrackPresenter;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import com.graduationproject.invoforultimate.entity.bean.TrackInfo;
 import com.graduationproject.invoforultimate.service.TrackThread;
-import com.graduationproject.invoforultimate.service.TrackTimer;
 import com.graduationproject.invoforultimate.ui.activity.MainActivity;
 import com.graduationproject.invoforultimate.utils.UnixUtil;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Timer;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.amap.api.location.CoordinateConverter.calculateLineDistance;
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
 import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 

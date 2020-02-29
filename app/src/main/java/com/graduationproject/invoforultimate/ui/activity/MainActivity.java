@@ -11,26 +11,36 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.entity.constants.MainConstants;
+import com.graduationproject.invoforultimate.listener.OnLocationSourceListenerImpl;
 import com.graduationproject.invoforultimate.utils.TrackDialog;
 import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
 import com.graduationproject.invoforultimate.utils.InputUtil;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import butterknife.*;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -111,7 +121,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
 
                 case R.id.tools2:
                     startActivity(new Intent(MainActivity.this, LauncherActivity.class),
-                            ActivityOptions.makeSceneTransitionAnimation(MainActivity.this,bottomNavigationView,"intent").toBundle());
+                            ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, bottomNavigationView, "intent").toBundle());
                     break;
 
                 case R.id.tools3:
@@ -120,6 +130,8 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
             return true;
         });
+
+
     }
 
     @OnCheckedChanged(track_camera)
@@ -164,6 +176,12 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             getMap().getMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
             isLocate = true;
         }
+        getMap().getMap().setLocationSource(new OnLocationSourceListenerImpl() {
+            @Override
+            public void activate(OnLocationChangedListener onLocationChangedListener) {
+                getMap().getMap().animateCamera(CameraUpdateFactory.zoomTo(18), 500, null);
+            }
+        });
     }
 
     public void terminalCreateAlterDialog() {
