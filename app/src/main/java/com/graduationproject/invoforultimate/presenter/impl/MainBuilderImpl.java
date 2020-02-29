@@ -28,26 +28,13 @@ import static com.graduationproject.invoforultimate.entity.constants.MainConstan
  * on 2020-02-07.
  */
 public class MainBuilderImpl extends Presenter<MainViewCallback> implements MainBuilderPresenter {
-
-
     private TrackTerminalImpl trackTerminalImpl;
-    private TrackServiceImpl trackServiceImpl;
     private TrackLocationImpl trackLocationImpl;
+
     public MainBuilderImpl() {
         this.trackTerminalImpl = new TrackTerminalImpl(this);
         this.trackLocationImpl = new TrackLocationImpl(this);
     }
-/*
-    public void stopTrack(Bitmap bitmap) {
-        trackServiceImpl.onStopTrack(bitmap);
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP);
-    }
-
-    public void startTrack(Chronometer chronometer) {
-        this.trackServiceImpl = new TrackServiceImpl(chronometer,this);
-        trackServiceImpl.onStartTrack();
-        trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START);
-    }*/
 
     public void setCamera(boolean type) {
         trackLocationImpl.setCameraModel(type);
@@ -81,38 +68,9 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
     }
 
     @Override
-    public void onLatLngCallback(LatLng latLng, @NonNull Integer type) {
-        if (CAMERA_FOLLOW_INIT == type) {
-            getV().onInitLocationResult(latLng, type);
-        } else if (CAMERA_FOLLOW_STOP == type) {
-            getV().onInitLocationResult(latLng, type);
-        } else if (CAMERA_FOLLOW_START == type) {
-            getV().onInitLocationResult(latLng, type);
-        }
+    public void onLatLngCallback(LatLng latLng) {
+        getV().onInitLocationResult(latLng);
     }
-
-   /* @Override
-    public void onTrackCallback(int x, String s) {
-        getV().onTrackResult(x, s);
-    }
-
-    @Override
-    public void onTrackChangedCallback(String s1, String s2) {
-        getV().onTrackChangedResult(s1, s2);
-    }
-
-    @Override
-    public void onTrackLocationCallback(double d1, double d2, int i) {
-        getV().onTrackLocationResult(d1, d2, i);
-    }
-
-    @Override
-    public void onTrackUploadCallback(boolean x) {
-        getV().onTrackUploadResult(x);
-        if (x) {
-            trackServiceImpl.onUploadTrackCheck();
-        }
-    }*/
 
     @Override
     public void onGetWeatherCallback(@NonNull boolean callback, @Nullable JSONObject obj) {

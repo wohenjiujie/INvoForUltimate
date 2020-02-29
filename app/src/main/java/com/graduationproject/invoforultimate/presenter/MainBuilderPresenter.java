@@ -17,7 +17,7 @@ public interface MainBuilderPresenter extends TrackPresenter{
 
     void checkTerminalCallback(boolean x);
 
-    void onLatLngCallback(LatLng latLng,@NonNull Integer type);
+    void onLatLngCallback(LatLng latLng);
 
   /*  void onTrackCallback(int x,String s);
 

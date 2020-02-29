@@ -3,52 +3,34 @@ package com.graduationproject.invoforultimate.ui.activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Chronometer;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.CheckResult;
-import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
-
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.Polyline;
-import com.amap.api.maps.model.PolylineOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.graduationproject.invoforultimate.BaseActivity;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.entity.constants.MainConstants;
-import com.graduationproject.invoforultimate.listener.TrackScreenShotImpl;
 import com.graduationproject.invoforultimate.utils.TrackDialog;
 import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
 import com.graduationproject.invoforultimate.utils.InputUtil;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import butterknife.*;
-
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -58,31 +40,15 @@ import static com.graduationproject.invoforultimate.R2.id.main_bottom;
 import static com.graduationproject.invoforultimate.R2.id.main_textView_1;
 import static com.graduationproject.invoforultimate.R2.id.main_textView_2;
 import static com.graduationproject.invoforultimate.R2.id.nav_view;
-import static com.graduationproject.invoforultimate.R2.id.time_task;
 import static com.graduationproject.invoforultimate.R2.id.track_camera;
-import static com.graduationproject.invoforultimate.R2.id.track_controller;
-import static com.graduationproject.invoforultimate.R2.id.track_distance;
-import static com.graduationproject.invoforultimate.R2.id.track_signal;
-import static com.graduationproject.invoforultimate.R2.id.track_speed;
 import static com.graduationproject.invoforultimate.entity.constants.MainConstants.*;
 import static com.graduationproject.invoforultimate.entity.constants.TerminalModuleConstants.*;
-import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 
 public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl, TextureMapView> implements MainViewCallback {
     @BindView(basic_map)
     TextureMapView textureMapView;
     @BindView(nav_view)
     BottomNavigationView bottomNavigationView;
-    @BindView(track_signal)
-    ImageView trackSignal;
-    @BindView(track_distance)
-    TextView trackDistance;
-    @BindView(time_task)
-    Chronometer chronometer;
-    @BindView(track_controller)
-    TextView trackController;
-    @BindView(track_speed)
-    TextView trackSpeed;
     @BindView(track_camera)
     CheckBox trackCamera;
     @BindView(main_textView_1)
@@ -91,12 +57,9 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
     TextView trackWeatherRefresh;
     @BindView(main_bottom)
     ConstraintLayout trackBottom;
+
     private static final String TAG = MainConstants.TAG;
-    private static List<LatLng> coordinate = new ArrayList<>();
-    private static Polyline polyline;
-    private static boolean isStart = false;
     private static boolean isLocate = false;
-    private static List<Polyline> polyLines = new LinkedList<>();
 
     @Override
     protected int getContentViewId() {
@@ -124,22 +87,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (KeyEvent.KEYCODE_BACK == keyCode && View.VISIBLE == trackController.getVisibility()) {
-            if (isStart) {
-                new TrackDialog(this, DIALOG_STOP_TRACK)
-                        .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
-                            @Override
-                            public void onMapScreenShot(Bitmap bitmap) {
-//                                getP().stopTrack(bitmap);
-                            }
-                        })).setNegativeButton(DIALOG_NEGATIVE_CHOICE, (dialog, which) -> dialog.dismiss()).show();
-            } else {
-                trackController.setVisibility(View.INVISIBLE);
-                bottomNavigationView.setVisibility(View.VISIBLE);
-                trackBottom.setVisibility(View.VISIBLE);
-            }
-            return false;
-        } else if (KeyEvent.KEYCODE_BACK == keyCode && View.INVISIBLE == trackController.getVisibility()) {
+        if (KeyEvent.KEYCODE_BACK == keyCode) {
             new TrackDialog(this, DIALOG_EXIT_APP).setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> {
                 finish();
                 System.exit(0);
@@ -157,22 +105,13 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         getP().getWeather();
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
-                /*
-                 * 暂定
-                 */
                 case R.id.tools1:
-                    startActivity(new Intent(MainActivity.this, LauncherActivity.class),
-                            ActivityOptions.makeSceneTransitionAnimation(MainActivity.this,bottomNavigationView,"intent").toBundle());
+                    ToastText("No Function");
                     break;
 
                 case R.id.tools2:
-                    new TrackDialog(this, DIALOG_START_TRACK)
-                            .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> {
-                                bottomNavigationView.setVisibility(View.INVISIBLE);
-                                trackBottom.setVisibility(View.INVISIBLE);
-                                trackController.setVisibility(View.VISIBLE);
-                            })
-                            .setNegativeButton(DIALOG_NEGATIVE_CHOICE, (dialog, which) -> dialog.dismiss()).show();
+                    startActivity(new Intent(MainActivity.this, LauncherActivity.class),
+                            ActivityOptions.makeSceneTransitionAnimation(MainActivity.this,bottomNavigationView,"intent").toBundle());
                     break;
 
                 case R.id.tools3:
@@ -183,35 +122,11 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         });
     }
 
-   /* @MainThread
-    @OnLongClick(track_controller)
-    @NonNull
-    public void trackStop() {
-        if (isStart) {
-            isLocate = false;
-            getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
-                @Override
-                public void onMapScreenShot(Bitmap bitmap) {
-                    getP().stopTrack(bitmap);
-                }
-            });
-        }
-    }*/
-
     @OnCheckedChanged(track_camera)
     public void setCameraModel(boolean isChecked) {
         trackCamera.setText(isChecked ? CHECK_BOX_CAMERA : CHECK_BOX_MARKER);
         getP().setCamera(isChecked);
     }
-
-   /* @OnClick(track_controller)
-    @NonNull
-    public void trackStart() {
-        if (!isStart) {
-            isLocate = false;
-            getP().startTrack(chronometer);
-        }
-    }*/
 
     @OnClick(main_textView_1)
     public void getWeatherInfo() {
@@ -243,107 +158,11 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         });
     }
 
-    private void updateBtnStatus() {
-        trackController.setText(isStart ? TRACK_STOP : TRACK_START);
-        chronometer.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
-        trackDistance.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
-        trackSpeed.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
-        trackSignal.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    /*@Override
-    public void onTrackChangedResult(String s1, String s2) {
-        runOnUiThread(() -> {
-            if (null == s1) {
-                trackSpeed.setText(0.0 + " km/h");
-            } else {
-                trackSpeed.setText(s1 + " km/h");
-            }
-            if (null == s2) {
-                trackDistance.setText("0.0 m");
-            } else {
-                trackDistance.setText(s2 + " m");
-            }
-        });
-    }*/
-
-    /*@Override
-    public void onTrackResult(int callback, String s) {
-        runOnUiThread(() -> {
-            if (TRACK_RESULT_START == callback) {
-                ToastText(s);
-                isStart = true;
-                updateBtnStatus();
-                getMap().getMap().moveCamera(CameraUpdateFactory.zoomTo(21));
-            }
-            if (TRACK_RESULT_STOP == callback) {
-                isStart = false;
-                updateBtnStatus();
-                trackSpeed.setText("0.0 km/h");
-                trackDistance.setText("0 m");
-                getMap().getMap().moveCamera(CameraUpdateFactory.zoomTo(16));
-                for (Polyline p : polyLines) {
-                    p.remove();
-                }
-                coordinate.clear();
-                polyLines.clear();
-            }
-            if (TRACK_RESULT_FAILURE == callback) {
-                ToastText(s);
-            }
-        });
-    }*/
-
-  /*  @Override
-    public void onTrackLocationResult(double longitude, double latitude, int rank) {
-        runOnUiThread(() -> {
-            trackSignal.setVisibility(View.VISIBLE);
-            switch (rank) {
-                case 1:
-                    trackSignal.setImageResource(R.drawable.gps_signal_good);
-                    break;
-                case 0:
-                    trackSignal.setImageResource(R.drawable.gps_signal_bad);
-                    break;
-                case -1:
-                    trackSignal.setImageResource(R.drawable.gps_signal_unknown);
-                    break;
-            }
-            coordinate.add(new LatLng(latitude, longitude));
-            polyline = getMap().getMap().addPolyline(new PolylineOptions().
-                    addAll(coordinate).width(10).color(Color.argb(255, 65, 105, 225)));
-            polyLines.add(polyline);
-        });
-    }*/
-
-    /*@Override
-    public void onTrackUploadResult(boolean x) {
-        runOnUiThread(() -> {
-            if (x) {
-                ToastText(TRACK_UPLOAD);
-            } else {
-                new TrackDialog(this, DIALOG_TRACK_NOT_UPLOAD)
-                        .setPositiveButton(ALTER_DIALOG_POSITIVE, (dialog, which) -> dialog.dismiss()).show();
-            }
-        });
-    }
-*/
     @Override
-    public void onInitLocationResult(LatLng latLng, @NonNull Integer type) {
-        if (CAMERA_FOLLOW_INIT == type) {
-            if (!isLocate) {
-                getMap().getMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
-                isLocate = true;
-            }
-        }
-        if (CAMERA_FOLLOW_START == type) {
+    public void onInitLocationResult(LatLng latLng) {
+        if (!isLocate) {
             getMap().getMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
-        }
-        if (CAMERA_FOLLOW_STOP == type) {
-            if (!isLocate) {
-                getMap().getMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
-                isLocate = true;
-            }
+            isLocate = true;
         }
     }
 
@@ -352,7 +171,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         Button button = view.findViewById(R.id.create_tid_btn);
         EditText editText = view.findViewById(R.id.create_tid_edit);
         AlertDialog alertDialog = new TrackDialog(this, DIALOG_CREATE_TERMINAL).setView(view).show();
-
         editText.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -364,7 +182,6 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
             return false;
         });
-
         button.setOnClickListener(v -> {
             if (0 != editText.getText().toString().length()) {
                 alertDialog.dismiss();

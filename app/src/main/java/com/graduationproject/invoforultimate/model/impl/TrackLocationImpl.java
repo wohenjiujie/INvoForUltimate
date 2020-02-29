@@ -41,6 +41,7 @@ public class TrackLocationImpl {
         myLocationStyle = new MyLocationStyle();
         myLocationStyle.interval(2000).showMyLocation(true);
         if (0x101 == type) {
+            //连续定位、蓝点不会移动到地图中心点，定位点依照设备方向旋转，并且蓝点会跟随设备移动
             myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER)
                     .strokeColor(Color.argb(0, 0, 0, 0))
                     .radiusFillColor(Color.argb(0, 0, 0, 0));
@@ -51,6 +52,7 @@ public class TrackLocationImpl {
             aMap.setMyLocationEnabled(true);
         }
         if (0x102 == type) {
+            //连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动
             myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.landian))
                     .myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE)
                     .strokeColor(Color.argb(0, 0, 0, 0))
@@ -61,6 +63,7 @@ public class TrackLocationImpl {
     }
 
     public void setCameraModel(boolean type) {
+        //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动。
         aMap.setMyLocationStyle(
                 new MyLocationStyle()
                         .interval(2000)
@@ -76,7 +79,7 @@ public class TrackLocationImpl {
             @Override
             public void onMyLocationChange(Location location) {
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
-              mainBuilderPresenter.onLatLngCallback(latLng, type);
+              mainBuilderPresenter.onLatLngCallback(latLng);
             }
         });
     }

@@ -18,15 +18,7 @@ public interface MainViewCallback extends ViewCallback {
 
     void onCreateTerminalResult(String s);
 
-   /* void onTrackResult(int callback, String s);
-
-    void onTrackChangedResult(String s1, String s2);
-
-    void onTrackLocationResult(double longitude, double latitude, int rank);
-
-    void onTrackUploadResult(boolean x);*/
-
-    void onInitLocationResult(LatLng latLng,@NonNull Integer type);
+    void onInitLocationResult(LatLng latLng);
 
     void onGetWeatherResult(@Nullable JSONObject object);
 }

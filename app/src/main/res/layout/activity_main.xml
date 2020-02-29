@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
 
-    <!--  android:background="@android:color/transparent"
--->
     <com.amap.api.maps.TextureMapView
         android:id="@+id/basic_map"
         android:layout_width="0dp"
@@ -17,8 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_top"
@@ -58,122 +54,28 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_center_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/main_top"
-        app:layout_constraintBottom_toTopOf="@id/main_center_2"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        >
-
-        <ImageView
-            android:id="@+id/track_signal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="@id/track_distance"
-            android:src="@drawable/gps_signal_good"
-            android:visibility="invisible"/>
-
-        <TextView
-            android:id="@+id/track_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/track_signal"
-            app:layout_constraintRight_toRightOf="@id/track_camera"
-            android:alpha="0.75"
-            android:gravity="center"
-            android:text="0 m"
-            android:textColor="@color/colorSienna"
-            android:textSize="22sp"
-            android:visibility="invisible" />
+        app:layout_constraintTop_toTopOf="@id/main_top">
 
         <CheckBox
             android:id="@+id/track_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/track_distance"
-            app:layout_constraintRight_toRightOf="parent"
             android:alpha="0.8"
             android:checked="false"
             android:textColor="@color/colorBlack"
-            android:textSize="10sp"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_center_2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/main_center_1"
-        app:layout_constraintBottom_toTopOf="@id/nav_view"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <Chronometer
-            android:id="@+id/time_task"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-
-            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="@id/track_controller"
-
-            android:alpha="0.5"
-            android:background="@drawable/ring_grey"
-            android:format="00:00:00"
-            android:gravity="center"
-            android:textColor="@color/colorBlack"
-            android:textSize="18sp"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/track_controller"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/time_task"
-            app:layout_constraintRight_toRightOf="@id/track_speed"
-
-            android:alpha="0.75"
-            android:background="@drawable/btn_start_end"
-            android:gravity="center"
-            android:text="@string/start"
-            android:textColor="@color/colorBlack"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/track_speed"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/track_controller"
             app:layout_constraintRight_toRightOf="parent"
-            android:alpha="0.5"
-            android:background="@drawable/ring_grey"
-            android:gravity="center"
-            android:text="0.0 km/h"
-            android:textColor="@color/colorBlack"
-            android:visibility="invisible" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -203,25 +105,24 @@
             android:id="@+id/main_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_marker_avatar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.12"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@id/main_textView_1"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_marker_avatar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/main_textView_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="未知"
-            android:textSize="14sp"
             android:textColor="@color/colorBlack"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/main_bottom"
             app:layout_constraintLeft_toLeftOf="@id/main_imageView"
             app:layout_constraintRight_toRightOf="@id/main_textView_2"
             app:layout_constraintTop_toTopOf="@+id/main_bottom" />
-
 
         <TextView
             android:id="@+id/main_textView_2"
@@ -234,7 +135,6 @@
             app:layout_constraintLeft_toLeftOf="@id/main_textView_1"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/main_bottom" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
