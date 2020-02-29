@@ -29,6 +29,7 @@ import com.graduationproject.invoforultimate.listener.OnTrackLifecycleListenerIm
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
 import com.graduationproject.invoforultimate.listener.TrackTimerListener;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
+import com.graduationproject.invoforultimate.presenter.RecordBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.TrackPresenter;
 import com.graduationproject.invoforultimate.utils.TerminalUtil;
 import com.graduationproject.invoforultimate.entity.bean.TrackInfo;
@@ -62,7 +63,8 @@ public class TrackServiceImpl  {
 //    private TrackTimer trackTimer;
 //    private Timer timer;
     private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    private MainBuilderPresenter mainBuilderPresenter;
+    //    private MainBuilderPresenter mainBuilderPresenter;
+    private RecordBuilderPresenter recordBuilderPresenter;
     private TrackLatLng trackLatLng;
     private  CoordinateConverter coordinateConverter = new CoordinateConverter(getContext());
     private float sum = 0;
@@ -70,7 +72,7 @@ public class TrackServiceImpl  {
         @Override
         public void onStartTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
-                mainBuilderPresenter.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
+                recordBuilderPresenter.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
 
                 chronometer.start();
                 trackLatLng = new TrackLatLng();
@@ -93,7 +95,7 @@ public class TrackServiceImpl  {
                 aMapTrackClient.startGather(onTrackLifecycleListener);
                 aMapLocationClient.startLocation();
             } else {
-                mainBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
+                recordBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
             }
         }
 
@@ -102,7 +104,7 @@ public class TrackServiceImpl  {
             if (i == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 theFirstTransmit = false;
                 sum = 0;
-                mainBuilderPresenter.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
+                recordBuilderPresenter.onTrackCallback(TRACK_RESULT_STOP, TRACK_RESULT_STOP_RESULT);
             }
         }
     };
@@ -131,7 +133,7 @@ public class TrackServiceImpl  {
     }
 
     public TrackServiceImpl(Chronometer chronometer, TrackPresenter trackPresenter) {
-        this.mainBuilderPresenter = (MainBuilderPresenter) trackPresenter;
+        this.recordBuilderPresenter = (RecordBuilderPresenter) trackPresenter;
         aMapTrackClient = new AMapTrackClient(getContext());
         aMapTrackClient.setInterval(GATHER_TIME, 30);
         init();
@@ -159,7 +161,8 @@ public class TrackServiceImpl  {
         aMapTrackClient.stopGather(onTrackLifecycleListener);
         aMapTrackClient.stopTrack(new TrackParam(SERVICE_ID, TerminalUtil.getTerminal()), onTrackLifecycleListener);
         chronometer.stop();
-        mainBuilderPresenter.onTrackUploadCallback((int) trackInfo.getTimeConsuming() >= 60 ? true : false);
+        chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
+        recordBuilderPresenter.onTrackUploadCallback((int) trackInfo.getTimeConsuming() >= 60 ? true : false);
     }
 
     public void onStartTrack() {
@@ -178,7 +181,7 @@ public class TrackServiceImpl  {
                     }
                     aMapTrackClient.startTrack(trackParam, onTrackLifecycleListener);
                 } else {
-                    mainBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESPONSE + addTrackResponse.getErrorMsg());
+                    recordBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESPONSE + addTrackResponse.getErrorMsg());
                 }
             }
         });
@@ -214,6 +217,8 @@ public class TrackServiceImpl  {
         public void onLocationChanged(AMapLocation aMapLocation) {
             if (null != aMapLocation) {
                 if (aMapLocation.getErrorCode() == 0) {
+                    Log.d(TAG, "aMapLocation.getSpeed():" + aMapLocation.getSpeed());
+                    Log.d(TAG, "aMapLocation.getAltitude():" + aMapLocation.getAltitude());
                     double longitude = aMapLocation.getLongitude();
                     double latitude = aMapLocation.getLatitude();
                     DPoint dPoint = new DPoint();
@@ -228,8 +233,8 @@ public class TrackServiceImpl  {
                     trackLatLng.setStartDPoint(trackLatLng.getEndDPoint());
                     trackLatLng.setEndDPoint(null);
                     trackInfo.setDistance(String.format("%.1f", sum));
-                    mainBuilderPresenter.onTrackChangedCallback(String.valueOf(aMapLocation.getSpeed()), String.format("%.1f", sum));
-                    mainBuilderPresenter.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
+                    recordBuilderPresenter.onTrackChangedCallback(String.valueOf(aMapLocation.getSpeed()), String.format("%.1f", sum),String.valueOf(aMapLocation.getAltitude()));
+                    recordBuilderPresenter.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
                     String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
                     if (address.length() > 0 && !theFirstTransmit) {
                         trackInfo.setDesc(address);

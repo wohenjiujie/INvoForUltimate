@@ -4,15 +4,19 @@ import android.graphics.Bitmap;
 import android.widget.Chronometer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
 import com.graduationproject.invoforultimate.model.impl.TrackTerminalImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackLocationImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackServiceImpl;
+import com.graduationproject.invoforultimate.model.impl.TrackWeatherImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
+
+import org.json.JSONObject;
 
 import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_INIT;
 import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_START;
@@ -29,12 +33,11 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
     private TrackTerminalImpl trackTerminalImpl;
     private TrackServiceImpl trackServiceImpl;
     private TrackLocationImpl trackLocationImpl;
-
     public MainBuilderImpl() {
         this.trackTerminalImpl = new TrackTerminalImpl(this);
         this.trackLocationImpl = new TrackLocationImpl(this);
     }
-
+/*
     public void stopTrack(Bitmap bitmap) {
         trackServiceImpl.onStopTrack(bitmap);
         trackLocationImpl.cameraFollow(CAMERA_FOLLOW_STOP);
@@ -44,14 +47,14 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
         this.trackServiceImpl = new TrackServiceImpl(chronometer,this);
         trackServiceImpl.onStartTrack();
         trackLocationImpl.cameraFollow(CAMERA_FOLLOW_START);
-    }
+    }*/
 
     public void setCamera(boolean type) {
         trackLocationImpl.setCameraModel(type);
     }
 
     public void mapSettings(AMap aMap) {
-        trackLocationImpl.mapSettings(aMap);
+        trackLocationImpl.mapSettings(aMap,0x101);
         trackLocationImpl.cameraFollow(CAMERA_FOLLOW_INIT);
     }
 
@@ -61,6 +64,10 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
 
     public void checkTerminal() {
         trackTerminalImpl.checkTerminal();
+    }
+
+    public void getWeather() {
+        new TrackWeatherImpl(this);
     }
 
     @Override
@@ -84,7 +91,7 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
         }
     }
 
-    @Override
+   /* @Override
     public void onTrackCallback(int x, String s) {
         getV().onTrackResult(x, s);
     }
@@ -104,6 +111,15 @@ public class MainBuilderImpl extends Presenter<MainViewCallback> implements Main
         getV().onTrackUploadResult(x);
         if (x) {
             trackServiceImpl.onUploadTrackCheck();
+        }
+    }*/
+
+    @Override
+    public void onGetWeatherCallback(@NonNull boolean callback, @Nullable JSONObject obj) {
+        if (callback) {
+            getV().onGetWeatherResult(obj);
+        } else {
+            getV().onGetWeatherResult(null);
         }
     }
 }

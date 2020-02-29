@@ -34,7 +34,9 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-
+        <activity
+            android:name=".ui.activity.LauncherActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.TrackReplayActivity"
             android:screenOrientation="portrait" />

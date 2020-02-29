@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import com.amap.api.maps.model.LatLng;
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 
+import org.json.JSONObject;
+
 /**
  * Created by INvo
  * on 2020-02-07.
@@ -16,13 +18,15 @@ public interface MainViewCallback extends ViewCallback {
 
     void onCreateTerminalResult(String s);
 
-    void onTrackResult(int callback, String s);
+   /* void onTrackResult(int callback, String s);
 
     void onTrackChangedResult(String s1, String s2);
 
     void onTrackLocationResult(double longitude, double latitude, int rank);
 
-    void onTrackUploadResult(boolean x);
+    void onTrackUploadResult(boolean x);*/
 
     void onInitLocationResult(LatLng latLng,@NonNull Integer type);
+
+    void onGetWeatherResult(@Nullable JSONObject object);
 }

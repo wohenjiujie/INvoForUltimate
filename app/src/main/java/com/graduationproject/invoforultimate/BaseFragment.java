@@ -1,42 +1,60 @@
 package com.graduationproject.invoforultimate;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.amap.api.maps.TextureMapView;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.service.TrackBroadcast;
+import com.graduationproject.invoforultimate.ui.fragment.TrackRecordFragment;
 import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 import com.graduationproject.invoforultimate.utils.ToastUtil;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by INvo
- * on 2019-09-24.
+ * on 2020-02-29.
  */
-public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V>, Map extends TextureMapView> extends Activity {
-    private static Context context;
+public abstract class BaseFragment<V extends ViewCallback,P extends Presenter<V>,Map extends TextureMapView> extends Fragment {
+    //    private TrackRecordFragment.OnFragmentInteractionListener mListener;
     private P p;
     private V v;
     private Map map;
+    private Unbinder unbinder;
     private boolean isRegistered = false;
     private TrackBroadcast trackBroadcast;
-    @CallSuper
+
+    // FIXME: 2020-02-29 Reconstructor the interface for BaseFrament
+    private static Context context;
+
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        context = getApplicationContext();
-        setContentView(getContentViewId());
-        ButterKnife.bind(this);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = getContentView(inflater, container);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
+    }
+
+    protected abstract View getContentView(LayoutInflater inflater, ViewGroup container);
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         if (null == this.map) {
             this.map = loadMap(savedInstanceState);
         }
@@ -54,14 +72,18 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(trackBroadcast, filter);
+        context.registerReceiver(trackBroadcast, filter);
         isRegistered = true;
         initControls(savedInstanceState);
     }
 
-    protected static Context getContext() {
-        return context;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = getContext();
     }
+
+    protected abstract void initControls(@Nullable Bundle savedInstanceState);
 
     protected abstract Map loadMap(Bundle savedInstanceState);
 
@@ -77,7 +99,9 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         return this.map;
     }
 
-    protected abstract int getContentViewId();
+    protected static Context asContext() {
+        return context;
+    }
 
     protected void ToastText(String string) {
         ToastUtil.shortToast(context, string);
@@ -87,10 +111,40 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
         ToastUtil.LongToast(context, string);
     }
 
-    protected abstract void initControls(@Nullable Bundle savedInstanceState);
+    public abstract void onKeyDownChild(int keyCode, KeyEvent event);
+
 
     @Override
-    protected void onResume() {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+       /* if (context instanceof TrackRecordFragment.OnFragmentInteractionListener) {
+            mListener = (TrackRecordFragment.OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }*/
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+//        mListener = null;
+    }
+    /*public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }*/
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+
+    @Override
+    public void onResume() {
         super.onResume();
         if (null != this.map) {
             map.onResume();
@@ -98,7 +152,7 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         if (null != this.map) {
             map.onPause();
@@ -106,15 +160,14 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (null != this.map) {
             map.onSaveInstanceState(outState);
         }
     }
-
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (null != this.p && null != this.v) {
             this.p.detachV();
@@ -123,7 +176,7 @@ public abstract class BaseActivity<V extends ViewCallback, P extends Presenter<V
             map.onDestroy();
         }
         if (isRegistered) {
-            unregisterReceiver(trackBroadcast);
+            context.unregisterReceiver(trackBroadcast);
             trackBroadcast = null;
         }
     }

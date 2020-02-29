@@ -1,90 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
     tools:context=".ui.activity.MainActivity">
 
+    <!--  android:background="@android:color/transparent"
+-->
     <com.amap.api.maps.TextureMapView
         android:id="@+id/basic_map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginTop="740dp"
-            android:alpha="0.8"
-            android:background="@color/colorRed"
-            app:menu="@menu/bottom_navigation"
-            tools:ignore="MissingConstraints" />
-    </com.amap.api.maps.TextureMapView>
 
-    <LinearLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_top"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="50dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/main_search_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/main_search_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="查找地点、公交、地铁"
+            android:textColor="#cccccc"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="@id/main_search_ic"
+            app:layout_constraintRight_toRightOf="@id/main_top"
+            app:layout_constraintTop_toTopOf="@id/main_top" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_center_1"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_gravity="top"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="50dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/main_top"
+        app:layout_constraintBottom_toTopOf="@id/main_center_2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
 
         <ImageView
             android:id="@+id/track_signal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/track_distance"
             android:src="@drawable/gps_signal_good"
-            android:visibility="invisible">
-        </ImageView>
+            android:visibility="invisible"/>
 
         <TextView
             android:id="@+id/track_distance"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/track_signal"
+            app:layout_constraintRight_toRightOf="@id/track_camera"
             android:alpha="0.75"
             android:gravity="center"
             android:text="0 m"
             android:textColor="@color/colorSienna"
             android:textSize="22sp"
             android:visibility="invisible" />
+
         <CheckBox
             android:id="@+id/track_camera"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="10sp"
-            android:text="@string/camera_model"
-            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/track_distance"
+            app:layout_constraintRight_toRightOf="parent"
             android:alpha="0.8"
-            android:checked="true">
-        </CheckBox>
+            android:checked="false"
+            android:textColor="@color/colorBlack"
+            android:textSize="10sp"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_center_2"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="80dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/main_center_1"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
         <Chronometer
             android:id="@+id/time_task"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/track_controller"
+
             android:alpha="0.5"
             android:background="@drawable/ring_grey"
             android:format="00:00:00"
@@ -95,23 +144,30 @@
 
         <TextView
             android:id="@+id/track_controller"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/time_task"
+            app:layout_constraintRight_toRightOf="@id/track_speed"
+
+            android:alpha="0.75"
             android:background="@drawable/btn_start_end"
             android:gravity="center"
             android:text="@string/start"
-            android:alpha="0.75"
             android:textColor="@color/colorBlack"
             android:visibility="invisible" />
 
         <TextView
             android:id="@+id/track_speed"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/track_controller"
+            app:layout_constraintRight_toRightOf="parent"
             android:alpha="0.5"
             android:background="@drawable/ring_grey"
             android:gravity="center"
@@ -119,6 +175,67 @@
             android:textColor="@color/colorBlack"
             android:visibility="invisible" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:alpha="0.8"
+        android:background="@color/colorRed"
+        android:transitionName="intent"
+        app:layout_constraintBottom_toBottomOf="@+id/basic_map"
+        app:menu="@menu/bottom_navigation"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorTransparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nav_view">
+
+        <ImageView
+            android:id="@+id/main_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.12"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/main_textView_1"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_marker_avatar" />
+
+        <TextView
+            android:id="@+id/main_textView_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="未知"
+            android:textSize="14sp"
+            android:textColor="@color/colorBlack"
+            app:layout_constraintBottom_toBottomOf="@+id/main_bottom"
+            app:layout_constraintLeft_toLeftOf="@id/main_imageView"
+            app:layout_constraintRight_toRightOf="@id/main_textView_2"
+            app:layout_constraintTop_toTopOf="@+id/main_bottom" />
+
+
+        <TextView
+            android:id="@+id/main_textView_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="refresh"
+            android:textColor="@color/colorBlack"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/main_bottom"
+            app:layout_constraintLeft_toLeftOf="@id/main_textView_1"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/main_bottom" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

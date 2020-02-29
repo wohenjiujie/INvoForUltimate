@@ -16,13 +16,16 @@
     <string name="end">结束</string>
     <string name="continuance">继续</string>
     <string name="createTrack">创建轨迹以保存</string>
-    <string name="camera_model">镜头跟随</string>
+    <string name="camera_model">定位跟随</string>
 
     <string name="checkTid">0x03</string>
 
     <string name="createTid">创建终端</string>
 
     <string name="createTidHint">支持中文、英文大小字母、英文下划线</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

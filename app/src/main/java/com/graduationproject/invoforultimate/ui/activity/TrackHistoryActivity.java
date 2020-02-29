@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.animation.Animator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +17,9 @@ import android.os.Bundle;
 import butterknife.BindView;
 
 import android.os.Parcelable;
+import android.transition.Explode;
 import android.util.Log;
+import android.view.Window;
 import android.widget.ProgressBar;
 
 import com.amap.api.maps.MapView;
@@ -31,6 +34,9 @@ import com.graduationproject.invoforultimate.listener.OnTrackAdapterListener;
 import com.graduationproject.invoforultimate.presenter.impl.HistoryBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.HistoryViewCallback;
 import com.graduationproject.invoforultimate.utils.Decoration;
+import com.willowtreeapps.spruce.Spruce;
+import com.willowtreeapps.spruce.animation.DefaultAnimations;
+import com.willowtreeapps.spruce.sort.DefaultSort;
 
 import static com.graduationproject.invoforultimate.R2.id.swipe_refresh;
 import static com.graduationproject.invoforultimate.R2.id.track_history;
@@ -43,30 +49,31 @@ public class TrackHistoryActivity extends BaseActivity<HistoryViewCallback, Hist
     @BindView(swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-    private ProgressDialog progressDialog;
 
     @Override
     protected void initControls(Bundle savedInstanceState) {
+        Explode explode = new Explode();
+        explode.excludeTarget(android.R.id.statusBarBackground,true);
+        explode.setDuration(500L);
+        Window window = this.getWindow();
+        window.setEnterTransition(explode);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorBlack, R.color.colorGreen, R.color.colorBlue, R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            getP().getTrackHistoryInfo();
+            getP().getTrackHistoryInfo(null);
             swipeRefreshLayout.setRefreshing(true);
         });
+
+
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new Decoration());
-        getP().getTrackHistoryInfo();
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(PROGRESS_DIALOG_MESSAGE);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        getP().getTrackHistoryInfo(this);
     }
 
     @MainThread
     @Override
     public void onGetTrackHistoryResult(@Nullable TrackHistoryInfo trackHistoryInfo) {
         runOnUiThread(() -> {
-            progressDialog.dismiss();
             recyclerView.setAdapter(new TrackHistoryAdapter(trackHistoryInfo, this));
             if (swipeRefreshLayout.isRefreshing()) {
                 ToastText(UPGRADE_STATUS);
@@ -117,7 +124,7 @@ public class TrackHistoryActivity extends BaseActivity<HistoryViewCallback, Hist
     @Override
     public void onDeleteResult() {
         runOnUiThread(() -> {
-            getP().getTrackHistoryInfo();
+            getP().getTrackHistoryInfo(null);
             ToastText(DELETE_STATUS);
             swipeRefreshLayout.setRefreshing(false);
         });

@@ -1,15 +1,11 @@
 package com.graduationproject.invoforultimate.ui.activity;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +19,13 @@ import android.widget.TextView;
 import androidx.annotation.CheckResult;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
 import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Polyline;
@@ -42,15 +40,12 @@ import com.graduationproject.invoforultimate.presenter.impl.MainBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
 import com.graduationproject.invoforultimate.utils.InputUtil;
 
-import org.apache.commons.codec.binary.Base64;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.*;
 
@@ -59,6 +54,9 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.graduationproject.invoforultimate.R2.id.basic_map;
+import static com.graduationproject.invoforultimate.R2.id.main_bottom;
+import static com.graduationproject.invoforultimate.R2.id.main_textView_1;
+import static com.graduationproject.invoforultimate.R2.id.main_textView_2;
 import static com.graduationproject.invoforultimate.R2.id.nav_view;
 import static com.graduationproject.invoforultimate.R2.id.time_task;
 import static com.graduationproject.invoforultimate.R2.id.track_camera;
@@ -87,6 +85,12 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
     TextView trackSpeed;
     @BindView(track_camera)
     CheckBox trackCamera;
+    @BindView(main_textView_1)
+    TextView trackWeatherInfo;
+    @BindView(main_textView_2)
+    TextView trackWeatherRefresh;
+    @BindView(main_bottom)
+    ConstraintLayout trackBottom;
     private static final String TAG = MainConstants.TAG;
     private static List<LatLng> coordinate = new ArrayList<>();
     private static Polyline polyline;
@@ -126,12 +130,13 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                         .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
                             @Override
                             public void onMapScreenShot(Bitmap bitmap) {
-                                getP().stopTrack(bitmap);
+//                                getP().stopTrack(bitmap);
                             }
                         })).setNegativeButton(DIALOG_NEGATIVE_CHOICE, (dialog, which) -> dialog.dismiss()).show();
             } else {
                 trackController.setVisibility(View.INVISIBLE);
                 bottomNavigationView.setVisibility(View.VISIBLE);
+                trackBottom.setVisibility(View.VISIBLE);
             }
             return false;
         } else if (KeyEvent.KEYCODE_BACK == keyCode && View.INVISIBLE == trackController.getVisibility()) {
@@ -149,33 +154,36 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 1);
         }
         getP().checkTerminal();
+        getP().getWeather();
         bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 /*
                  * 暂定
                  */
                 case R.id.tools1:
-                    ToastText("No Function");
+                    startActivity(new Intent(MainActivity.this, LauncherActivity.class),
+                            ActivityOptions.makeSceneTransitionAnimation(MainActivity.this,bottomNavigationView,"intent").toBundle());
                     break;
 
                 case R.id.tools2:
-                    this.startActivity(new Intent().setClass(getContext(), TrackHistoryActivity.class));
-                    break;
-
-                case R.id.tools3:
                     new TrackDialog(this, DIALOG_START_TRACK)
                             .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> {
                                 bottomNavigationView.setVisibility(View.INVISIBLE);
+                                trackBottom.setVisibility(View.INVISIBLE);
                                 trackController.setVisibility(View.VISIBLE);
                             })
                             .setNegativeButton(DIALOG_NEGATIVE_CHOICE, (dialog, which) -> dialog.dismiss()).show();
+                    break;
+
+                case R.id.tools3:
+                    ActivityCompat.startActivity(this, new Intent(getContext(), TrackHistoryActivity.class), ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
                     break;
             }
             return true;
         });
     }
 
-    @MainThread
+   /* @MainThread
     @OnLongClick(track_controller)
     @NonNull
     public void trackStop() {
@@ -188,7 +196,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                 }
             });
         }
-    }
+    }*/
 
     @OnCheckedChanged(track_camera)
     public void setCameraModel(boolean isChecked) {
@@ -196,13 +204,23 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         getP().setCamera(isChecked);
     }
 
-    @OnClick(track_controller)
+   /* @OnClick(track_controller)
     @NonNull
     public void trackStart() {
         if (!isStart) {
             isLocate = false;
             getP().startTrack(chronometer);
         }
+    }*/
+
+    @OnClick(main_textView_1)
+    public void getWeatherInfo() {
+
+    }
+
+    @OnClick(main_textView_2)
+    public void refreshWeatherInfo() {
+        getP().getWeather();
     }
 
     @Override
@@ -220,6 +238,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                 ToastText(s);
                 getP().mapSettings(getMap().getMap());
                 bottomNavigationView.setVisibility(View.VISIBLE);
+                trackBottom.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -232,7 +251,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         trackSignal.setVisibility(isStart ? View.VISIBLE : View.INVISIBLE);
     }
 
-    @Override
+    /*@Override
     public void onTrackChangedResult(String s1, String s2) {
         runOnUiThread(() -> {
             if (null == s1) {
@@ -246,9 +265,9 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                 trackDistance.setText(s2 + " m");
             }
         });
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onTrackResult(int callback, String s) {
         runOnUiThread(() -> {
             if (TRACK_RESULT_START == callback) {
@@ -273,9 +292,9 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                 ToastText(s);
             }
         });
-    }
+    }*/
 
-    @Override
+  /*  @Override
     public void onTrackLocationResult(double longitude, double latitude, int rank) {
         runOnUiThread(() -> {
             trackSignal.setVisibility(View.VISIBLE);
@@ -295,9 +314,9 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
                     addAll(coordinate).width(10).color(Color.argb(255, 65, 105, 225)));
             polyLines.add(polyline);
         });
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onTrackUploadResult(boolean x) {
         runOnUiThread(() -> {
             if (x) {
@@ -308,7 +327,7 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
             }
         });
     }
-
+*/
     @Override
     public void onInitLocationResult(LatLng latLng, @NonNull Integer type) {
         if (CAMERA_FOLLOW_INIT == type) {
@@ -359,9 +378,25 @@ public class MainActivity extends BaseActivity<MainViewCallback, MainBuilderImpl
         runOnUiThread(() -> {
             if (!x) {
                 bottomNavigationView.setVisibility(View.INVISIBLE);
+                trackBottom.setVisibility(View.INVISIBLE);
                 terminalCreateAlterDialog();
             } else {
                 getP().mapSettings(getMap().getMap());
+            }
+        });
+    }
+
+    @Override
+    public void onGetWeatherResult(@Nullable JSONObject object) {
+        runOnUiThread(() -> {
+            if (null != object) {
+                try {
+                    trackWeatherInfo.setText(object.getString("city") + " " + object.getString("weather") + " " + object.getString("temperature"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                trackWeatherInfo.setText("获取信息失败");
             }
         });
     }

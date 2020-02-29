@@ -3,17 +3,19 @@
 
     <item
         android:id="@+id/tools1"
-        android:icon="@drawable/sport"
+        android:icon="@drawable/ic_route"
         android:title="" />
 
     <item
         android:id="@+id/tools2"
-        android:icon="@drawable/history_record"
+        android:icon="@drawable/sport"
         android:title="" />
 
     <item
         android:id="@+id/tools3"
-        android:icon="@drawable/sport"
+        android:icon="@drawable/history_record"
         android:title="" />
+
+
 
 </menu>
