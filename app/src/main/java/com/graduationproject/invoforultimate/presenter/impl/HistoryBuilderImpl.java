@@ -10,6 +10,7 @@ import com.graduationproject.invoforultimate.entity.bean.TrackHistoryInfo;
 import com.graduationproject.invoforultimate.model.impl.TrackHistoryImpl;
 import com.graduationproject.invoforultimate.presenter.HistoryBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.Presenter;
+import com.graduationproject.invoforultimate.ui.view.ViewCallback;
 import com.graduationproject.invoforultimate.ui.view.impl.HistoryViewCallback;
 
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
@@ -33,6 +34,7 @@ public class HistoryBuilderImpl extends Presenter<HistoryViewCallback> implement
 
     public void getTrackHistoryIntent(Object var) {
         new TrackHistoryImpl(GET_TRACK_INTENT_INFO,  var, this).execute();
+
     }
 
     public void deleteTrack(Object var) {

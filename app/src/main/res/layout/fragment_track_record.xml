@@ -153,7 +153,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:alpha="0.75"
-                android:background="@drawable/circle_green"
+                android:background="@drawable/circle_ripper"
                 android:gravity="center"
                 android:text="@string/start"
                 android:textColor="#ffffff" />

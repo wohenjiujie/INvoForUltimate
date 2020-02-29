@@ -8,6 +8,7 @@ import java.util.List;
  * on 2020-02-12.
  */
 public class TrackHistoryInfo<E> {
+
     private E counts;
     private ArrayList<E> desc = new ArrayList<>();
     private ArrayList<E> date = new ArrayList<>();

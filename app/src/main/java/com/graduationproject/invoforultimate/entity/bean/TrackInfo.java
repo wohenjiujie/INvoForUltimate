@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  * Created by INvo
  * on 2019-11-03.
  */
-public class TrackInfo<T> {
+public class TrackInfo<T>  {
     private T serviceID;
     private T terminalID;
     private T trackID;

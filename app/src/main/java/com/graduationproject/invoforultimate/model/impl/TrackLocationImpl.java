@@ -28,7 +28,6 @@ public class TrackLocationImpl {
     private MainBuilderPresenter mainBuilderPresenter;
     private MyLocationStyle myLocationStyle;
 
-
     public TrackLocationImpl(@Nullable  TrackPresenter trackPresenter) {
         this.mainBuilderPresenter = (MainBuilderPresenter) trackPresenter;
     }
