@@ -8,4 +8,17 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MyPopWindowMore">
+        <item name="android:windowEnterAnimation">@anim/pop_more_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_more_out</item>
+    </style>
+
+    <style name="MyPopWindowMainLocatio">
+        <item name="android:windowEnterAnimation">@anim/pop_main_location_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_main_location_out</item>
+    </style>
+
+    <declare-styleable name="DynamicHeightRecyclerView">
+        <attr name="maxHeight" format="integer" />
+    </declare-styleable>
 </resources>

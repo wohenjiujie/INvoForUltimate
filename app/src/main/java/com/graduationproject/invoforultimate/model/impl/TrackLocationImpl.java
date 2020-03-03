@@ -5,18 +5,29 @@ import android.location.Location;
 
 import androidx.annotation.Nullable;
 
+import com.amap.api.location.AMapLocation;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.core.PoiItem;
+import com.amap.api.services.poisearch.PoiResult;
+import com.amap.api.services.poisearch.PoiSearch;
 import com.graduationproject.invoforultimate.R;
+import com.graduationproject.invoforultimate.listener.OnLocationServiceListener;
+import com.graduationproject.invoforultimate.listener.OnLocationServiceListenerImpl;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.RecordBuilderPresenter;
 import com.graduationproject.invoforultimate.presenter.TrackPresenter;
 
 import java.lang.reflect.Type;
+
+import static com.graduationproject.invoforultimate.app.TrackApplication.getAddress;
+import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
+import static com.graduationproject.invoforultimate.app.TrackApplication.getLocation;
 
 /**
  * Created by INvo
@@ -27,13 +38,13 @@ public class TrackLocationImpl {
     private AMap aMap;
     private MainBuilderPresenter mainBuilderPresenter;
     private MyLocationStyle myLocationStyle;
+    private PoiSearch poiSearch;
 
-    public TrackLocationImpl(@Nullable  TrackPresenter trackPresenter) {
+    public TrackLocationImpl(@Nullable TrackPresenter trackPresenter) {
         this.mainBuilderPresenter = (MainBuilderPresenter) trackPresenter;
     }
 
     public void mapSettings(AMap aMap, int type) {
-
         this.aMap = aMap;
         aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
         aMap.setMyLocationEnabled(true);
@@ -73,13 +84,11 @@ public class TrackLocationImpl {
         );
     }
 
-    public void cameraFollow(int type) {
-        aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-              mainBuilderPresenter.onLatLngCallback(latLng);
-            }
+    public void cameraFollow(@Nullable int type) {
+        aMap.setOnMyLocationChangeListener(location -> {
+            getLocation(new OnLocationServiceListenerImpl());
+            latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mainBuilderPresenter.onLatLngCallback(latLng);
         });
     }
 }

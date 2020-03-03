@@ -8,6 +8,11 @@ import androidx.annotation.Nullable;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.poisearch.PoiResult;
+import com.amap.api.services.poisearch.PoiSearch;
+import com.graduationproject.invoforultimate.listener.OnPoiSearchListenerImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackTerminalImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackLocationImpl;
 import com.graduationproject.invoforultimate.model.impl.TrackServiceImpl;
@@ -15,9 +20,11 @@ import com.graduationproject.invoforultimate.model.impl.TrackWeatherImpl;
 import com.graduationproject.invoforultimate.presenter.Presenter;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
 import com.graduationproject.invoforultimate.ui.view.impl.MainViewCallback;
+import com.graduationproject.invoforultimate.utils.PoiOverlay;
 
 import org.json.JSONObject;
 
+import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
 import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_INIT;
 import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_START;
 import static com.graduationproject.invoforultimate.entity.constants.MainConstants.CAMERA_FOLLOW_STOP;
@@ -30,10 +37,27 @@ import static com.graduationproject.invoforultimate.entity.constants.MainConstan
 public class MainBuilderImpl extends Presenter<MainViewCallback> implements MainBuilderPresenter {
     private TrackTerminalImpl trackTerminalImpl;
     private TrackLocationImpl trackLocationImpl;
+    private PoiSearch poiSearch;
+
 
     public MainBuilderImpl() {
         this.trackTerminalImpl = new TrackTerminalImpl(this);
         this.trackLocationImpl = new TrackLocationImpl(this);
+    }
+    public void initPoiSearch(double lat, double lon, String type) {
+            poiSearch =null;
+            PoiSearch.Query poiQuery = new PoiSearch.Query("", type);
+            LatLonPoint centerPoint = new LatLonPoint(lat, lon);
+            PoiSearch.SearchBound searchBound = new PoiSearch.SearchBound(centerPoint, 1000);
+            poiSearch = new PoiSearch(getContext(), poiQuery);
+            poiSearch.setBound(searchBound);
+            poiSearch.setOnPoiSearchListener(new OnPoiSearchListenerImpl() {
+                @Override
+                public void onPoiSearched(PoiResult poiResult, int i) {
+                    getV().onPoiOverlayResult(poiResult,i);
+                }
+            });
+            poiSearch.searchPOIAsyn();
     }
 
     public void setCamera(boolean type) {

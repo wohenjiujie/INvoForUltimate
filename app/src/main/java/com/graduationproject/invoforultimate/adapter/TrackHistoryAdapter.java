@@ -33,7 +33,6 @@ import static com.graduationproject.invoforultimate.ui.activity.TrackHistoryActi
 public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapter.TrackHistoryViewHolder> {
     private TrackHistoryInfo trackHistoryInfo;
     private OnTrackAdapterListener onTrackAdapter;
-
     public TrackHistoryAdapter(TrackHistoryInfo trackHistoryInfo, OnTrackAdapterListener onTrackAdapter) {
         super();
         this.trackHistoryInfo = trackHistoryInfo;
@@ -48,19 +47,24 @@ public class TrackHistoryAdapter extends RecyclerView.Adapter<TrackHistoryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull TrackHistoryViewHolder holder, int position) {
-        for (int i = 0; i <= position; i++) {
-            holder.desc.setText((String) trackHistoryInfo.getDesc().get(i));
-            holder.date.setText((String) trackHistoryInfo.getDate().get(i));
-            holder.time.setText("用时:" + trackHistoryInfo.getTime().get(i));
-            holder.distance.setText("里程:" + trackHistoryInfo.getDistance().get(i) + "m");
-            holder.thumbnail.setImageBitmap((Bitmap) trackHistoryInfo.getBitmap().get(i));
+        if (null != trackHistoryInfo) {
+            for (int i = 0; i <= position; i++) {
+                holder.desc.setText((String) trackHistoryInfo.getDesc().get(i));
+                holder.date.setText((String) trackHistoryInfo.getDate().get(i));
+                holder.time.setText("用时:" + trackHistoryInfo.getTime().get(i));
+                holder.distance.setText("里程:" + trackHistoryInfo.getDistance().get(i) + "m");
+                holder.thumbnail.setImageBitmap((Bitmap) trackHistoryInfo.getBitmap().get(i));
+            }
+            holder.desc.setOnClickListener(v -> onTrackAdapter.onSwitch(trackHistoryInfo.getTrackID().get(position)));
+            holder.delete.setOnClickListener(v -> onTrackAdapter.onDelete(trackHistoryInfo.getTrackID().get(position)));
         }
-        holder.desc.setOnClickListener(v -> onTrackAdapter.onSwitch(trackHistoryInfo.getTrackID().get(position)));
-        holder.delete.setOnClickListener(v -> onTrackAdapter.onDelete(trackHistoryInfo.getTrackID().get(position)));
     }
 
     @Override
     public int getItemCount() {
+        if (null == trackHistoryInfo) {
+            return 0;
+        }
         return Integer.parseInt((String) trackHistoryInfo.getCounts());
     }
 

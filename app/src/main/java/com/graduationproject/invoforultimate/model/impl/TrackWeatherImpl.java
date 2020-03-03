@@ -1,19 +1,15 @@
 package com.graduationproject.invoforultimate.model.impl;
 
-import android.util.Log;
-
 import androidx.annotation.Nullable;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.services.weather.LocalWeatherForecastResult;
 import com.amap.api.services.weather.LocalWeatherLive;
 import com.amap.api.services.weather.LocalWeatherLiveResult;
 import com.amap.api.services.weather.WeatherSearch;
 import com.amap.api.services.weather.WeatherSearchQuery;
-import com.graduationproject.invoforultimate.listener.TrackWeatherSearchListener;
+import com.graduationproject.invoforultimate.listener.OnTrackWeatherSearchListenerImpl;
 import com.graduationproject.invoforultimate.presenter.MainBuilderPresenter;
 
 import org.json.JSONException;
@@ -41,7 +37,7 @@ public class TrackWeatherImpl {
                 WeatherSearchQuery weatherSearchQuery = new WeatherSearchQuery(aMapLocation.getCity()
                         , WeatherSearchQuery.WEATHER_TYPE_LIVE);
                 WeatherSearch weatherSearch = new WeatherSearch(getContext());
-                weatherSearch.setOnWeatherSearchListener(new TrackWeatherSearchListener() {
+                weatherSearch.setOnWeatherSearchListener(new OnTrackWeatherSearchListenerImpl() {
                     @Override
                     public void onWeatherLiveSearched(LocalWeatherLiveResult localWeatherLiveResult, int i) {
                         if (1000 == i) {

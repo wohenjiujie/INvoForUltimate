@@ -6,14 +6,10 @@ import android.view.KeyEvent;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.graduationproject.invoforultimate.BaseFragment;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.ui.fragment.TrackRecordFragment;
 
-/**
- * Created by INvo
- * on 2020-02-28.
- */
+
 public class LauncherActivity extends AppCompatActivity {
     private TrackRecordFragment trackRecordFragment;
     @Override

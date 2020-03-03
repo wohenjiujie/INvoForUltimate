@@ -25,7 +25,7 @@
         android:roundIcon="@drawable/rem"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-
+        <activity android:name=".ui.activity.RouteSearchActivity" />
 
         <receiver android:name=".service.TrackBroadcast">
             <intent-filter>
@@ -34,6 +34,11 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <activity android:name="com.amap.api.navi.AmapRouteActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+
         <activity
             android:name=".ui.activity.LauncherActivity"
             android:screenOrientation="portrait" />
@@ -56,7 +61,6 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b5c9067a77ad3db4ecda4cf3e7f0fb39" />
-
         <meta-data
             android:name="android.max_aspect"
             android:value="2.2" />

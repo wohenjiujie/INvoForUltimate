@@ -14,9 +14,7 @@
             android:id="@+id/track_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorGrey">
-        </androidx.recyclerview.widget.RecyclerView>
-
+            android:background="#8B658B"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

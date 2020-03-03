@@ -23,9 +23,4 @@
     <string name="createTid">创建终端</string>
 
     <string name="createTidHint">支持中文、英文大小字母、英文下划线</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
 </resources>

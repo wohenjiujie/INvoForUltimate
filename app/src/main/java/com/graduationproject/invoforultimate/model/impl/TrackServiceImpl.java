@@ -25,6 +25,7 @@ import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.graduationproject.invoforultimate.R;
 import com.graduationproject.invoforultimate.entity.bean.TrackLatLng;
+import com.graduationproject.invoforultimate.listener.OnLocationServiceListener;
 import com.graduationproject.invoforultimate.listener.OnTrackLifecycleListenerImpl;
 import com.graduationproject.invoforultimate.listener.OnTrackListenerImpl;
 import com.graduationproject.invoforultimate.presenter.RecordBuilderPresenter;
@@ -39,56 +40,38 @@ import java.io.ByteArrayOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.graduationproject.invoforultimate.app.TrackApplication.getContext;
+import static com.graduationproject.invoforultimate.app.TrackApplication.getLocation;
 import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.*;
 
 /**
  * Created by INvo
  * on 2020-02-08.
  */
-public class TrackServiceImpl  {
+public class TrackServiceImpl {
     private AMapTrackClient aMapTrackClient;
-    private AMapLocationClient aMapLocationClient = null;
-    private AMapLocationClientOption aMapLocationClientOption = null;
     private boolean theFirstTransmit = false;
     private TrackInfo trackInfo = new TrackInfo();
     private TrackParam trackParam;
-//    private TrackServiceTrackModel trackServiceModel;
     private Chronometer chronometer;
     UnixUtil unixUtil = new UnixUtil();
-//    private TrackTimer trackTimer;
-//    private Timer timer;
     private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    //    private MainBuilderPresenter mainBuilderPresenter;
     private RecordBuilderPresenter recordBuilderPresenter;
     private TrackLatLng trackLatLng;
-    private  CoordinateConverter coordinateConverter = new CoordinateConverter(getContext());
+    private CoordinateConverter coordinateConverter = new CoordinateConverter(getContext());
     private float sum = 0;
+
     private OnTrackLifecycleListenerImpl onTrackLifecycleListener = new OnTrackLifecycleListenerImpl() {
         @Override
         public void onStartTrackCallback(int i, String s) {
             if (i == ErrorCode.TrackListen.START_TRACK_SUCEE || i == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
                 recordBuilderPresenter.onTrackCallback(TRACK_RESULT_START, TRACK_RESULT_START_RESULT);
-
                 chronometer.start();
                 trackLatLng = new TrackLatLng();
-                /**
-                 * update
-                 */
-               /* timer = new Timer();
-                trackTimer = new TrackTimer(TIMER_TYPE_UPDATE_DATA, trackInfo.getTrackID(), new TrackTimerListener() {
-                    @Override
-                    public void onTimerCallback(String s1, String s2) {
-                        mainBuilderPresenter.onTrackChangedCallback(s1, s2);
-                        trackInfo.setDistance(s2);
-                    }
-                });
-                timer.schedule(trackTimer, 5000, 7000);*/
                 trackInfo.setDate(unixUtil.getDate());
                 chronometer.setBase(SystemClock.elapsedRealtime());//计时器清零
                 int hour = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000 / 60);
                 chronometer.setFormat("0" + hour + ":%s");
                 aMapTrackClient.startGather(onTrackLifecycleListener);
-                aMapLocationClient.startLocation();
             } else {
                 recordBuilderPresenter.onTrackCallback(TRACK_RESULT_FAILURE, TRACK_RESULT_FAILURE_RESULT_);
             }
@@ -105,27 +88,38 @@ public class TrackServiceImpl  {
     };
 
     void init() {
-        //初始化client
-        aMapLocationClient = new AMapLocationClient(getContext());
-//        setDefaultOption();
-        aMapLocationClientOption = new AMapLocationClientOption();
-        aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
-        aMapLocationClientOption.setInterval(2000);//设定连续定位间隔
-        //设置定位参数
-        aMapLocationClient.setLocationOption(aMapLocationClientOption);
-        // 设置定位监听
-        aMapLocationClient.setLocationListener(aMapLocationListener);
+        getLocation(aMapLocation -> {
+            if (null != aMapLocation) {
+                if (aMapLocation.getErrorCode() == 0) {
+                    Log.d(TAG, "aMapLocation.getSpeed():" + aMapLocation.getSpeed());
+                    Log.d(TAG, "aMapLocation.getAltitude():" + aMapLocation.getAltitude());
+                    double longitude = aMapLocation.getLongitude();
+                    double latitude = aMapLocation.getLatitude();
+                    DPoint dPoint = new DPoint();
+                    dPoint.setLatitude(latitude);
+                    dPoint.setLongitude(longitude);
+                    if (!theFirstTransmit) {
+                        trackLatLng.setStartDPoint(dPoint);
+                    }
+                    trackLatLng.setEndDPoint(dPoint);
+                    float distance = coordinateConverter.calculateLineDistance(trackLatLng.getStartDPoint(), trackLatLng.getEndDPoint());
+                    sum += distance;
+                    trackLatLng.setStartDPoint(trackLatLng.getEndDPoint());
+                    trackLatLng.setEndDPoint(null);
+                    trackInfo.setDistance(String.format("%.1f", sum));
+                    recordBuilderPresenter.onTrackChangedCallback(String.valueOf(aMapLocation.getSpeed()), String.format("%.1f", sum), String.valueOf(aMapLocation.getAltitude()));
+                    recordBuilderPresenter.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
+                    String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
+                    if (address.length() > 0 && !theFirstTransmit) {
+                        trackInfo.setDesc(address);
+                        theFirstTransmit = true;
+                    }
+                    Log.d(TAG, address);
+                }
+            }
+        });
     }
 
-    /**
-     * 设置定位参数
-     */
-    private AMapLocationClientOption setDefaultOption() {
-        /*aMapLocationClientOption = new AMapLocationClientOption();
-        aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度定位模式
-        aMapLocationClientOption.setInterval(2000);//设定连续定位间隔*/
-        return aMapLocationClientOption;
-    }
 
     public TrackServiceImpl(Chronometer chronometer, TrackPresenter trackPresenter) {
         this.recordBuilderPresenter = (RecordBuilderPresenter) trackPresenter;
@@ -152,7 +146,6 @@ public class TrackServiceImpl  {
         bitmap.compress(Bitmap.CompressFormat.WEBP, 1, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         trackInfo.setBitmap(org.apache.commons.codec.binary.Base64.encodeBase64String(bytes));
-        aMapLocationClient.stopLocation();
         aMapTrackClient.stopGather(onTrackLifecycleListener);
         aMapTrackClient.stopTrack(new TrackParam(SERVICE_ID, TerminalUtil.getTerminal()), onTrackLifecycleListener);
         chronometer.stop();
@@ -206,39 +199,6 @@ public class TrackServiceImpl  {
         Notification notification = builder.build();
         return notification;
     }
-
-    AMapLocationListener aMapLocationListener = new AMapLocationListener() {
-        @Override
-        public void onLocationChanged(AMapLocation aMapLocation) {
-            if (null != aMapLocation) {
-                if (aMapLocation.getErrorCode() == 0) {
-                    Log.d(TAG, "aMapLocation.getSpeed():" + aMapLocation.getSpeed());
-                    Log.d(TAG, "aMapLocation.getAltitude():" + aMapLocation.getAltitude());
-                    double longitude = aMapLocation.getLongitude();
-                    double latitude = aMapLocation.getLatitude();
-                    DPoint dPoint = new DPoint();
-                    dPoint.setLatitude(latitude);
-                    dPoint.setLongitude(longitude);
-                    if (!theFirstTransmit) {
-                        trackLatLng.setStartDPoint(dPoint);
-                    }
-                    trackLatLng.setEndDPoint(dPoint);
-                    float distance =  coordinateConverter.calculateLineDistance(trackLatLng.getStartDPoint(), trackLatLng.getEndDPoint());
-                    sum += distance;
-                    trackLatLng.setStartDPoint(trackLatLng.getEndDPoint());
-                    trackLatLng.setEndDPoint(null);
-                    trackInfo.setDistance(String.format("%.1f", sum));
-                    recordBuilderPresenter.onTrackChangedCallback(String.valueOf(aMapLocation.getSpeed()), String.format("%.1f", sum),String.valueOf(aMapLocation.getAltitude()));
-                    recordBuilderPresenter.onTrackLocationCallback(longitude, latitude, aMapLocation.getGpsAccuracyStatus());
-                    String address = aMapLocation.getProvince() + aMapLocation.getCity() + aMapLocation.getDistrict() + aMapLocation.getStreet();
-                    if (address.length() > 0 && !theFirstTransmit) {
-                        trackInfo.setDesc(address);
-                        theFirstTransmit = true;
-                    }
-                }
-            }
-        }
-    };
 }
 
 

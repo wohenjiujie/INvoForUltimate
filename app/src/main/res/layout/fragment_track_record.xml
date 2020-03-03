@@ -7,7 +7,6 @@
     android:keepScreenOn="true"
     tools:context=".ui.fragment.TrackRecordFragment">
 
-    <!-- TODO: Update Texture MapView -->
     <com.amap.api.maps.TextureMapView
         android:id="@+id/record_map"
         android:layout_width="match_parent"

@@ -54,7 +54,7 @@ public class TrackHistoryActivity extends BaseActivity<HistoryViewCallback, Hist
     protected void initControls(Bundle savedInstanceState) {
         Explode explode = new Explode();
         explode.excludeTarget(android.R.id.statusBarBackground,true);
-        explode.setDuration(500L);
+        explode.setDuration(700L);
         Window window = this.getWindow();
         window.setEnterTransition(explode);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorBlack, R.color.colorGreen, R.color.colorBlue, R.color.colorAccent);
@@ -65,7 +65,7 @@ public class TrackHistoryActivity extends BaseActivity<HistoryViewCallback, Hist
 
 
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new Decoration());
         getP().getTrackHistoryInfo(this);
     }

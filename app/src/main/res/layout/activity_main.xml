@@ -14,15 +14,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_top"
+        android:id="@+id/basic_top"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/shape_route_search_more_bg"
         android:paddingStart="16dp"
         android:paddingTop="16dp"
         android:paddingEnd="16dp"
@@ -31,53 +32,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/main_search_ic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_search"
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/img_avatar"
+            android:alpha="0.6"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/main_search_tv"
+            android:id="@+id/rvTip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="查找地点、公交、地铁"
             android:textColor="#cccccc"
             android:textSize="14sp"
-            app:layout_constraintLeft_toLeftOf="@id/main_search_ic"
-            app:layout_constraintRight_toRightOf="@id/main_top"
-            app:layout_constraintTop_toTopOf="@id/main_top" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_center_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/main_top">
-
-        <CheckBox
-            android:id="@+id/track_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:alpha="0.8"
-            android:checked="false"
-            android:textColor="@color/colorBlack"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/imgAvatar"
+            app:layout_constraintStart_toEndOf="@+id/imgAvatar"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_menu"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:alpha="0.8"
+        android:background="@drawable/shape_circle_main"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/map_widget_home_corp" />
+    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -109,7 +105,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.12"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="@id/main_textView_1"
+            app:layout_constraintRight_toLeftOf="@id/main_textView_1"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -120,19 +116,19 @@
             android:textColor="@color/colorBlack"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/main_bottom"
-            app:layout_constraintLeft_toLeftOf="@id/main_imageView"
-            app:layout_constraintRight_toRightOf="@id/main_textView_2"
+            app:layout_constraintLeft_toRightOf="@id/main_imageView"
+            app:layout_constraintRight_toLeftOf="@id/main_textView_2"
             app:layout_constraintTop_toTopOf="@+id/main_bottom" />
 
         <TextView
             android:id="@+id/main_textView_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="refresh"
-            android:textColor="@color/colorBlack"
-            android:textSize="14sp"
+            android:text="刷新"
+            android:textColor="@color/colorGrey"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="@+id/main_bottom"
-            app:layout_constraintLeft_toLeftOf="@id/main_textView_1"
+            app:layout_constraintLeft_toRightOf="@id/main_textView_1"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/main_bottom" />
 

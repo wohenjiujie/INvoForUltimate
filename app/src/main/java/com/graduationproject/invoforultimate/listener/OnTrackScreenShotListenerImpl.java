@@ -8,7 +8,7 @@ import com.amap.api.maps.AMap;
  * Created by INvo
  * on 2020-02-16.
  */
-public class TrackScreenShotImpl implements AMap.OnMapScreenShotListener {
+public class OnTrackScreenShotListenerImpl implements AMap.OnMapScreenShotListener {
     @Override
     public void onMapScreenShot(Bitmap bitmap) {
 

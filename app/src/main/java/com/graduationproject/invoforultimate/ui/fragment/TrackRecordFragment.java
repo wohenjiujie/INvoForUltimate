@@ -22,7 +22,7 @@ import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.graduationproject.invoforultimate.BaseFragment;
 import com.graduationproject.invoforultimate.R;
-import com.graduationproject.invoforultimate.listener.TrackScreenShotImpl;
+import com.graduationproject.invoforultimate.listener.OnTrackScreenShotListenerImpl;
 import com.graduationproject.invoforultimate.presenter.impl.RecordBuilderImpl;
 import com.graduationproject.invoforultimate.ui.view.impl.RecordViewCallback;
 import com.graduationproject.invoforultimate.utils.TrackDialog;
@@ -50,11 +50,6 @@ import static com.graduationproject.invoforultimate.entity.constants.TrackServic
 import static com.graduationproject.invoforultimate.entity.constants.TrackServiceConstants.TRACK_RESULT_STOP;
 
 public class TrackRecordFragment extends BaseFragment<RecordViewCallback, RecordBuilderImpl, TextureMapView> implements RecordViewCallback {
-    private static boolean isStart = false;
-    private static List<LatLng> coordinate = new ArrayList<>();
-    private static Polyline polyline;
-    private static List<Polyline> polyLines = new LinkedList<>();
-
     @BindView(R.id.record_map)
     TextureMapView textureMapView;
     @BindView(R.id.record_controller)
@@ -69,9 +64,13 @@ public class TrackRecordFragment extends BaseFragment<RecordViewCallback, Record
     TextView recordDistance;
     @BindView(R.id.record_speed)
     TextView recordSpeed;
-
     @BindView(R.id.record_tips)
     TextView recordTips;
+
+    private static boolean isStart = false;
+    private static List<LatLng> coordinate = new ArrayList<>();
+    private static Polyline polyline;
+    private static List<Polyline> polyLines = new LinkedList<>();
 
     public static TrackRecordFragment newInstance(@Nullable Bundle args) {
         TrackRecordFragment fragment = new TrackRecordFragment();
@@ -86,12 +85,11 @@ public class TrackRecordFragment extends BaseFragment<RecordViewCallback, Record
         getP().mapSettings(getMap().getMap());
     }
 
-
     @Override
     public void onKeyDownChild(int keyCode, KeyEvent event) {
         if (KeyEvent.KEYCODE_BACK == keyCode && isStart) {
             new TrackDialog(asContext(), DIALOG_STOP_TRACK)
-                    .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
+                    .setPositiveButton(DIALOG_POSITIVE_CHOICE, (dialog, which) -> getMap().getMap().getMapScreenShot(new OnTrackScreenShotListenerImpl() {
                         @Override
                         public void onMapScreenShot(Bitmap bitmap) {
                                 getP().stopTrack(bitmap);
@@ -111,10 +109,9 @@ public class TrackRecordFragment extends BaseFragment<RecordViewCallback, Record
     @OnLongClick(record_controller)
     @NonNull
     public void trackStop() {
-        // TODO: 2020-02-29 chronometer not clear
 
         if (isStart) {
-            getMap().getMap().getMapScreenShot(new TrackScreenShotImpl() {
+            getMap().getMap().getMapScreenShot(new OnTrackScreenShotListenerImpl() {
                 @Override
                 public void onMapScreenShot(Bitmap bitmap) {
                     getP().stopTrack(bitmap);

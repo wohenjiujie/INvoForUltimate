@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.jakewharton.butterknife'
 android {
     compileSdkVersion 29
@@ -7,8 +9,8 @@ android {
         applicationId "com.graduationproject.invoforultimate"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 3
-        versionName "3.0.2"
+        versionCode 5
+        versionName "5.1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -57,4 +59,12 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
     implementation 'com.willowtreeapps.spruce:spruce-android:1.0.1'
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.9"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
+}
+repositories {
+    mavenCentral()
 }

@@ -19,13 +19,5 @@ public interface MainBuilderPresenter extends TrackPresenter{
 
     void onLatLngCallback(LatLng latLng);
 
-  /*  void onTrackCallback(int x,String s);
-
-    void onTrackChangedCallback(String s1,String s2);
-
-    void onTrackLocationCallback(double d1,double d2,int i);
-
-    void onTrackUploadCallback(boolean x);*/
-
     void onGetWeatherCallback(@NonNull boolean callback, @Nullable JSONObject obj);
 }

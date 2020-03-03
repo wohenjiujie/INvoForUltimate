@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="104dp"
     android:background="@color/colorTransparent"
     android:orientation="horizontal"
     android:padding="2dp">
-
 
 
     <HorizontalScrollView
@@ -14,22 +14,22 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="104dp"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
 
             <ImageView
                 android:id="@+id/track_extra_3"
-                android:scaleType="centerCrop"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:background="@color/colorBlue"/>
+                android:background="@color/colorBlue"
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:layout_width="290dp"
                 android:layout_height="match_parent"
-                android:paddingLeft="15dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingLeft="15dp">
 
                 <TextView
                     android:id="@+id/track_title"
@@ -37,14 +37,15 @@
                     android:layout_height="wrap_content"
                     android:text="Description"
                     android:textColor="@color/colorBlack"
-                    android:textSize="20sp"></TextView>
+                    android:textSize="20sp" />
+
                 <TextView
                     android:id="@+id/track_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Date"
                     android:textColor="@color/colorGrey"
-                    android:textSize="15sp"></TextView>
+                    android:textSize="15sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -58,16 +59,16 @@
                         android:layout_weight="1"
                         android:text="Distance:Unknown"
                         android:textColor="@color/colorBlack"
-                        android:textSize="10sp"></TextView>
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/track_extra_2"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:text="Time:Unknown"
                         android:textColor="@color/colorGrey"
-                        android:textSize="10sp"></TextView>
+                        android:textSize="10sp" />
 
                 </LinearLayout>
 
@@ -78,11 +79,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@color/colorRed"
-                android:text="删除"
                 android:ems="1"
                 android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="35sp"/>
+                android:text="删除"
+                android:textSize="35sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

@@ -30,15 +30,12 @@ import butterknife.Unbinder;
  * on 2020-02-29.
  */
 public abstract class BaseFragment<V extends ViewCallback,P extends Presenter<V>,Map extends TextureMapView> extends Fragment {
-    //    private TrackRecordFragment.OnFragmentInteractionListener mListener;
     private P p;
     private V v;
     private Map map;
     private Unbinder unbinder;
     private boolean isRegistered = false;
     private TrackBroadcast trackBroadcast;
-
-    // FIXME: 2020-02-29 Reconstructor the interface for BaseFrament
     private static Context context;
 
     @Nullable
@@ -50,7 +47,6 @@ public abstract class BaseFragment<V extends ViewCallback,P extends Presenter<V>
     }
 
     protected abstract View getContentView(LayoutInflater inflater, ViewGroup container);
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -112,29 +108,6 @@ public abstract class BaseFragment<V extends ViewCallback,P extends Presenter<V>
     }
 
     public abstract void onKeyDownChild(int keyCode, KeyEvent event);
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-       /* if (context instanceof TrackRecordFragment.OnFragmentInteractionListener) {
-            mListener = (TrackRecordFragment.OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
-    /*public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
-
 
     @Override
     public void onDestroyView() {
