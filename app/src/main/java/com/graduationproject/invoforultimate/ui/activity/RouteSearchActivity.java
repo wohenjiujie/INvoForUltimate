@@ -117,8 +117,8 @@ public class RouteSearchActivity extends BaseAppCompatActivity<RouteSearchViewCa
                 fragmentPagerAdapter = new NavigationFragmentPagerAdapter(getSupportFragmentManager(), arrayList);
                 viewPager.setAdapter(fragmentPagerAdapter);
                 tabLayout.setupWithViewPager(viewPager);
-                tabLayout.getTabAt(0).setText("bike");
-                tabLayout.getTabAt(1).setText("walk");
+                tabLayout.getTabAt(0).setText("骑行");
+                tabLayout.getTabAt(1).setText("步行");
             }));
         } else {
             ToastText("请求失败,请检查网络设置");
